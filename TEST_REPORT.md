@@ -42,9 +42,17 @@ Playwright มี **12 test cases × 3 projects = 36 executions**:
 
 ครอบคลุม 14 Tool Cards, Core/File Tools, Worker-backed processing, Offline preparation, reload แบบไม่มี Network, Lazy Worker loading, PWA, Theme, Favorites, History และ Not Found
 
-Local workspace ยังไม่มี Chromium executable จึงเริ่ม Browser suite ไม่ได้ การล้มเหลวเกิดก่อนเปิด Browser ทุกกรณีและไม่มี Test assertion ใดทำงาน GitHub Actions จะเป็น Browser runtime หลักหลัง Push Branch
+Local workspace ยังไม่มี Chromium executable จึงใช้ GitHub Actions เป็น Browser runtime หลัก การทดสอบบน CI ยืนยันทั้ง Desktop และ Android สองระดับแล้ว
 
-**สถานะ Browser E2E:** รอ GitHub Actions ยืนยัน 36/36 executions
+**สถานะ Browser E2E:** GitHub Actions CI Run #37 ผ่าน **36/36 executions**
+
+### Offline regression ที่ตรวจพบและแก้ไข
+
+- CI Run #31 พบ E2E selector ใช้ชื่อ `JSON Formatter` แต่ Accessible Name จริงคือ `JSON Formatter / Validator`; แก้ให้ตรวจ Accessible Name เต็มและคลิกด้วย `data-action="offline"`
+- CI Runs #32–36 ยืนยันว่าปุ่มเตรียม Offline และ Cache entries สำเร็จ แต่ Entry JS/CSS ไม่ถูกคืนหลังตัด Network เพราะ Request variant ไม่ตรงกับ Cache lookup
+- Service Worker แก้ให้ Pre-cache `index.html`, รอ Navigation/runtime cache writes และเรียก `caches.match(request, { ignoreVary: true })`
+- Browser test ตรวจ Service Worker controller และยืนยันว่า Cache มี App Shell, Entry JS, CSS และ JSON Formatter chunk ก่อนตัด Network
+- CI Run #37 ผ่าน reload หน้า Hub และเปิด JSON Formatter ขณะ Offline ครบทั้ง 3 Browser profiles
 
 ## WebAssembly decision
 

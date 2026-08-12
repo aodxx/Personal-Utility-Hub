@@ -4,7 +4,7 @@
 > ข้อกำหนดผลิตภัณฑ์ให้อ้างอิง `PRD.md` ส่วนผลการทดสอบโดยละเอียดให้อ้างอิง `TEST_REPORT.md`
 
 **อัปเดตล่าสุด:** 12 สิงหาคม 2026  
-**สถานะโครงการ:** Phase 0–3 เสร็จสิ้นและเผยแพร่แล้ว; Phase 4 Performance and Offline กำลังพัฒนา
+**สถานะโครงการ:** Phase 0–3 เสร็จสิ้นและเผยแพร่แล้ว; Phase 4 พัฒนาเสร็จบน Draft PR #10 และรอ Merge
 **Phase ปัจจุบัน:** Phase 4 — Performance and Offline
 **เวอร์ชันปัจจุบัน:** `0.6.0`
 **เว็บไซต์:** https://aodxx.github.io/Personal-Utility-Hub/
@@ -19,7 +19,7 @@
 | Phase 1 | Hub MVP | ✅ เสร็จสิ้น Merge และเผยแพร่แล้ว | PR #6, CI 22/22, E2E 8/8, Deploy ผ่าน |
 | Phase 2 | Visual System + Core Tools | ✅ เสร็จสิ้นและเผยแพร่แล้ว | PR #7 และ #8 Merge; CI Run #26 และ Pages Run #10 ผ่าน |
 | Phase 3 | File Tools | ✅ เสร็จสิ้นและเผยแพร่แล้ว | PR #9 Merge; CI 36/36, E2E 20/20 และ Production ตอบ 200 |
-| Phase 4 | Performance and Offline | 🚧 กำลังดำเนินการ | Branch `agent/phase-4-performance-offline`; Local 40/40, Build และ Bundle Budget ผ่าน |
+| Phase 4 | Performance and Offline | 🟡 พัฒนาเสร็จ รอ Merge | Draft PR #10; CI Run #37 ผ่าน 40/40 Unit/Integration และ E2E 36/36 |
 | Phase 5 | Product Expansion | ⬜ ยังไม่เริ่ม | รอ Phase 4 |
 
 ความคืบหน้าตาม Roadmap: **เสร็จแล้ว 4 จาก 6 Phase**
@@ -205,9 +205,13 @@ Phase 2 ปิดแล้ว เริ่ม Phase 3 จาก Merge commit `64
 
 ## 6. Phase 4 — Performance and Offline
 
-**สถานะ:** 🚧 กำลังดำเนินการ
+**สถานะ:** 🟡 พัฒนาเสร็จบน Branch และรอ Merge
 
 **Branch:** `agent/phase-4-performance-offline`
+
+**Pull Request:** [#10 — Build Phase 4 performance and offline](https://github.com/aodxx/Personal-Utility-Hub/pull/10)
+
+**CI-validated source commit:** [`d272790cd687217ab0b8027a6293bf1cc113794e`](https://github.com/aodxx/Personal-Utility-Hub/commit/d272790cd687217ab0b8027a6293bf1cc113794e)
 
 **ฐาน Branch:** Phase 3 Merge commit `0b3cf36e0640f2f4fdcbc17c34a96a4dc980a3da`
 
@@ -231,11 +235,14 @@ Phase 2 ปิดแล้ว เริ่ม Phase 3 จาก Merge commit `64
 - Bundle Budget — Entry 10.8 KB gzip; Largest lazy 366.1 KB; JavaScript รวม 929.6 KB/24 chunks
 - Dependency audit — 0 vulnerabilities
 - Service Worker syntax และ `git diff --check` — ผ่าน
-- Playwright 12 cases × 3 profiles = 36 executions — เตรียมแล้ว; รอ GitHub Actions เพราะ Local ไม่มี Chromium executable
+- GitHub Actions CI Run #37 — ผ่าน
+- Playwright 12 cases × 3 profiles = 36 executions — ผ่าน 36/36 บน Desktop Chromium, Android entry 360 × 740 และ Android Pixel 7
+- CI Runs #31–36 ช่วยตรวจพบ Offline regression: ปรับ E2E selector ให้ตรง Accessible Name, รอ Service Worker controller, รอ runtime cache writes และใช้ Cache API `ignoreVary` เพื่อให้ Entry JS/CSS ถูกคืนจาก Cache หลังตัด Network
+- Offline App Shell, Entry JS/CSS และ JSON Formatter chunk ผ่านการตรวจ Cache และเปิดใช้งานหลัง reload แบบไม่มี Network จริง
 
 ### ขั้นตอนถัดไป
 
-Push Branch และเปิด Draft PR หลังได้รับคำยืนยัน จากนั้นใช้ GitHub Actions ยืนยัน Browser E2E 36/36 executions
+ตรวจ Draft PR #10 และ Merge เมื่อพร้อม จากนั้นยืนยัน CI/Pages บน `main` และทดสอบ Offline บนอุปกรณ์ Android จริงก่อนปิด Phase 4
 
 ---
 
