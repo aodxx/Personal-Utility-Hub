@@ -18,6 +18,6 @@
 - Playwright suite: Search, Favorites, History, Theme, Planned Tool route, Lazy Module และ Not Found
 - Viewports: Desktop Chromium และ Android Pixel 7
 - Local browser download: Playwright CDN ในสภาพแวดล้อมนี้ส่งไฟล์ขนาด 0 MiB จึงไม่สามารถเปิด Chromium ภายในเครื่องได้
-- Phase 2 GitHub Actions CI: รอตรวจหลัง Push Branch โดยเพิ่มการตรวจว่า 3D sprite ตอบ `200`, Hero แสดง และ Category/Tool Card มี Asset ครบ
+- GitHub Actions CI Run #20: **ผ่าน** — Vitest 25/25 และ Playwright 8/8 บน Desktop/Android รวมการตรวจว่า 3D sprite ตอบ `200`, Hero แสดง และ Category/Tool Card มี Asset ครบ
 
 ข้อจำกัดการดาวน์โหลด Browser เป็นข้อจำกัดของสภาพแวดล้อมตรวจสอบ ไม่ใช่ความล้มเหลวของ Source code หรือ production build

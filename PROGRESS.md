@@ -97,7 +97,8 @@
 
 **สถานะ:** 🚧 กำลังดำเนินการ
 **Branch:** `agent/phase-2-visual-system`
-**Pull Request:** ยังไม่มี
+**Pull Request:** [#7 — Build Phase 2 3D visual system](https://github.com/aodxx/Personal-Utility-Hub/pull/7) (Draft)
+**Head commit:** `3c1f395c72e2001941514c28d3a26b019a282299`
 
 ### Visual System Upgrade — กำลังดำเนินการ
 
@@ -109,6 +110,7 @@
 - เพิ่ม Design Tokens สำหรับ gradient, shadow, visual surface และขนาด Asset ใน Light/Dark Mode
 - เพิ่ม Asset เข้า Service Worker precache
 - เพิ่มเอกสาร `docs/VISUAL_SYSTEM.md` และ automated asset validation
+- GitHub Actions CI Run #20 ผ่าน: TypeScript, 25/25 Unit/Integration, Production build และ Playwright 8/8 บน Desktop/Android
 
 งานนี้เป็น Foundation ชุดแรกของ Phase 2 และยังไม่ถือว่า Core Tools ทั้ง 7 ทำงานแล้ว
 
@@ -178,7 +180,7 @@
 ### Blocking
 
 - ไม่มีปัญหาที่ขวางการพัฒนา Source
-- Browser E2E ใน Local workspace ยังรันไม่ได้เพราะไม่มี Playwright Chromium; ต้องยืนยันบน GitHub Actions ก่อน Merge
+- Browser E2E ใน Local workspace ยังรันไม่ได้เพราะไม่มี Playwright Chromium แต่ยืนยันผ่าน GitHub Actions CI Run #20 แล้ว
 
 ### Non-blocking / ต้องตรวจภายหลัง
 
