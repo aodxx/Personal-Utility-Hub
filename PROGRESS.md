@@ -98,7 +98,7 @@
 **สถานะ:** 🚧 กำลังดำเนินการ
 **Branch:** `agent/phase-2-visual-system`
 **Pull Request:** [#7 — Build Phase 2 3D visual system](https://github.com/aodxx/Personal-Utility-Hub/pull/7) (Draft)
-**Head commit:** `3c1f395c72e2001941514c28d3a26b019a282299`
+**Visual System commit:** `3c1f395c72e2001941514c28d3a26b019a282299`
 
 ### Visual System Upgrade — กำลังดำเนินการ
 
