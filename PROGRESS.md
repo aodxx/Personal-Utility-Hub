@@ -4,7 +4,7 @@
 > ข้อกำหนดผลิตภัณฑ์ให้อ้างอิง `PRD.md` ส่วนผลการทดสอบโดยละเอียดให้อ้างอิง `TEST_REPORT.md`
 
 **อัปเดตล่าสุด:** 12 สิงหาคม 2026  
-**สถานะโครงการ:** Phase 0 และ Phase 1 เสร็จสิ้น; Phase 2 Visual System เผยแพร่แล้วและ Core Tools อยู่ระหว่าง Browser validation
+**สถานะโครงการ:** Phase 0 และ Phase 1 เสร็จสิ้น; Phase 2 Visual System เผยแพร่แล้วและ Core Tools ผ่าน CI/Browser validation ใน Draft PR
 **Phase ปัจจุบัน:** Phase 2 — Core Tools
 **เวอร์ชันปัจจุบัน:** `0.4.0`
 **เว็บไซต์:** https://aodxx.github.io/Personal-Utility-Hub/
@@ -17,7 +17,7 @@
 |---|---|---|---|
 | Phase 0 | Foundation | ✅ เสร็จสิ้นและเผยแพร่แล้ว | PR #1, Foundation CI ผ่าน, GitHub Pages ทำงาน |
 | Phase 1 | Hub MVP | ✅ เสร็จสิ้น Merge และเผยแพร่แล้ว | PR #6, CI 22/22, E2E 8/8, Deploy ผ่าน |
-| Phase 2 | Visual System + Core Tools | 🧪 รอตรวจสอบ | Visual System Merge แล้ว; Core Tools 7 รายการผ่าน Local validation และรอ GitHub Actions |
+| Phase 2 | Visual System + Core Tools | 🧪 พร้อมตรวจและ Merge | Visual System Merge แล้ว; Core Tools 7 รายการผ่าน CI 31/31 และ E2E 14/14 ใน PR #8 |
 | Phase 3 | File Tools | ⬜ ยังไม่เริ่ม | รอ Phase 2 |
 | Phase 4 | Performance and Offline | ⬜ ยังไม่เริ่ม | รอ Phase 3 |
 | Phase 5 | Product Expansion | ⬜ ยังไม่เริ่ม | รอ Phase 4 |
@@ -99,7 +99,11 @@
 
 **Core Tools Branch:** `agent/phase-2-core-tools`
 
-**Core Tools Pull Request:** รอเปิดหลังตรวจ Local source เสร็จ
+**Core Tools Pull Request:** [#8 — Build Phase 2 core tools](https://github.com/aodxx/Personal-Utility-Hub/pull/8) (Draft)
+
+**Core Tools source commit:** [`f87df1d37bb75bf38cc0638612d9730991a3338f`](https://github.com/aodxx/Personal-Utility-Hub/commit/f87df1d37bb75bf38cc0638612d9730991a3338f)
+
+**Local source commit:** `bdf2a64a041e5c5b14c7a71b4321d656a861d0ea` (Git tree ตรงกับ Remote Head)
 
 **Visual System PR:** [#7 — Build Phase 2 3D visual system](https://github.com/aodxx/Personal-Utility-Hub/pull/7)
 
@@ -120,7 +124,7 @@
 - GitHub Actions CI Run #22 ผ่าน: TypeScript, 25/25 Unit/Integration, Production build และ Playwright 8/8 บน Desktop/Android
 - GitHub Pages Deploy Run #9 หลัง Merge — ผ่าน
 
-### Core Tools — 🧪 พัฒนาเสร็จใน Branch และรอ GitHub Actions
+### Core Tools — 🧪 พัฒนาเสร็จและผ่าน GitHub Actions
 
 - JSON Formatter / Validator — Format, Minify, Validate และ Copy
 - Base64 Encoder / Decoder — รองรับ UTF-8 ภาษาไทยและอีโมจิ
@@ -141,11 +145,12 @@
 - Production build และ GitHub Pages subpath — ผ่าน
 - Service Worker syntax และ `git diff --check` — ผ่าน
 - Dependency audit — 0 vulnerabilities
-- Playwright เตรียม 7 cases × 2 viewports = 14 executions; Local Chromium ดาวน์โหลดไม่ได้ จึงรอ GitHub Actions
+- GitHub Actions CI Run #24 — ผ่าน
+- Playwright 7 cases × 2 viewports = 14 executions — ผ่าน 14/14 บน Desktop Chromium และ Android Pixel 7
 
 ### ขั้นตอนถัดไป
 
-Commit และ Push Branch, เปิด Draft PR, ให้ GitHub Actions รัน Browser E2E 14 executions แล้วแก้ข้อผิดพลาดทั้งหมดก่อนเสนอ Merge
+ตรวจ Draft PR #8 และ Merge เข้า `main` เมื่อพร้อม จากนั้นตรวจ GitHub Pages deployment และทดสอบ QR Reader ด้วยกล้องบน Android จริง
 
 ---
 
@@ -173,13 +178,13 @@ Commit และ Push Branch, เปิด Draft PR, ให้ GitHub Actions �
 | Tool | Production `main` | Branch `agent/phase-2-core-tools` |
 |---|---|---|
 | Foundation Lifecycle Demo | Active | Active |
-| JSON Formatter / Validator | Planned | Active — Local tests ผ่าน |
-| Base64 Encoder / Decoder | Planned | Active — Local tests ผ่าน |
-| Text Formatter | Planned | Active — Local tests ผ่าน |
-| QR Code Generator | Planned | Active — Local tests ผ่าน |
-| Image Resizer | Planned | Active — Local tests ผ่าน |
-| Image Converter | Planned | Active — Local tests ผ่าน |
-| QR Code Reader | Planned | Active — Local tests ผ่าน |
+| JSON Formatter / Validator | Planned | Active — CI/E2E ผ่าน |
+| Base64 Encoder / Decoder | Planned | Active — CI/E2E ผ่าน |
+| Text Formatter | Planned | Active — CI/E2E ผ่าน |
+| QR Code Generator | Planned | Active — CI/E2E ผ่าน |
+| Image Resizer | Planned | Active — CI/E2E ผ่าน |
+| Image Converter | Planned | Active — CI/E2E ผ่าน |
+| QR Code Reader | Planned | Active — CI/E2E ผ่าน |
 
 ---
 
@@ -187,8 +192,7 @@ Commit และ Push Branch, เปิด Draft PR, ให้ GitHub Actions �
 
 ### Blocking
 
-- ไม่มีปัญหาที่ขวางการพัฒนา Source
-- Browser E2E ของ Core Tools ใน Local workspace ยังรันไม่ได้ เพราะ Playwright CDN คืน Browser archive ขนาด 0 MiB; รอ GitHub Actions ของ Branch ปัจจุบัน
+- ไม่มีปัญหาที่ขวางการตรวจและ Merge PR #8
 
 ### Non-blocking / ต้องตรวจภายหลัง
 

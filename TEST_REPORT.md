@@ -47,9 +47,11 @@ Playwright เตรียมไว้ **7 test cases** และรันทั
 - Resize PNG และ Convert เป็น WebP ด้วย Canvas
 - 3D sprite, Category และ Tool Card assets
 
-Local workspace ยังเปิด Chromium ไม่ได้ เพราะ Playwright CDN คืนไฟล์ browser ขนาด 0 MiB การติดตั้งถูกลองซ้ำแล้วและหยุดที่ archive ไม่สมบูรณ์ จึงต้องใช้ GitHub Actions เป็น Browser runtime สำหรับ Head commit ของ PR
+Local workspace ยังเปิด Chromium ไม่ได้ เพราะ Playwright CDN คืนไฟล์ browser ขนาด 0 MiB การติดตั้งถูกลองซ้ำแล้วและหยุดที่ archive ไม่สมบูรณ์ จึงใช้ GitHub Actions เป็น Browser runtime สำหรับ Head commit ของ PR
 
-**สถานะ Browser E2E:** รอ GitHub Actions หลัง Push Branch
+**GitHub Actions CI Run #24:** ผ่าน TypeScript, Vitest 31/31, Production build และ Playwright 14/14
+
+**สถานะ Browser E2E:** ผ่าน 14/14 บน Desktop Chromium และ Android Pixel 7
 
 ## Dependency review
 
