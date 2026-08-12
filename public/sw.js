@@ -56,15 +56,17 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  event.respondWith(
-    caches.match(request).then((cached) => cached ?? fetch(request).then((response) => {
-      if (response.ok) {
-        const copy = response.clone();
-        caches.open(url.pathname.includes('/assets/') ? TOOL_CACHE : SHELL_CACHE).then((cache) => cache.put(request, copy));
-      }
-      return response;
-    })),
-  );
+  event.respondWith((async () => {
+    const cached = await caches.match(request);
+    if (cached) return cached;
+
+    const response = await fetch(request);
+    if (response.ok) {
+      const cache = await caches.open(url.pathname.includes('/assets/') ? TOOL_CACHE : SHELL_CACHE);
+      await cache.put(request, response.clone());
+    }
+    return response;
+  })());
 });
 
 self.addEventListener('message', (event) => {
