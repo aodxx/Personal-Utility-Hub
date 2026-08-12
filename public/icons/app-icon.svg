@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title">
+  <title id="title">Personal Utility Hub</title>
+  <rect width="512" height="512" rx="112" fill="#3f5bd8"/>
+  <path d="M144 132v152c0 96 50 126 112 126s112-30 112-126V132h-68v152c0 45-14 63-44 63s-44-18-44-63V132z" fill="#fff"/>
+  <circle cx="390" cy="112" r="30" fill="#d7ff64"/>
+</svg>

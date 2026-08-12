@@ -1,13 +1,22 @@
 import { getErrorMessage, ToolNotFoundError } from '../core/errors';
+import { PwaController } from '../core/pwa';
+import { filterTools } from '../core/search';
+import { LocalPreferences, type ThemePreference } from '../core/storage';
+import type { ToolMetadata } from '../core/tool-contract';
 import { ToolLoader } from '../core/tool-loader';
-import { toolRegistry } from '../data/tools';
+import { allCategories } from '../data/categories';
+import { toolCatalog, toolRegistry } from '../data/tools';
 import { HashRouter } from './router';
 import type { AppRoute } from './routes';
 
 export class AppShell {
   private readonly router = new HashRouter();
   private readonly toolLoader = new ToolLoader(toolRegistry);
+  private readonly preferences = new LocalPreferences();
+  private readonly pwa = new PwaController();
   private navigationId = 0;
+  private cleanupHome: (() => void) | undefined;
+  private themeButton: HTMLButtonElement | undefined;
 
   constructor(private readonly root: HTMLElement) {}
 
@@ -19,26 +28,49 @@ export class AppShell {
           <span class="brand__mark" aria-hidden="true">U</span>
           <span><strong>Utility Hub</strong><small>Private by design</small></span>
         </a>
-        <span class="phase-chip">Phase 0 · Foundation</span>
+        <div class="header-actions">
+          <button id="install-app" class="icon-button icon-button--install" type="button" aria-label="ติดตั้งแอป">ติดตั้ง</button>
+          <button id="theme-toggle" class="icon-button" type="button" aria-label="เปลี่ยนธีม"><span aria-hidden="true">◐</span></button>
+        </div>
       </header>
       <main id="main-content" class="main-content" tabindex="-1"></main>
       <footer class="site-footer">
-        <p>เครื่องมือ Client-side จะประมวลผลข้อมูลภายในอุปกรณ์ของคุณ</p>
-        <p>Personal Utility Hub · Foundation v0.1.0</p>
+        <p><strong>Local-first:</strong> เครื่องมือ Client-side ประมวลผลข้อมูลภายในอุปกรณ์ของคุณ</p>
+        <nav aria-label="ลิงก์ท้ายเว็บไซต์"><a href="#/">เครื่องมือ</a><a href="https://github.com/aodxx/Personal-Utility-Hub/blob/main/docs/PRIVACY_AND_DEPENDENCIES.md" target="_blank" rel="noreferrer">ความเป็นส่วนตัว</a></nav>
       </footer>
     `;
+
+    this.themeButton = this.root.querySelector<HTMLButtonElement>('#theme-toggle') ?? undefined;
+    this.applyTheme(this.getInitialTheme());
+    this.themeButton?.addEventListener('click', this.handleThemeToggle);
+
+    const installButton = this.root.querySelector<HTMLButtonElement>('#install-app');
+    if (installButton) this.pwa.start(installButton);
 
     this.router.start((route) => void this.renderRoute(route));
   }
 
   stop(): void {
+    this.cleanupHome?.();
+    this.cleanupHome = undefined;
+    this.themeButton?.removeEventListener('click', this.handleThemeToggle);
+    this.themeButton = undefined;
+    this.pwa.stop();
     this.router.stop();
     void this.toolLoader.clear();
   }
 
+  private readonly handleThemeToggle = (): void => {
+    const nextTheme: ThemePreference = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark';
+    this.preferences.setTheme(nextTheme);
+    this.applyTheme(nextTheme);
+  };
+
   private async renderRoute(route: AppRoute): Promise<void> {
     const navigationId = ++this.navigationId;
     const main = this.getMain();
+    this.cleanupHome?.();
+    this.cleanupHome = undefined;
 
     if (route.kind !== 'tool') await this.toolLoader.clear();
     if (navigationId !== this.navigationId) return;
@@ -59,13 +91,18 @@ export class AppShell {
       return;
     }
 
+    const tool = entry.metadata;
+    this.preferences.addRecent(tool.id);
     main.innerHTML = `
       <nav class="breadcrumb" aria-label="Breadcrumb"><a href="#/">← กลับหน้า Hub</a></nav>
       <section class="tool-heading">
-        <div class="eyebrow">${this.escapeHtml(entry.metadata.category)}</div>
-        <h1>${this.escapeHtml(entry.metadata.title)}</h1>
-        <p>${this.escapeHtml(entry.metadata.description)}</p>
-        <div class="privacy-note"><span aria-hidden="true">✓</span><strong>ประมวลผลในเครื่อง</strong> Demo นี้ไม่ส่งข้อมูลออกจากอุปกรณ์</div>
+        <div class="tool-heading__meta"><span class="eyebrow">${this.escapeHtml(tool.category)}</span>${this.statusBadge(tool)}</div>
+        <h1>${this.escapeHtml(tool.title)}</h1>
+        <p>${this.escapeHtml(tool.description)}</p>
+        <div class="privacy-note">
+          <span aria-hidden="true">✓</span>
+          <div><strong>ประมวลผลในเครื่อง</strong><small>ไม่อัปโหลดข้อมูลหรือไฟล์ของคุณไปยังเซิร์ฟเวอร์${tool.supportsOffline ? ' · รองรับการใช้งาน Offline' : ''}</small></div>
+        </div>
       </section>
       <div id="tool-container" class="tool-container" aria-live="polite">
         <div class="loading-state"><span class="spinner" aria-hidden="true"></span>กำลังโหลด Module…</div>
@@ -95,53 +132,172 @@ export class AppShell {
   }
 
   private renderHome(main: HTMLElement): void {
-    const demoEntry = toolRegistry.find(({ metadata }) => metadata.id === 'foundation-demo');
-    if (!demoEntry) throw new Error('ไม่พบ Foundation Demo ใน Tool Registry');
-    const demo = demoEntry.metadata;
+    let query = '';
+    let activeCategory = 'ทั้งหมด';
+    let favoritesOnly = false;
+
     main.innerHTML = `
-      <section class="hero">
-        <div class="eyebrow">Static · Local-first · Modular</div>
-        <h1>เครื่องมือเล็ก ๆ<br><span>ในพื้นที่ส่วนตัวของคุณ</span></h1>
-        <p>Foundation ของศูนย์รวม Utility Web Tools พร้อมแล้วสำหรับการขยาย โดยไม่ต้องผูกกับ Backend หรือส่งไฟล์ผู้ใช้ออกนอกเบราว์เซอร์</p>
-        <div class="hero__actions">
-          <a class="button button--primary" href="#${demo.route}">เปิด Lifecycle Demo</a>
-          <a class="button button--ghost" href="https://github.com/aodxx/Personal-Utility-Hub" target="_blank" rel="noreferrer">ดู Source Code</a>
+      <section class="hero hero--hub">
+        <div class="eyebrow">Private · Fast · Works offline</div>
+        <h1>เครื่องมือที่ต้องใช้<br><span>รวมไว้ในที่เดียว</span></h1>
+        <p>ค้นหา เปิดใช้ และบันทึกเครื่องมือโปรดได้ทันที ข้อมูลของคุณประมวลผลภายในเบราว์เซอร์โดยไม่ต้องสมัครสมาชิก</p>
+        <div class="search-panel" role="search">
+          <label class="search-box" for="tool-search">
+            <span aria-hidden="true">⌕</span>
+            <input id="tool-search" type="search" placeholder="ค้นหา เช่น JSON, QR Code, รูปภาพ…" autocomplete="off" />
+            <kbd>/</kbd>
+          </label>
+          <label class="favorite-filter"><input id="favorites-only" type="checkbox" /> เฉพาะรายการโปรด</label>
         </div>
       </section>
 
       <section class="trust-strip" aria-label="หลักการความเป็นส่วนตัว">
-        <div><span aria-hidden="true">01</span><strong>Client-side First</strong><small>ข้อมูลอยู่ในเบราว์เซอร์</small></div>
-        <div><span aria-hidden="true">02</span><strong>No Account</strong><small>ไม่ต้องสมัครสมาชิก</small></div>
-        <div><span aria-hidden="true">03</span><strong>Open Architecture</strong><small>เพิ่ม Tool ผ่าน Registry</small></div>
+        <div><span aria-hidden="true">01</span><strong>ทำงานในเครื่อง</strong><small>ไฟล์ไม่ถูกอัปโหลด</small></div>
+        <div><span aria-hidden="true">02</span><strong>ไม่ต้องมีบัญชี</strong><small>เปิดแล้วใช้งานได้ทันที</small></div>
+        <div><span aria-hidden="true">03</span><strong>พร้อม Offline</strong><small>ติดตั้งเป็น PWA ได้</small></div>
       </section>
 
-      <section class="section-block" aria-labelledby="foundation-title">
+      <section class="section-block section-block--catalog" aria-labelledby="catalog-title">
         <div class="section-heading">
-          <div><div class="eyebrow">Architecture proof</div><h2 id="foundation-title">Foundation ที่ตรวจสอบได้</h2></div>
-          <span class="status-pill">Core foundation ready</span>
+          <div><div class="eyebrow">Tool catalog</div><h2 id="catalog-title">เลือกเครื่องมือ</h2></div>
+          <output id="result-count" class="result-count" aria-live="polite"></output>
         </div>
-        <div class="foundation-grid">
-          ${this.foundationCard('Typed Registry', 'Metadata ถูกตรวจสอบก่อนแอปเริ่มทำงาน', 'TR')}
-          ${this.foundationCard('Hash Router', 'เปิดและ Refresh ได้บน GitHub Pages', 'HR')}
-          ${this.foundationCard('Lazy Loader', 'โหลด Module เมื่อผู้ใช้เปิดเท่านั้น', 'LL')}
-          ${this.foundationCard('Safe Lifecycle', 'คืน Listener และ Resource ผ่าน unmount()', 'SL')}
+        <div id="category-tabs" class="category-tabs" role="group" aria-label="กรองตามหมวดหมู่">
+          ${allCategories.map((category) => `<button class="category-tab" type="button" data-category="${this.escapeHtml(category)}" aria-pressed="${category === 'ทั้งหมด'}">${this.escapeHtml(category)}</button>`).join('')}
         </div>
+        <div id="tool-grid" class="tool-grid"></div>
       </section>
 
-      <section class="section-block" aria-labelledby="demo-title">
-        <div class="section-heading"><div><div class="eyebrow">Internal tool</div><h2 id="demo-title">ทดสอบเส้นทางครบวงจร</h2></div></div>
-        <article class="tool-card">
-          <div class="tool-card__icon" aria-hidden="true">${demo.icon ?? '◈'}</div>
-          <div class="tool-card__body">
-            <div class="tool-card__meta"><span>${this.escapeHtml(demo.category)}</span><span class="beta-pill">BETA</span></div>
-            <h3>${this.escapeHtml(demo.title)}</h3>
-            <p>${this.escapeHtml(demo.description)}</p>
-            <div class="badge-row"><span class="privacy-badge">✓ ประมวลผลในเครื่อง</span><span class="version-badge">v${demo.version}</span></div>
-          </div>
-          <a class="tool-card__link" href="#${demo.route}" aria-label="เปิด ${this.escapeHtml(demo.title)}">เปิด <span aria-hidden="true">→</span></a>
-        </article>
-      </section>
+      <section id="favorites-section" class="section-block" aria-labelledby="favorites-title"></section>
+      <section id="recent-section" class="section-block" aria-labelledby="recent-title"></section>
     `;
+
+    const searchInput = main.querySelector<HTMLInputElement>('#tool-search');
+    const favoritesCheckbox = main.querySelector<HTMLInputElement>('#favorites-only');
+    const categoryTabs = main.querySelector<HTMLElement>('#category-tabs');
+
+    const refresh = (): void => {
+      const favorites = this.preferences.getFavorites();
+      const filtered = filterTools(toolCatalog, { query, category: activeCategory, favorites, favoritesOnly });
+      const grid = main.querySelector<HTMLElement>('#tool-grid');
+      const count = main.querySelector<HTMLOutputElement>('#result-count');
+      if (count) count.textContent = `${filtered.length} เครื่องมือ`;
+      if (grid) {
+        grid.innerHTML = filtered.length
+          ? filtered.map((tool) => this.toolCard(tool, favorites)).join('')
+          : this.emptyState('ไม่พบเครื่องมือที่ตรงกับการค้นหา', 'ลองเปลี่ยนคำค้น หมวดหมู่ หรือตัวกรองรายการโปรด');
+      }
+      this.renderFavorites(main, favorites);
+      this.renderRecent(main, favorites);
+    };
+
+    const handleInput = (): void => {
+      query = searchInput?.value ?? '';
+      refresh();
+    };
+    const handleFavoritesFilter = (): void => {
+      favoritesOnly = favoritesCheckbox?.checked ?? false;
+      refresh();
+    };
+    const handleCategory = (event: Event): void => {
+      const button = (event.target as HTMLElement).closest<HTMLButtonElement>('[data-category]');
+      if (!button) return;
+      activeCategory = button.dataset.category ?? 'ทั้งหมด';
+      categoryTabs?.querySelectorAll<HTMLButtonElement>('[data-category]').forEach((tab) => {
+        tab.setAttribute('aria-pressed', String(tab === button));
+      });
+      refresh();
+    };
+    const handleActions = (event: Event): void => {
+      const target = (event.target as HTMLElement).closest<HTMLElement>('[data-action]');
+      if (!target) return;
+      const action = target.dataset.action;
+      if (action === 'favorite' && target.dataset.id) {
+        this.preferences.toggleFavorite(target.dataset.id);
+        refresh();
+      }
+      if (action === 'clear-recent') {
+        this.preferences.clearRecent();
+        refresh();
+      }
+    };
+    const handleShortcut = (event: KeyboardEvent): void => {
+      if (event.key === '/' && document.activeElement !== searchInput) {
+        event.preventDefault();
+        searchInput?.focus();
+      }
+    };
+
+    searchInput?.addEventListener('input', handleInput);
+    favoritesCheckbox?.addEventListener('change', handleFavoritesFilter);
+    categoryTabs?.addEventListener('click', handleCategory);
+    main.addEventListener('click', handleActions);
+    document.addEventListener('keydown', handleShortcut);
+    this.cleanupHome = () => {
+      searchInput?.removeEventListener('input', handleInput);
+      favoritesCheckbox?.removeEventListener('change', handleFavoritesFilter);
+      categoryTabs?.removeEventListener('click', handleCategory);
+      main.removeEventListener('click', handleActions);
+      document.removeEventListener('keydown', handleShortcut);
+    };
+
+    refresh();
+  }
+
+  private renderFavorites(main: HTMLElement, favorites: ReadonlySet<string>): void {
+    const section = main.querySelector<HTMLElement>('#favorites-section');
+    if (!section) return;
+    const tools = toolCatalog.filter((tool) => favorites.has(tool.id));
+    section.innerHTML = `
+      <div class="section-heading"><div><div class="eyebrow">Saved locally</div><h2 id="favorites-title">รายการโปรด</h2></div><span class="result-count">${tools.length}</span></div>
+      ${tools.length ? `<div class="tool-grid tool-grid--compact">${tools.map((tool) => this.toolCard(tool, favorites)).join('')}</div>` : this.emptyState('ยังไม่มีรายการโปรด', 'กดรูปดาวบน Tool Card เพื่อเก็บเครื่องมือไว้ในอุปกรณ์นี้')}
+    `;
+  }
+
+  private renderRecent(main: HTMLElement, favorites: ReadonlySet<string>): void {
+    const section = main.querySelector<HTMLElement>('#recent-section');
+    if (!section) return;
+    const recentIds = this.preferences.getRecent();
+    const tools = recentIds.map((id) => toolCatalog.find((tool) => tool.id === id)).filter((tool): tool is ToolMetadata => Boolean(tool));
+    section.innerHTML = `
+      <div class="section-heading">
+        <div><div class="eyebrow">On this device</div><h2 id="recent-title">เปิดล่าสุด</h2></div>
+        ${tools.length ? '<button class="text-button" type="button" data-action="clear-recent">ล้างประวัติ</button>' : ''}
+      </div>
+      ${tools.length ? `<div class="tool-grid tool-grid--compact">${tools.map((tool) => this.toolCard(tool, favorites)).join('')}</div>` : this.emptyState('ยังไม่มีประวัติ', 'เครื่องมือที่คุณเปิดจะปรากฏตรงนี้โดยเก็บเฉพาะในอุปกรณ์')}
+    `;
+  }
+
+  private toolCard(tool: ToolMetadata, favorites: ReadonlySet<string>): string {
+    const isFavorite = favorites.has(tool.id);
+    return `
+      <article class="tool-card" data-tool-id="${tool.id}">
+        <div class="tool-card__top">
+          <span class="tool-card__icon" aria-hidden="true">${this.escapeHtml(tool.icon ?? '◇')}</span>
+          <button class="favorite-button" type="button" data-action="favorite" data-id="${tool.id}" aria-label="${isFavorite ? 'นำออกจาก' : 'เพิ่มใน'}รายการโปรด: ${this.escapeHtml(tool.title)}" aria-pressed="${isFavorite}"><span aria-hidden="true">${isFavorite ? '★' : '☆'}</span></button>
+        </div>
+        <div class="tool-card__body">
+          <div class="tool-card__meta"><span>${this.escapeHtml(tool.category)}</span>${this.statusBadge(tool)}</div>
+          <h3><a href="#${tool.route}">${this.escapeHtml(tool.title)}</a></h3>
+          <p>${this.escapeHtml(tool.description)}</p>
+        </div>
+        <div class="tool-card__footer">
+          <span class="privacy-badge">✓ ในเครื่อง</span>
+          ${tool.supportsOffline ? '<span class="offline-badge">Offline</span>' : ''}
+          <a class="tool-card__link" href="#${tool.route}" aria-label="เปิด ${this.escapeHtml(tool.title)}">เปิด <span aria-hidden="true">→</span></a>
+        </div>
+      </article>
+    `;
+  }
+
+  private statusBadge(tool: ToolMetadata): string {
+    if (tool.status === 'planned') return '<span class="planned-pill">เร็ว ๆ นี้</span>';
+    if (tool.status === 'beta') return '<span class="beta-pill">BETA</span>';
+    return '';
+  }
+
+  private emptyState(title: string, description: string): string {
+    return `<div class="empty-state"><span aria-hidden="true">◇</span><div><strong>${title}</strong><p>${description}</p></div></div>`;
   }
 
   private renderNotFound(main: HTMLElement, path: string): void {
@@ -156,8 +312,23 @@ export class AppShell {
     `;
   }
 
-  private foundationCard(title: string, description: string, code: string): string {
-    return `<article class="foundation-card"><span>${code}</span><h3>${title}</h3><p>${description}</p></article>`;
+  private getInitialTheme(): ThemePreference {
+    const saved = this.preferences.getTheme();
+    if (saved) return saved;
+    return window.matchMedia?.('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+  }
+
+  private applyTheme(theme: ThemePreference): void {
+    document.documentElement.dataset.theme = theme;
+    document.documentElement.style.colorScheme = theme;
+    if (this.themeButton) {
+      const nextLabel = theme === 'dark' ? 'เปลี่ยนเป็นธีมสว่าง' : 'เปลี่ยนเป็นธีมมืด';
+      this.themeButton.setAttribute('aria-label', nextLabel);
+      const icon = this.themeButton.querySelector('span');
+      if (icon) icon.textContent = theme === 'dark' ? '☀' : '◐';
+    }
+    const themeColor = document.querySelector<HTMLMetaElement>('meta[name="theme-color"]');
+    themeColor?.setAttribute('content', theme === 'dark' ? '#0d1526' : '#f5f7fb');
   }
 
   private getMain(): HTMLElement {

@@ -19,4 +19,6 @@
 5. ประวัติช่องโหว่และแผนอัปเดต
 6. ความสามารถในการ Lazy Load และยกเลิกงาน
 
-Phase 0 ไม่มี Runtime Dependency และไม่โหลด Third-party Script
+Phase 1 ไม่มี Runtime Dependency และไม่โหลด Third-party Script
+
+ข้อมูล Favorites, Recent Tools และ Theme เก็บเฉพาะใน LocalStorage ของอุปกรณ์ ไม่เก็บเนื้อหาไฟล์หรือข้อมูลที่ผู้ใช้ป้อน หาก LocalStorage ใช้งานไม่ได้ Hub จะทำงานต่อด้วยข้อมูลชั่วคราวใน Memory

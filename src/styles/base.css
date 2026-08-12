@@ -11,6 +11,7 @@ body {
   text-rendering: optimizeLegibility;
 }
 button, input, textarea, select { font: inherit; }
+button { color: inherit; }
 a { color: inherit; }
 img, svg { display: block; max-width: 100%; }
 h1, h2, h3, p { margin-top: 0; }
@@ -29,3 +30,4 @@ h1, h2, h3 { line-height: 1.15; letter-spacing: -0.025em; }
   transform: translateY(-160%);
 }
 .skip-link:focus { transform: translateY(0); }
+[hidden] { display: none !important; }

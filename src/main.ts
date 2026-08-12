@@ -3,6 +3,7 @@ import './styles/base.css';
 import './styles/layout.css';
 import './styles/components.css';
 import { AppShell } from './app/app-shell';
+import { registerServiceWorker } from './core/pwa';
 
 const root = document.querySelector<HTMLElement>('#app');
 
@@ -12,3 +13,5 @@ if (!root) {
 
 const app = new AppShell(root);
 app.start();
+
+if (import.meta.env.PROD) void registerServiceWorker();
