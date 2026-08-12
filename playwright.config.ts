@@ -12,7 +12,15 @@ export default defineConfig({
   },
   projects: [
     { name: 'desktop-chromium', use: { ...devices['Desktop Chrome'] } },
-    { name: 'android-chromium', use: { ...devices['Pixel 7'] } },
+    {
+      name: 'android-entry',
+      use: {
+        ...devices['Pixel 5'],
+        viewport: { width: 360, height: 740 },
+        deviceScaleFactor: 2,
+      },
+    },
+    { name: 'android-current', use: { ...devices['Pixel 7'] } },
   ],
   webServer: {
     command: 'npm run preview -- --host 127.0.0.1',

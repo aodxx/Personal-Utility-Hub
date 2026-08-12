@@ -1,6 +1,7 @@
 import { PDFDocument, type PDFImage } from 'pdf-lib';
 import { canvasToBlob, loadImageBitmap, renderBitmap, type SupportedImageType } from './image-processing';
 import { MAX_PDF_PAGES, parsePageSelection, validatePdfFile } from './file-processing';
+export { bytesToPdfBlob } from './file-processing';
 
 const A4 = { width: 595.28, height: 841.89 } as const;
 const PAGE_MARGIN = 24;
@@ -89,10 +90,6 @@ export async function splitPdf(file: File, selection: string): Promise<{ bytes: 
   const copied = await output.copyPages(source, selectedPages);
   copied.forEach((page) => output.addPage(page));
   return { bytes: await output.save(), selectedPages, totalPages };
-}
-
-export function bytesToPdfBlob(bytes: Uint8Array): Blob {
-  return new Blob([bytes as BlobPart], { type: 'application/pdf' });
 }
 
 export async function compressImage(

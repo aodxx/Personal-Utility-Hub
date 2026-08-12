@@ -72,3 +72,7 @@ export function compressionSavingPercent(originalBytes: number, resultBytes: num
   if (originalBytes <= 0 || resultBytes < 0) return 0;
   return Math.round((1 - resultBytes / originalBytes) * 100);
 }
+
+export function bytesToPdfBlob(bytes: Uint8Array): Blob {
+  return new Blob([bytes as BlobPart], { type: PDF_MIME_TYPE });
+}
