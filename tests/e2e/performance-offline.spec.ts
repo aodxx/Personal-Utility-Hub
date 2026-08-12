@@ -11,8 +11,10 @@ test('prepares one tool for offline use and reopens it without a network', async
   if (!await page.evaluate(() => Boolean(navigator.serviceWorker.controller))) await page.reload();
 
   const card = page.locator('[data-tool-id="json-formatter"]');
-  await card.getByRole('button', { name: /เตรียม JSON Formatter ไว้ใช้ Offline/ }).click();
-  await expect(card.locator('[data-action="offline"]')).toHaveText('✓ Offline พร้อม');
+  const offlineButton = card.locator('[data-action="offline"]');
+  await expect(offlineButton).toHaveAccessibleName('เตรียม JSON Formatter / Validator ไว้ใช้ Offline');
+  await offlineButton.click();
+  await expect(offlineButton).toHaveText('✓ Offline พร้อม');
 
   await context.setOffline(true);
   await page.reload();
