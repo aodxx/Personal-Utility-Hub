@@ -42,11 +42,14 @@
 .tool-card::before { content: ''; position: absolute; inset: 0; pointer-events: none; background: radial-gradient(circle at 16% 4%, color-mix(in srgb, var(--color-cyan) 9%, transparent), transparent 37%), radial-gradient(circle at 92% 0%, color-mix(in srgb, var(--color-secondary) 8%, transparent), transparent 42%); }
 .tool-card:hover { transform: translateY(-6px); border-color: color-mix(in srgb, var(--color-primary) 48%, var(--color-border)); box-shadow: var(--shadow-card-3d-hover); }
 .tool-card__top, .tool-card__footer, .tool-card__meta, .tool-heading__meta { display: flex; align-items: center; }
-.tool-card__top { position: relative; min-height: 5.25rem; align-items: start; justify-content: space-between; margin-bottom: var(--space-2); }
-.tool-card__visual { width: 4.75rem; height: 4.75rem; display: grid; place-items: center; margin: -.25rem 0 0 -.2rem; filter: drop-shadow(0 16px 14px rgb(47 62 141 / 14%)); transition: transform 220ms ease; }
+.tool-card__tap-target { position: absolute; z-index: 1; inset: 0; border-radius: inherit; text-decoration: none; -webkit-tap-highlight-color: transparent; }
+.tool-card__tap-target:focus-visible { outline: 3px solid var(--color-focus); outline-offset: -3px; }
+.tool-card__top { position: relative; min-height: 5.25rem; align-items: start; margin-bottom: var(--space-2); }
+.tool-card__visual { width: 4.75rem; height: 4.75rem; display: grid; place-items: center; margin: -.25rem 0 0 -.2rem; overflow: clip; contain: layout paint; filter: drop-shadow(0 16px 14px rgb(47 62 141 / 14%)); transition: transform 220ms ease; }
+.tool-card__visual .asset-icon { overflow: hidden; }
 .tool-card:hover .tool-card__visual { transform: translateY(-2px) rotate(-2deg) scale(1.035); }
 .asset-icon-fallback { width: 4rem; height: 4rem; display: grid; place-items: center; border-radius: var(--radius-md); background: var(--gradient-visual-surface); color: var(--color-primary); font-size: 1.2rem; font-weight: 900; }
-.favorite-button { width: 2.75rem; height: 2.75rem; display: inline-grid; place-items: center; border: 0; border-radius: 50%; background: transparent; color: var(--color-text-muted); font-size: 1.45rem; cursor: pointer; }
+.favorite-button { position: absolute; z-index: 2; top: 1.15rem; right: 1.15rem; width: 2.75rem; height: 2.75rem; display: inline-grid; place-items: center; border: 0; border-radius: 50%; background: transparent; color: var(--color-text-muted); font-size: 1.45rem; cursor: pointer; }
 .favorite-button:hover, .favorite-button[aria-pressed="true"] { background: var(--color-surface-soft); color: #dd9c00; }
 .favorite-button.is-bouncing > span { animation: favorite-bounce 360ms cubic-bezier(.2, .85, .35, 1.25); }
 .tool-card__body { position: relative; flex: 1; }
@@ -56,8 +59,6 @@
 .beta-pill { padding: 0.12rem 0.45rem; border: 1px solid var(--color-primary); color: var(--color-primary); }
 .planned-pill { padding: 0.18rem 0.48rem; background: var(--color-surface-soft); color: var(--color-text-muted); }
 .tool-card h3 { margin: var(--space-2) 0; font-size: 1.05rem; }
-.tool-card h3 a { text-decoration: none; }
-.tool-card h3 a::after { content: ''; position: absolute; }
 .tool-card p { display: -webkit-box; margin-bottom: var(--space-3); overflow: hidden; color: var(--color-text-muted); font-size: 0.82rem; line-height: 1.45; -webkit-box-orient: vertical; -webkit-line-clamp: 2; }
 .tool-card__footer { position: relative; min-height: 2.25rem; flex-wrap: wrap; gap: var(--space-2); padding-top: var(--space-3); border-top: 1px solid var(--color-border); }
 .privacy-badge { color: var(--color-success); font-size: 0.7rem; font-weight: 800; }
@@ -66,7 +67,9 @@
 .offline-cache-button:hover { border-color: var(--color-success); }
 .offline-cache-button[data-offline-state="ready"] { background: color-mix(in srgb, var(--color-success) 14%, var(--color-surface)); }
 .offline-cache-button:disabled { cursor: wait; opacity: .68; }
-.tool-card__link { margin-left: auto; color: var(--color-primary); font-size: 0.82rem; font-weight: 850; text-decoration: none; }
+.tool-card__arrow { margin-left: auto; color: var(--color-primary); font-size: 1rem; font-weight: 900; transition: transform 160ms ease; }
+.tool-card:hover .tool-card__arrow { transform: translateX(2px); }
+.favorite-button, .offline-cache-button { z-index: 2; }
 .empty-state { min-height: 8rem; display: flex; align-items: center; gap: var(--space-4); padding: var(--space-5); border: 1px dashed var(--color-border); border-radius: var(--radius-md); color: var(--color-text-muted); }
 .empty-state > span { font-size: 2rem; color: var(--color-primary); }
 .empty-state strong { color: var(--color-text); }
@@ -78,11 +81,11 @@
 .button--primary:hover { background: var(--color-primary-strong); }
 
 :is(.icon-button, .category-tab, .favorite-button, .offline-cache-button, .text-button, .button) {
-  position: relative;
   overflow: hidden;
   touch-action: manipulation;
   -webkit-tap-highlight-color: transparent;
 }
+:is(.icon-button, .category-tab, .offline-cache-button, .text-button, .button) { position: relative; }
 :is(.icon-button, .category-tab, .favorite-button, .offline-cache-button, .text-button, .button)::after {
   content: '';
   position: absolute;
@@ -253,9 +256,9 @@
     padding: var(--space-3);
     border-radius: var(--radius-md);
   }
-  .tool-card__top { display: contents; }
-  .tool-card__visual { grid-area: visual; width: 3.75rem; height: 3.75rem; margin: 0; align-self: start; }
-  .favorite-button { grid-area: favorite; align-self: start; justify-self: end; }
+  .tool-card__top { grid-area: visual; width: 3.75rem; height: 3.75rem; min-height: 3.75rem; display: block; margin: 0; overflow: clip; contain: layout paint; align-self: start; }
+  .tool-card__visual { width: 3.75rem; height: 3.75rem; margin: 0; overflow: clip; contain: layout paint; }
+  .favorite-button { top: var(--space-3); right: var(--space-3); }
   .tool-card__body { grid-area: body; }
   .tool-card__meta { gap: .35rem; font-size: .64rem; line-height: 1.25; }
   .tool-card h3 { margin: .28rem 0; font-size: .96rem; }
@@ -263,7 +266,7 @@
   .tool-card__footer { grid-area: footer; min-height: 2rem; gap: .4rem; padding-top: var(--space-2); }
   .privacy-badge { font-size: .64rem; }
   .offline-cache-button { min-height: 1.75rem; font-size: .6rem; }
-  .tool-card__link { font-size: .76rem; }
+  .tool-card__arrow { font-size: .9rem; }
   .tool-card:hover { transform: none; }
   .tool-card:hover .tool-card__visual { transform: none; }
 }
