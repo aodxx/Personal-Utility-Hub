@@ -82,3 +82,9 @@ Phase 4 ไม่เพิ่ม WebAssembly dependency ในรอบนี้
 Local workspace ไม่มี Chromium executable จึงยังเริ่ม Browser process ไม่ได้ การเรียก Playwright หยุดก่อนโหลดแอปและไม่ใช่ Source failure
 
 GitHub Actions CI Run #40 ยืนยัน Browser contract ใหม่แล้ว: Playwright ผ่าน **37 executions** บน Desktop Chromium, Android entry 360 × 740 และ Android Pixel 7 พร้อม **2 skips ที่ตั้งใจไว้** เนื่องจาก Compact UI case ถูกจำกัดให้รันเฉพาะ Android entry profile ผล Unit/Integration ผ่าน 40/40 และ TypeScript, Production build กับ Bundle Budget ผ่านครบ
+
+### Tool Card regression fix หลัง Merge PR #11
+
+การทดสอบ Production พบว่า Mobile icon สามารถล้นกรอบลงทับ Privacy/Offline footer และผู้ใช้ยังต้องแตะลิงก์ “เปิด →” ขนาดเล็ก Draft PR #12 แก้ด้วย Icon Grid area ที่มี `overflow: clip`, ยกเลิก `display: contents`, แยก Favorite control เป็น Layer ของตนเอง และใช้ Semantic link ครอบพื้นที่การ์ดทั้งหมด โดย Favorite/Offline controls อยู่เหนือ Link layer
+
+Playwright เพิ่มการตรวจว่า Icon bounding box ไม่ทับ Footer, Favorite click ไม่เปลี่ยน URL และ Full-card click เปลี่ยนไป `#/tools/base64` พร้อมแสดง H1 จริง GitHub Actions CI Run #44 ผ่าน **37 executions** พร้อม **2 intentional skips**; Unit/Integration ผ่าน 40/40 และ TypeScript, Build, Bundle Budget ผ่านครบ

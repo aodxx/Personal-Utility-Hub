@@ -35,18 +35,28 @@ test('keeps mobile tool cards compact with clear touch feedback', async ({ page 
 
   const visualBox = await firstCard.locator('.tool-card__visual').boundingBox();
   const headingBox = await firstCard.getByRole('heading').boundingBox();
+  const footerBox = await firstCard.locator('.tool-card__footer').boundingBox();
   expect(visualBox).not.toBeNull();
   expect(headingBox).not.toBeNull();
+  expect(footerBox).not.toBeNull();
   expect(visualBox!.x).toBeLessThan(headingBox!.x);
+  expect(visualBox!.y + visualBox!.height).toBeLessThanOrEqual(footerBox!.y);
 
   const category = page.getByRole('button', { name: 'ข้อความและข้อมูล' });
   await category.click();
   await expect(category).toHaveAttribute('aria-pressed', 'true');
 
   const favorite = page.locator('#tool-grid [data-tool-id="base64"] [data-action="favorite"]');
+  const hubUrl = page.url();
   await favorite.click();
   await expect(favorite).toHaveAttribute('aria-pressed', 'true');
   await expect(page.locator('#favorite-status')).toContainText('เพิ่ม Base64 Encoder / Decoder ในรายการโปรดแล้ว');
+  expect(page.url()).toBe(hubUrl);
+
+  const base64Card = page.locator('#tool-grid [data-tool-id="base64"]');
+  await base64Card.click({ position: { x: 120, y: 36 } });
+  await expect(page).toHaveURL(/#\/tools\/base64$/);
+  await expect(page.getByRole('heading', { name: 'Base64 Encoder / Decoder', exact: true })).toBeVisible();
 });
 
 test('opens an active tool, records history and toggles theme', async ({ page }) => {
