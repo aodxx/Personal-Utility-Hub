@@ -7,3 +7,5 @@ export const categories = [
   'Developer Tools',
   'อื่น ๆ',
 ] as const;
+
+export const allCategories = ['ทั้งหมด', ...categories] as const;

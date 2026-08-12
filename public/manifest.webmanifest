@@ -1,0 +1,42 @@
+{
+  "id": "/Personal-Utility-Hub/",
+  "name": "Personal Utility Hub",
+  "short_name": "Utility Hub",
+  "description": "ศูนย์รวม Utility Web Tools ที่ประมวลผลข้อมูลภายในอุปกรณ์ของคุณ",
+  "lang": "th",
+  "dir": "ltr",
+  "start_url": "./#/",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#f5f7fb",
+  "theme_color": "#3f5bd8",
+  "categories": ["utilities", "productivity", "developer"],
+  "icons": [
+    {
+      "src": "icons/app-icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icons/app-icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icons/app-icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "ค้นหาเครื่องมือ",
+      "short_name": "ค้นหา",
+      "url": "./#/"
+    }
+  ]
+}
