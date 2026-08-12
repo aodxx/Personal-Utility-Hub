@@ -2,8 +2,10 @@ const SHELL_CACHE = 'utility-hub-shell-v0.6.0-performance-offline';
 const TOOL_CACHE = 'utility-hub-tools-v0.6.0-performance-offline';
 const CACHE_NAMES = [SHELL_CACHE, TOOL_CACHE];
 const APP_SCOPE = self.registration.scope;
+const APP_SHELL_URL = new URL('index.html', APP_SCOPE).href;
 const PRECACHE_URLS = [
   APP_SCOPE,
+  APP_SHELL_URL,
   new URL('offline.html', APP_SCOPE).href,
   new URL('manifest.webmanifest', APP_SCOPE).href,
   new URL('icons/app-icon-192.png', APP_SCOPE).href,
@@ -35,13 +37,18 @@ self.addEventListener('fetch', (event) => {
   if (request.mode === 'navigate') {
     event.respondWith(
       fetch(request)
-        .then((response) => {
-          const copy = response.clone();
-          caches.open(SHELL_CACHE).then((cache) => cache.put(APP_SCOPE, copy));
+        .then(async (response) => {
+          if (!response.ok) throw new Error(`Navigation failed with ${response.status}`);
+          const cache = await caches.open(SHELL_CACHE);
+          await Promise.all([
+            cache.put(APP_SCOPE, response.clone()),
+            cache.put(APP_SHELL_URL, response.clone()),
+          ]);
           return response;
         })
         .catch(async () => (
-          await caches.match(APP_SCOPE)
+          await caches.match(APP_SHELL_URL)
+          ?? await caches.match(APP_SCOPE)
           ?? await caches.match(new URL('offline.html', APP_SCOPE).href)
           ?? Response.error()
         )),
