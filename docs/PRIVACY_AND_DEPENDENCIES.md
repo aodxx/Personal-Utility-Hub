@@ -19,7 +19,7 @@
 5. ประวัติช่องโหว่และแผนอัปเดต
 6. ความสามารถในการ Lazy Load และยกเลิกงาน
 
-Phase 1 ไม่มี Runtime Dependency ส่วน Phase 2 เพิ่มเฉพาะ Dependency ที่จำเป็นสำหรับ QR Code และ Bundle ไว้ภายใน Production build โดยไม่โหลด Third-party Script หรือ CDN
+Phase 1 ไม่มี Runtime Dependency, Phase 2 เพิ่ม Dependency สำหรับ QR Code และ Phase 3 เพิ่ม Dependency สำหรับสร้าง/แก้ไข/เรนเดอร์ PDF ทุกตัวถูก Bundle ภายใน Production build โดยไม่โหลด Third-party Script หรือ CDN
 
 ข้อมูล Favorites, Recent Tools และ Theme เก็บเฉพาะใน LocalStorage ของอุปกรณ์ ไม่เก็บเนื้อหาไฟล์หรือข้อมูลที่ผู้ใช้ป้อน หาก LocalStorage ใช้งานไม่ได้ Hub จะทำงานต่อด้วยข้อมูลชั่วคราวใน Memory
 
@@ -32,6 +32,15 @@ Phase 1 ไม่มี Runtime Dependency ส่วน Phase 2 เพิ่ม�
 
 ทั้งสอง Dependency ถูกโหลดเมื่อเปิด Tool ที่เกี่ยวข้องเท่านั้น จึงไม่เพิ่มขนาด JavaScript เริ่มต้นของหน้า Hub และ `npm audit --omit=dev` ณ วันที่ 12 สิงหาคม 2026 รายงาน 0 vulnerabilities
 
+## Phase 3 Runtime Dependencies
+
+| Dependency | Version | License | ใช้ทำอะไร | Privacy / Network | Lazy bundle |
+|---|---:|---|---|---|---:|
+| `pdf-lib` | 1.17.1 | MIT | สร้าง PDF จากรูป, รวม, แยก และอ่าน Document Metadata | ประมวลผล `ArrayBuffer` ใน Browser, ไม่มี telemetry/network | shared chunk 422.32 kB raw / 176.48 kB gzip |
+| `pdfjs-dist` | 6.2.108 | Apache-2.0 | อ่านจำนวนหน้าและเรนเดอร์หน้าที่เลือกเป็น Canvas | Worker และ API ถูก self-hosted ใน Build, ไม่มีการส่ง PDF ออกนอกเครื่อง | API 427.59 kB raw / 127.75 kB gzip + worker 1.26 MB |
+
+หน้า Hub ไม่โหลด PDF dependency ทั้งสองตัวตั้งแต่เริ่มต้น `pdf-lib` ถูกโหลดเมื่อเปิด File Tool ที่ต้องใช้ และ PDF.js ถูก dynamic import หลังผู้ใช้เลือก PDF ใน PDF to Image เท่านั้น Runtime asset ที่เคยโหลดจะถูก Service Worker เก็บแบบ same-origin สำหรับการใช้งานครั้งถัดไป
+
 ## File และ Camera Lifecycle
 
 - Image Resizer, Image Converter และ QR Reader รับเฉพาะ PNG, JPEG หรือ WebP ขนาดไม่เกิน 15 MB
@@ -41,3 +50,12 @@ Phase 1 ไม่มี Runtime Dependency ส่วน Phase 2 เพิ่ม�
 - QR Reader ขอ `getUserMedia()` หลังผู้ใช้กดเปิดกล้องเท่านั้น
 - Media Track และ Animation Frame ถูกหยุดเมื่อผู้ใช้ปิดกล้อง, อ่าน QR สำเร็จ หรือออกจาก Route
 - Pixel data, ข้อความ QR และชื่อไฟล์ไม่ถูกส่งไปยัง Backend/API
+
+## Phase 3 File Lifecycle
+
+- Image Compressor ใช้ข้อจำกัดรูปเดิม: 15 MB, ด้านละไม่เกิน 12,000 px และไม่เกิน 24 ล้านพิกเซล
+- Images to PDF รับสูงสุด 20 รูป รวมไม่เกิน 40 MB และสร้างหนึ่งหน้า A4 ต่อรูป
+- PDF Merge รับสูงสุด 10 ไฟล์รวมไม่เกิน 40 MB; PDF Merge/Split/Render จำกัดไม่เกิน 200 หน้า
+- File Metadata Viewer รับไฟล์ไม่เกิน 40 MB และคำนวณ SHA-256 ด้วย Web Crypto ภายในอุปกรณ์
+- Object URL ของผลลัพธ์ถูกยกเลิกเมื่อสร้างผลลัพธ์ใหม่หรือออกจาก Tool
+- ไม่รองรับ PDF ที่ล็อกรหัสผ่าน และไม่มีการเก็บสำเนาไฟล์ใน LocalStorage/IndexedDB

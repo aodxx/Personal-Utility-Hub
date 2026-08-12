@@ -9,7 +9,9 @@ describe('tool search', () => {
 
   it('searches title, description, category and tags', () => {
     expect(filterTools(toolCatalog, { query: 'JSON' }).map(({ id }) => id)).toEqual(['json-formatter']);
-    expect(filterTools(toolCatalog, { query: 'รูปภาพ' }).map(({ id }) => id)).toEqual(['image-resizer', 'image-converter', 'qr-reader']);
+    expect(filterTools(toolCatalog, { query: 'รูปภาพ' }).map(({ id }) => id)).toEqual([
+      'image-resizer', 'image-converter', 'qr-reader', 'image-compressor', 'images-to-pdf', 'file-metadata',
+    ]);
     expect(filterTools(toolCatalog, { query: 'กล้อง' }).map(({ id }) => id)).toEqual(['qr-reader']);
   });
 

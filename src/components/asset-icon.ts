@@ -14,6 +14,12 @@ export const visualAssetIds = [
   'tool-qr-reader',
   'tool-image-resizer',
   'tool-image-converter',
+  'tool-image-compressor',
+  'tool-images-to-pdf',
+  'tool-pdf-merge',
+  'tool-pdf-split',
+  'tool-pdf-to-image',
+  'tool-file-metadata',
 ] as const;
 
 export type VisualAssetId = (typeof visualAssetIds)[number];

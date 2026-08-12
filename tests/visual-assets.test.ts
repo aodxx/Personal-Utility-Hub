@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest';
 import { visualAssetIds } from '../src/components/asset-icon';
 import { categoryVisuals } from '../src/data/visual-assets';
 import { coreTools } from '../src/data/core-tools';
+import { fileTools } from '../src/data/file-tools';
 
 describe('3D visual asset system', () => {
   const sprite = readFileSync('public/icons/utility-3d-icons.svg', 'utf8');
@@ -13,10 +14,11 @@ describe('3D visual asset system', () => {
     }
   });
 
-  it('maps every category and Phase 2 tool to a declared asset', () => {
+  it('maps every category, Phase 2 tool and Phase 3 tool to a declared asset', () => {
     const declared = new Set<string>(visualAssetIds);
     expect(Object.values(categoryVisuals).every((id) => declared.has(id))).toBe(true);
     expect(coreTools.every((tool) => tool.icon && declared.has(tool.icon))).toBe(true);
+    expect(fileTools.every((tool) => tool.icon && declared.has(tool.icon))).toBe(true);
   });
 
   it('keeps the sprite self-hosted and free of executable content', () => {

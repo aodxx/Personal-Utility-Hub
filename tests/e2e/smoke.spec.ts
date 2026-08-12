@@ -7,10 +7,10 @@ test('searches, filters and saves a favorite', async ({ page }) => {
   expect(iconResponse.ok()).toBeTruthy();
   await expect(page.locator('.hero .asset-icon--hero')).toBeVisible();
   await expect(page.locator('.category-tab .asset-icon')).toHaveCount(8);
-  await expect(page.locator('#tool-grid .tool-card .asset-icon')).toHaveCount(8);
-  await expect(page.locator('#tool-grid .tool-card')).toHaveCount(8);
+  await expect(page.locator('#tool-grid .tool-card .asset-icon')).toHaveCount(14);
+  await expect(page.locator('#tool-grid .tool-card')).toHaveCount(14);
   await page.getByRole('searchbox').fill('รูปภาพ');
-  await expect(page.locator('#tool-grid .tool-card')).toHaveCount(3);
+  await expect(page.locator('#tool-grid .tool-card')).toHaveCount(6);
   await page.getByRole('searchbox').fill('JSON');
   await page.getByRole('button', { name: /เพิ่มในรายการโปรด: JSON Formatter/ }).click();
   await expect(page.locator('#favorites-section')).toContainText('JSON Formatter');

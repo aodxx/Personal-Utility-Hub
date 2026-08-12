@@ -27,15 +27,15 @@ describe('AppShell integration', () => {
   it('renders the Hub and filters tools by Thai search and category', async () => {
     const root = startApp();
     await vi.waitFor(() => expect(root.textContent).toContain('เครื่องมือที่ต้องใช้'));
-    expect(root.querySelectorAll('#tool-grid .tool-card')).toHaveLength(8);
+    expect(root.querySelectorAll('#tool-grid .tool-card')).toHaveLength(14);
     expect(root.querySelectorAll('.category-tab .asset-icon')).toHaveLength(8);
-    expect(root.querySelectorAll('#tool-grid .tool-card .asset-icon')).toHaveLength(8);
+    expect(root.querySelectorAll('#tool-grid .tool-card .asset-icon')).toHaveLength(14);
 
     const search = root.querySelector<HTMLInputElement>('#tool-search');
     if (!search) throw new Error('missing search input');
     search.value = 'รูปภาพ';
     search.dispatchEvent(new InputEvent('input', { bubbles: true }));
-    expect(root.querySelectorAll('#tool-grid .tool-card')).toHaveLength(3);
+    expect(root.querySelectorAll('#tool-grid .tool-card')).toHaveLength(6);
 
     search.value = '';
     search.dispatchEvent(new InputEvent('input', { bubbles: true }));
@@ -45,7 +45,7 @@ describe('AppShell integration', () => {
 
   it('persists favorites, records recent tools and clears history', async () => {
     const root = startApp();
-    await vi.waitFor(() => expect(root.querySelectorAll('#tool-grid .tool-card')).toHaveLength(8));
+    await vi.waitFor(() => expect(root.querySelectorAll('#tool-grid .tool-card')).toHaveLength(14));
     root.querySelector<HTMLButtonElement>('[data-tool-id="json-formatter"] [data-action="favorite"]')?.click();
     expect(root.querySelector('#favorites-section')?.textContent).toContain('JSON Formatter');
 
