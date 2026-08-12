@@ -23,7 +23,6 @@ async function imageBytesForPdf(file: File): Promise<{ bytes: ArrayBuffer; type:
     bitmap.close();
   }
 }
-
 function fitImage(image: PDFImage, pageWidth: number, pageHeight: number): { width: number; height: number; x: number; y: number } {
   const availableWidth = pageWidth - PAGE_MARGIN * 2;
   const availableHeight = pageHeight - PAGE_MARGIN * 2;
@@ -112,4 +111,3 @@ export async function compressImage(
     bitmap.close();
   }
 }
-

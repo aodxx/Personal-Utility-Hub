@@ -14,4 +14,3 @@ export const metadata = {
   status: 'active',
   version: '1.0.0',
 } as const satisfies ToolMetadata;
-

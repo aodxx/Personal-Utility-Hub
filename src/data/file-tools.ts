@@ -14,4 +14,3 @@ export const fileTools = [
   pdfToImage,
   fileMetadata,
 ] as const satisfies readonly ToolMetadata[];
-

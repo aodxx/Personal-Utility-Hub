@@ -117,4 +117,3 @@ const tool: ToolModule = {
 
 export const { mount, unmount } = tool;
 export { metadata };
-
