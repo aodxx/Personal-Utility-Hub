@@ -1,4 +1,4 @@
-const CACHE_NAME = 'utility-hub-v0.2.0';
+const CACHE_NAME = 'utility-hub-v0.3.0-visual-system';
 const APP_SCOPE = self.registration.scope;
 const PRECACHE_URLS = [
   APP_SCOPE,
@@ -7,6 +7,7 @@ const PRECACHE_URLS = [
   new URL('icons/app-icon-192.png', APP_SCOPE).href,
   new URL('icons/app-icon-512.png', APP_SCOPE).href,
   new URL('icons/app-icon.svg', APP_SCOPE).href,
+  new URL('icons/utility-3d-icons.svg', APP_SCOPE).href,
 ];
 
 self.addEventListener('install', (event) => {

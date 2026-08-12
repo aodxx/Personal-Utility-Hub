@@ -4,8 +4,10 @@ import { filterTools } from '../core/search';
 import { LocalPreferences, type ThemePreference } from '../core/storage';
 import type { ToolMetadata } from '../core/tool-contract';
 import { ToolLoader } from '../core/tool-loader';
+import { assetIcon, toolAssetIcon } from '../components/asset-icon';
 import { allCategories } from '../data/categories';
 import { toolCatalog, toolRegistry } from '../data/tools';
+import { categoryVisuals } from '../data/visual-assets';
 import { HashRouter } from './router';
 import type { AppRoute } from './routes';
 
@@ -138,9 +140,16 @@ export class AppShell {
 
     main.innerHTML = `
       <section class="hero hero--hub">
-        <div class="eyebrow">Private · Fast · Works offline</div>
-        <h1>เครื่องมือที่ต้องใช้<br><span>รวมไว้ในที่เดียว</span></h1>
-        <p>ค้นหา เปิดใช้ และบันทึกเครื่องมือโปรดได้ทันที ข้อมูลของคุณประมวลผลภายในเบราว์เซอร์โดยไม่ต้องสมัครสมาชิก</p>
+        <div class="hero__copy">
+          <div class="eyebrow">Private · Fast · Works offline</div>
+          <h1>เครื่องมือที่ต้องใช้<br><span>รวมไว้ในที่เดียว</span></h1>
+          <p>ค้นหา เปิดใช้ และบันทึกเครื่องมือโปรดได้ทันที ข้อมูลของคุณประมวลผลภายในเบราว์เซอร์โดยไม่ต้องสมัครสมาชิก</p>
+        </div>
+        <div class="hero__visual" aria-hidden="true">
+          <span class="hero__orb hero__orb--one"></span>
+          <span class="hero__orb hero__orb--two"></span>
+          ${assetIcon('category-all', 'asset-icon--hero')}
+        </div>
         <div class="search-panel" role="search">
           <label class="search-box" for="tool-search">
             <span aria-hidden="true">⌕</span>
@@ -163,7 +172,7 @@ export class AppShell {
           <output id="result-count" class="result-count" aria-live="polite"></output>
         </div>
         <div id="category-tabs" class="category-tabs" role="group" aria-label="กรองตามหมวดหมู่">
-          ${allCategories.map((category) => `<button class="category-tab" type="button" data-category="${this.escapeHtml(category)}" aria-pressed="${category === 'ทั้งหมด'}">${this.escapeHtml(category)}</button>`).join('')}
+          ${allCategories.map((category) => `<button class="category-tab" type="button" data-category="${this.escapeHtml(category)}" aria-pressed="${category === 'ทั้งหมด'}">${assetIcon(categoryVisuals[category], 'asset-icon--category')}<span>${this.escapeHtml(category)}</span></button>`).join('')}
         </div>
         <div id="tool-grid" class="tool-grid"></div>
       </section>
@@ -273,7 +282,7 @@ export class AppShell {
     return `
       <article class="tool-card" data-tool-id="${tool.id}">
         <div class="tool-card__top">
-          <span class="tool-card__icon" aria-hidden="true">${this.escapeHtml(tool.icon ?? '◇')}</span>
+          <span class="tool-card__visual">${toolAssetIcon(tool.icon)}</span>
           <button class="favorite-button" type="button" data-action="favorite" data-id="${tool.id}" aria-label="${isFavorite ? 'นำออกจาก' : 'เพิ่มใน'}รายการโปรด: ${this.escapeHtml(tool.title)}" aria-pressed="${isFavorite}"><span aria-hidden="true">${isFavorite ? '★' : '☆'}</span></button>
         </div>
         <div class="tool-card__body">

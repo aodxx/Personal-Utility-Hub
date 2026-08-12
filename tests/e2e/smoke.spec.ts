@@ -3,6 +3,11 @@ import { expect, test } from '@playwright/test';
 test('searches, filters and saves a favorite', async ({ page }) => {
   await page.goto('./');
   await expect(page.getByRole('heading', { name: /เครื่องมือที่ต้องใช้/ })).toBeVisible();
+  const iconResponse = await page.request.get('./icons/utility-3d-icons.svg');
+  expect(iconResponse.ok()).toBeTruthy();
+  await expect(page.locator('.hero .asset-icon--hero')).toBeVisible();
+  await expect(page.locator('.category-tab .asset-icon')).toHaveCount(8);
+  await expect(page.locator('#tool-grid .tool-card .asset-icon')).toHaveCount(8);
   await expect(page.locator('#tool-grid .tool-card')).toHaveCount(8);
   await page.getByRole('searchbox').fill('รูปภาพ');
   await expect(page.locator('#tool-grid .tool-card')).toHaveCount(3);

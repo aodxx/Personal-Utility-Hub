@@ -246,6 +246,15 @@ Personal Utility Hub คือศูนย์รวมเครื่องม�
 - มี aria-label สำหรับปุ่มไอคอน
 - ปุ่มและพื้นที่กดบนมือถือมีขนาดเหมาะสม
 
+### FR-008: 3D Visual Design System
+
+- Tool Card และ Category Component ต้องรองรับ 3D Illustration Asset โดยไม่ผูก Component กับไฟล์ภาพเฉพาะ
+- ภาพหมวดหมู่และ Core Tool ต้องใช้ Art Direction เดียวกัน: clay/glass, รูปทรงมน, มุมมอง isometric เล็กน้อย และโทน Indigo–Violet–Cyan พร้อม Lime accent
+- Asset ต้อง self-hosted, ทำงาน Offline, ไม่มี script ภายใน และไม่เรียก CDN หรือ Runtime API
+- Design Tokens ต้องกำหนดสี, gradient, asset size, shadow และ surface สำหรับ Light/Dark Mode
+- ไอคอนเป็นข้อมูลเสริมเชิงภาพ ชื่อและการทำงานต้องยังเข้าใจได้เมื่อภาพโหลดไม่สำเร็จ
+- ภาพต้องคมชัดและไม่ล้น Component ตั้งแต่หน้าจอมือถือกว้างประมาณ 360px ขึ้นไป
+
 ---
 
 ## 10. ความเป็นส่วนตัวและความปลอดภัย
@@ -578,4 +587,3 @@ Tool Card ต้องแสดงป้ายตามจริง เช่น
 การพัฒนาจะเริ่มจาก Hub Core และมาตรฐานการเพิ่มเครื่องมือก่อน แล้วจึงเพิ่มเครื่องมือพื้นฐานที่ทดสอบได้ง่าย จากนั้นค่อยขยายไปยัง PDF, Audio, Video, Web Worker และ WebAssembly
 
 แนวทางนี้ทำให้ Personal Utility Hub เป็นศูนย์รวมเครื่องมือที่ปลอดภัย ใช้งานง่าย และเติบโตได้โดยไม่ทำให้โค้ดหลักซับซ้อนเกินจำเป็น
-
