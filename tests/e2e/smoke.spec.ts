@@ -55,7 +55,8 @@ test('keeps mobile tool cards compact with clear touch feedback', async ({ page 
 
   const base64Card = page.locator('#tool-grid [data-tool-id="base64"]');
   await base64Card.click({ position: { x: 120, y: 36 } });
-  await expect(page.getByRole('heading', { name: 'เข้ารหัสและถอดรหัส Base64' })).toBeVisible();
+  await expect(page).toHaveURL(/#\/tools\/base64$/);
+  await expect(page.getByRole('heading', { name: 'Base64 Encoder / Decoder', exact: true })).toBeVisible();
 });
 
 test('opens an active tool, records history and toggles theme', async ({ page }) => {
