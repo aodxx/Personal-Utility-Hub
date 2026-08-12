@@ -4,8 +4,8 @@
 > ข้อกำหนดผลิตภัณฑ์ให้อ้างอิง `PRD.md` ส่วนผลการทดสอบโดยละเอียดให้อ้างอิง `TEST_REPORT.md`
 
 **อัปเดตล่าสุด:** 12 สิงหาคม 2026  
-**สถานะโครงการ:** Phase 0–3 เสร็จสิ้นและเผยแพร่แล้ว; Phase 4 พัฒนาเสร็จบน Draft PR #10 และรอ Merge
-**Phase ปัจจุบัน:** Phase 4 — Performance and Offline
+**สถานะโครงการ:** Phase 0–4 เสร็จสิ้นและเผยแพร่แล้ว; กำลังปรับ Compact UI และ Touch feedback ก่อนเริ่ม Phase 5
+**Phase ปัจจุบัน:** Pre-Phase 5 — UX/UI Refinement
 **เวอร์ชันปัจจุบัน:** `0.6.0`
 **เว็บไซต์:** https://aodxx.github.io/Personal-Utility-Hub/
 
@@ -19,10 +19,11 @@
 | Phase 1 | Hub MVP | ✅ เสร็จสิ้น Merge และเผยแพร่แล้ว | PR #6, CI 22/22, E2E 8/8, Deploy ผ่าน |
 | Phase 2 | Visual System + Core Tools | ✅ เสร็จสิ้นและเผยแพร่แล้ว | PR #7 และ #8 Merge; CI Run #26 และ Pages Run #10 ผ่าน |
 | Phase 3 | File Tools | ✅ เสร็จสิ้นและเผยแพร่แล้ว | PR #9 Merge; CI 36/36, E2E 20/20 และ Production ตอบ 200 |
-| Phase 4 | Performance and Offline | 🟡 พัฒนาเสร็จ รอ Merge | Draft PR #10; CI Run #37 ผ่าน 40/40 Unit/Integration และ E2E 36/36 |
-| Phase 5 | Product Expansion | ⬜ ยังไม่เริ่ม | รอ Phase 4 |
+| Phase 4 | Performance and Offline | ✅ เสร็จสิ้นและเผยแพร่แล้ว | PR #10 Merge; CI Run #38 ผ่าน 40/40 Unit/Integration และ E2E 36/36 |
+| Pre-Phase 5 | UX/UI Refinement | 🟡 พัฒนาในเครื่อง | Compact Tool Cards, Touch/Ripple feedback และ Favorite bounce |
+| Phase 5 | Product Expansion | ⬜ ยังไม่เริ่ม | รอปิดงาน UX/UI Refinement |
 
-ความคืบหน้าตาม Roadmap: **เสร็จแล้ว 4 จาก 6 Phase**
+ความคืบหน้าตาม Roadmap: **เสร็จแล้ว 5 จาก 6 Phase**
 
 ---
 
@@ -205,11 +206,13 @@ Phase 2 ปิดแล้ว เริ่ม Phase 3 จาก Merge commit `64
 
 ## 6. Phase 4 — Performance and Offline
 
-**สถานะ:** 🟡 พัฒนาเสร็จบน Branch และรอ Merge
+**สถานะ:** ✅ เสร็จสิ้น Merge และเผยแพร่แล้ว
 
 **Branch:** `agent/phase-4-performance-offline`
 
 **Pull Request:** [#10 — Build Phase 4 performance and offline](https://github.com/aodxx/Personal-Utility-Hub/pull/10)
+
+**Merge commit:** [`fe194b2c972b57d87f0b930f50569e5cbd3d7318`](https://github.com/aodxx/Personal-Utility-Hub/commit/fe194b2c972b57d87f0b930f50569e5cbd3d7318)
 
 **CI-validated source commit:** [`d272790cd687217ab0b8027a6293bf1cc113794e`](https://github.com/aodxx/Personal-Utility-Hub/commit/d272790cd687217ab0b8027a6293bf1cc113794e)
 
@@ -242,7 +245,18 @@ Phase 2 ปิดแล้ว เริ่ม Phase 3 จาก Merge commit `64
 
 ### ขั้นตอนถัดไป
 
-ตรวจ Draft PR #10 และ Merge เมื่อพร้อม จากนั้นยืนยัน CI/Pages บน `main` และทดสอบ Offline บนอุปกรณ์ Android จริงก่อนปิด Phase 4
+PR #10 Merge แล้ว และ Production GitHub Pages ตอบ HTTP 200 หลัง Merge จากนั้นแยก Branch `agent/pre-phase-5-compact-ui` เพื่อปรับ UX/UI ก่อนเริ่ม Phase 5
+
+### Pre-Phase 5 UX/UI Refinement — กำลังพัฒนา
+
+- ลด Tool Card บน Desktop จากความสูงขั้นต่ำ 23rem เป็น 17rem พร้อมลดขนาด Visual, Padding และตัวอักษรอย่างพอดี
+- บน Mobile 360px เปลี่ยนเป็น Horizontal card: ไอคอนซ้าย, เนื้อหากลาง, Favorites ขวา และ Footer แบบสั้นด้านล่าง
+- จำกัดคำอธิบายสองบรรทัด โดยยังคง Category, Status, Privacy, Offline และลิงก์เปิด Tool
+- เพิ่ม Active/Ripple feedback ให้ปุ่มหลัก, Category และ Offline controls
+- เพิ่ม Favorite bounce หลัง LocalStorage เปลี่ยนสถานะสำเร็จ พร้อม `aria-live` feedback
+- เคารพ `prefers-reduced-motion` และคงพื้นที่แตะ Favorites 44 × 44px
+- TypeScript, Unit/Integration 40/40, Production build, Bundle Budget, audit 0 vulnerabilities และ `git diff --check` ผ่านในเครื่อง
+- เพิ่ม Playwright ตรวจ Mobile 360 × 740 ว่ามี Tool Cards เต็มอย่างน้อย 3 ใบใน viewport และ Layout/สถานะปุ่มถูกต้อง; รอ GitHub Actions เป็น Browser runtime หลัง Push
 
 ---
 

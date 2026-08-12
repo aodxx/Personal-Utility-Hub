@@ -48,6 +48,10 @@ describe('AppShell integration', () => {
     await vi.waitFor(() => expect(root.querySelectorAll('#tool-grid .tool-card')).toHaveLength(14));
     root.querySelector<HTMLButtonElement>('[data-tool-id="json-formatter"] [data-action="favorite"]')?.click();
     expect(root.querySelector('#favorites-section')?.textContent).toContain('JSON Formatter');
+    const favoriteButton = root.querySelector<HTMLButtonElement>('#tool-grid [data-tool-id="json-formatter"] [data-action="favorite"]');
+    expect(favoriteButton?.getAttribute('aria-pressed')).toBe('true');
+    expect(favoriteButton?.classList.contains('is-bouncing')).toBe(true);
+    expect(root.querySelector('#favorite-status')?.textContent).toContain('เพิ่ม JSON Formatter / Validator ในรายการโปรดแล้ว');
 
     window.location.hash = '#/tools/json-formatter';
     window.dispatchEvent(new HashChangeEvent('hashchange'));

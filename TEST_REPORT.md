@@ -57,3 +57,26 @@ Local workspace ยังไม่มี Chromium executable จึงใช้ 
 ## WebAssembly decision
 
 Phase 4 ไม่เพิ่ม WebAssembly dependency ในรอบนี้ เพราะ PDF.js มี Worker ของตนเอง และงานที่ UI-blocking ถูกย้ายไป Dedicated Worker ได้โดยไม่เพิ่ม Runtime/Memory overhead ใหม่ การเพิ่ม WASM จะทำเมื่อมี Tool Audio/Video หรือ benchmark จริงยืนยันว่าประโยชน์สูงกว่าขนาด Bundle และ Compatibility cost
+
+## Pre-Phase 5 UX/UI refinement
+
+หลัง PR #10 Merge เข้า `main` ที่ commit `fe194b2c972b57d87f0b930f50569e5cbd3d7318` ได้เพิ่มชุดตรวจสำหรับ Compact Tool Cards และ Micro-interactions บน Branch `agent/pre-phase-5-compact-ui`
+
+### ผลตรวจในเครื่อง
+
+- TypeScript strict typecheck — **ผ่าน**
+- Vitest — **ผ่าน 40/40 tests**
+- Vite production build — **ผ่าน**
+- Bundle Budget — **ผ่าน**; Entry 11.0 KB gzip, Lazy chunk ใหญ่สุด 366.1 KB, JavaScript รวม 929.8 KB/24 chunks
+- Dependency audit — **0 vulnerabilities**
+- `git diff --check` — **ผ่าน**
+
+### Browser contract ที่เพิ่ม
+
+- รันเฉพาะ Android entry viewport 360 × 740 สำหรับเกณฑ์ Compact UI
+- หลังเลื่อน Tool Grid เข้าสู่ viewport ต้องเห็น Tool Card เต็มอย่างน้อย 3 ใบพร้อมกัน
+- Tool icon ต้องอยู่ด้านซ้ายของชื่อเครื่องมือ
+- Category button ต้องอัปเดต `aria-pressed` หลังแตะ
+- Favorite button ต้องอัปเดต `aria-pressed`, บันทึกรายการโปรด และประกาศผลผ่าน `aria-live`
+
+Local workspace ไม่มี Chromium executable จึงยังเริ่ม Browser process ไม่ได้ การเรียก Playwright หยุดก่อนโหลดแอปและไม่ใช่ Source failure; Browser contract ใหม่นี้ต้องยืนยันผ่าน GitHub Actions หลัง Push

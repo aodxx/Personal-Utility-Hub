@@ -37,6 +37,6 @@
 }
 @media (max-width: 34rem) {
   .site-header, .main-content, .site-footer { width: min(calc(100% - 1.25rem), var(--content-width)); }
-  .tool-grid, .tool-grid--compact { grid-template-columns: 1fr; }
+  .tool-grid, .tool-grid--compact { grid-template-columns: 1fr; gap: var(--space-3); }
   .section-heading { align-items: start; flex-direction: column; }
 }
