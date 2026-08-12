@@ -6,6 +6,11 @@ const onePixelPng = Buffer.from(
 );
 
 test('prepares one tool for offline use and reopens it without a network', async ({ page, context }) => {
+  const pageErrors: string[] = [];
+  const failedRequests: string[] = [];
+  page.on('pageerror', (error) => pageErrors.push(error.message));
+  page.on('requestfailed', (request) => failedRequests.push(`${request.url()} — ${request.failure()?.errorText ?? 'unknown'}`));
+
   await page.goto('./');
   await page.evaluate(async () => navigator.serviceWorker.ready);
   if (!await page.evaluate(() => Boolean(navigator.serviceWorker.controller))) await page.reload();
@@ -29,7 +34,17 @@ test('prepares one tool for offline use and reopens it without a network', async
 
   await context.setOffline(true);
   await page.reload();
-  await expect(page.getByRole('heading', { name: /เครื่องมือที่ต้องใช้/ })).toBeVisible();
+  const homeHeading = page.getByRole('heading', { name: /เครื่องมือที่ต้องใช้/ });
+  if (!await homeHeading.isVisible()) {
+    throw new Error(JSON.stringify({
+      url: page.url(),
+      title: await page.title(),
+      body: (await page.locator('body').innerText()).slice(0, 500),
+      controller: await page.evaluate(() => Boolean(navigator.serviceWorker.controller)),
+      pageErrors,
+      failedRequests,
+    }, null, 2));
+  }
   await page.goto('./#/tools/json-formatter');
   await expect(page.getByRole('heading', { name: 'JSON Formatter / Validator' })).toBeVisible();
 });
