@@ -5,7 +5,7 @@ test('searches, filters and saves a favorite', async ({ page }) => {
   await expect(page.getByRole('heading', { name: /เครื่องมือที่ต้องใช้/ })).toBeVisible();
   await expect(page.locator('#tool-grid .tool-card')).toHaveCount(8);
   await page.getByRole('searchbox').fill('รูปภาพ');
-  await expect(page.locator('#tool-grid .tool-card')).toHaveCount(2);
+  await expect(page.locator('#tool-grid .tool-card')).toHaveCount(3);
   await page.getByRole('searchbox').fill('JSON');
   await page.getByRole('button', { name: /เพิ่มในรายการโปรด: JSON Formatter/ }).click();
   await expect(page.locator('#favorites-section')).toContainText('JSON Formatter');
