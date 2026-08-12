@@ -44,6 +44,15 @@ Personal Utility Hub ใช้ภาพ 3D clay/glass ที่เป็นร�
 - `tool-image-resizer`
 - `tool-image-converter`
 
+### File tools
+
+- `tool-image-compressor`
+- `tool-images-to-pdf`
+- `tool-pdf-merge`
+- `tool-pdf-split`
+- `tool-pdf-to-image`
+- `tool-file-metadata`
+
 ## Accessibility and performance rules
 
 - ภาพเป็น decorative และใช้ `aria-hidden="true"`; ชื่อเครื่องมือยังเป็นข้อความจริง

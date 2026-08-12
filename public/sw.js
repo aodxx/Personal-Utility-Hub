@@ -1,4 +1,4 @@
-const CACHE_NAME = 'utility-hub-v0.4.0-core-tools';
+const CACHE_NAME = 'utility-hub-v0.5.0-file-tools';
 const APP_SCOPE = self.registration.scope;
 const PRECACHE_URLS = [
   APP_SCOPE,

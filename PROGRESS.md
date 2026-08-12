@@ -4,9 +4,9 @@
 > ข้อกำหนดผลิตภัณฑ์ให้อ้างอิง `PRD.md` ส่วนผลการทดสอบโดยละเอียดให้อ้างอิง `TEST_REPORT.md`
 
 **อัปเดตล่าสุด:** 12 สิงหาคม 2026  
-**สถานะโครงการ:** Phase 0 และ Phase 1 เสร็จสิ้น; Phase 2 Visual System เผยแพร่แล้วและ Core Tools ผ่าน CI/Browser validation ใน Draft PR
-**Phase ปัจจุบัน:** Phase 2 — Core Tools
-**เวอร์ชันปัจจุบัน:** `0.4.0`
+**สถานะโครงการ:** Phase 0–2 เสร็จสิ้นและเผยแพร่แล้ว; Phase 3 File Tools กำลังพัฒนาบน Branch แยก
+**Phase ปัจจุบัน:** Phase 3 — File Tools
+**เวอร์ชันปัจจุบัน:** `0.5.0`
 **เว็บไซต์:** https://aodxx.github.io/Personal-Utility-Hub/
 
 ---
@@ -17,12 +17,12 @@
 |---|---|---|---|
 | Phase 0 | Foundation | ✅ เสร็จสิ้นและเผยแพร่แล้ว | PR #1, Foundation CI ผ่าน, GitHub Pages ทำงาน |
 | Phase 1 | Hub MVP | ✅ เสร็จสิ้น Merge และเผยแพร่แล้ว | PR #6, CI 22/22, E2E 8/8, Deploy ผ่าน |
-| Phase 2 | Visual System + Core Tools | 🧪 พร้อมตรวจและ Merge | Visual System Merge แล้ว; Core Tools 7 รายการผ่าน CI 31/31 และ E2E 14/14 ใน PR #8 |
-| Phase 3 | File Tools | ⬜ ยังไม่เริ่ม | รอ Phase 2 |
+| Phase 2 | Visual System + Core Tools | ✅ เสร็จสิ้นและเผยแพร่แล้ว | PR #7 และ #8 Merge; CI Run #26 และ Pages Run #10 ผ่าน |
+| Phase 3 | File Tools | 🚧 กำลังดำเนินการ | เครื่องมือ 6 รายการผ่าน Local 36/36; รอ Browser CI 20 executions |
 | Phase 4 | Performance and Offline | ⬜ ยังไม่เริ่ม | รอ Phase 3 |
 | Phase 5 | Product Expansion | ⬜ ยังไม่เริ่ม | รอ Phase 4 |
 
-ความคืบหน้าตาม Roadmap: **เสร็จแล้ว 2 จาก 6 Phase**
+ความคืบหน้าตาม Roadmap: **เสร็จแล้ว 3 จาก 6 Phase**
 
 ---
 
@@ -95,15 +95,15 @@
 
 ## 4. Phase 2 — Core Tools
 
-**สถานะ:** 🧪 รอตรวจสอบ
+**สถานะ:** ✅ เสร็จสิ้น Merge และเผยแพร่แล้ว
 
 **Core Tools Branch:** `agent/phase-2-core-tools`
 
-**Core Tools Pull Request:** [#8 — Build Phase 2 core tools](https://github.com/aodxx/Personal-Utility-Hub/pull/8) (Draft)
+**Core Tools Pull Request:** [#8 — Build Phase 2 core tools](https://github.com/aodxx/Personal-Utility-Hub/pull/8)
 
 **Core Tools source commit:** [`f87df1d37bb75bf38cc0638612d9730991a3338f`](https://github.com/aodxx/Personal-Utility-Hub/commit/f87df1d37bb75bf38cc0638612d9730991a3338f)
 
-**Local source commit:** `bdf2a64a041e5c5b14c7a71b4321d656a861d0ea` (Git tree ตรงกับ Remote Head)
+**Core Tools Merge commit:** [`643cf81c67d2ea8fd8f0da30dfb67f838e481a3a`](https://github.com/aodxx/Personal-Utility-Hub/commit/643cf81c67d2ea8fd8f0da30dfb67f838e481a3a)
 
 **Visual System PR:** [#7 — Build Phase 2 3D visual system](https://github.com/aodxx/Personal-Utility-Hub/pull/7)
 
@@ -124,7 +124,7 @@
 - GitHub Actions CI Run #22 ผ่าน: TypeScript, 25/25 Unit/Integration, Production build และ Playwright 8/8 บน Desktop/Android
 - GitHub Pages Deploy Run #9 หลัง Merge — ผ่าน
 
-### Core Tools — 🧪 พัฒนาเสร็จและผ่าน GitHub Actions
+### Core Tools — ✅ Merge และเผยแพร่แล้ว
 
 - JSON Formatter / Validator — Format, Minify, Validate และ Copy
 - Base64 Encoder / Decoder — รองรับ UTF-8 ภาษาไทยและอีโมจิ
@@ -145,16 +145,54 @@
 - Production build และ GitHub Pages subpath — ผ่าน
 - Service Worker syntax และ `git diff --check` — ผ่าน
 - Dependency audit — 0 vulnerabilities
-- GitHub Actions CI Run #24 — ผ่าน
+- GitHub Actions CI Run #25 บน PR และ Run #26 บน `main` — ผ่าน
 - Playwright 7 cases × 2 viewports = 14 executions — ผ่าน 14/14 บน Desktop Chromium และ Android Pixel 7
+- GitHub Pages Deploy Run #10 หลัง Merge — ผ่าน
 
 ### ขั้นตอนถัดไป
 
-ตรวจ Draft PR #8 และ Merge เข้า `main` เมื่อพร้อม จากนั้นตรวจ GitHub Pages deployment และทดสอบ QR Reader ด้วยกล้องบน Android จริง
+Phase 2 ปิดแล้ว เริ่ม Phase 3 จาก Merge commit `643cf81c…`
 
 ---
 
-## 5. สถานะระบบปัจจุบัน
+## 5. Phase 3 — File Tools
+
+**สถานะ:** 🚧 กำลังดำเนินการ
+
+**Branch:** `agent/phase-3-file-tools`
+
+**ฐาน Branch:** Phase 2 Merge commit `643cf81c67d2ea8fd8f0da30dfb67f838e481a3a`
+
+### สิ่งที่พัฒนาแล้วใน Branch
+
+- Image Compressor — เลือก WebP/JPEG, Quality และด้านยาวสูงสุด พร้อม Preview/Download
+- Images to PDF — สูงสุด 20 รูป, หนึ่งหน้า A4 ต่อรูป, แนวหน้าอัตโนมัติ
+- PDF Merge — สูงสุด 10 ไฟล์, รวมตามลำดับที่เลือก
+- PDF Split — เลือกหน้า/ช่วงหน้า เช่น `1-3,5` แล้วสร้าง PDF ใหม่
+- PDF to Image — เลือกหน้า, Scale และ PNG/JPEG ด้วย PDF.js Worker
+- File Metadata Viewer — ชื่อ, MIME, ขนาด, วันที่, SHA-256, ขนาดรูป และ PDF metadata
+- เพิ่ม 3D SVG Asset 6 รายการใน Visual System เดิม
+- เพิ่ม `pdf-lib@1.17.1` และ `pdfjs-dist@6.2.108` แบบ Lazy/Dynamic import
+- จำกัดไฟล์รวม 40 MB, PDF ไม่เกิน 200 หน้า, รูปสูงสุด 20 ไฟล์
+- Service Worker cache เปลี่ยนเป็น `utility-hub-v0.5.0-file-tools`
+
+### ผลตรวจปัจจุบัน
+
+- TypeScript strict typecheck — ผ่าน
+- Unit/Integration — 36/36
+- Production build และ GitHub Pages subpath — ผ่าน
+- Service Worker syntax, `git diff --check` — ผ่าน
+- Dependency audit — 0 vulnerabilities
+- Playwright เตรียม 10 cases × 2 viewports = 20 executions
+- Local Chromium ติดตั้งไม่ได้เพราะ CDN คืน Archive 0 MiB; รอ GitHub Actions เป็น Browser runtime
+
+### ขั้นตอนถัดไป
+
+ตรวจ Source/เอกสารรอบสุดท้าย, Commit, Push Branch, เปิด Draft PR และให้ GitHub Actions ยืนยัน Browser E2E ทั้ง Desktop/Android
+
+---
+
+## 6. สถานะระบบปัจจุบัน
 
 ### Architecture
 
@@ -171,39 +209,41 @@
 - ไม่มี Analytics ที่เก็บข้อมูลส่วนบุคคลหรือเนื้อหาไฟล์
 - Favorites, Recent Tools และ Theme เก็บใน LocalStorage ของอุปกรณ์
 - เมื่อ LocalStorage ใช้งานไม่ได้ ระบบทำงานต่อด้วย Memory fallback
-- Runtime Dependency มีเฉพาะ `qrcode@1.5.4` และ `jsqr@1.4.0`; Bundle แบบ Lazy ไม่มี CDN/API/telemetry
+- Runtime Dependency คือ `qrcode@1.5.4`, `jsqr@1.4.0`, `pdf-lib@1.17.1` และ `pdfjs-dist@6.2.108`; ทุกตัว Bundle แบบ Lazy ไม่มี CDN/API/telemetry
 
 ### สถานะเครื่องมือ
 
-| Tool | Production `main` | Branch `agent/phase-2-core-tools` |
+| Tool group | Production `main` | Branch `agent/phase-3-file-tools` |
 |---|---|---|
-| Foundation Lifecycle Demo | Active | Active |
-| JSON Formatter / Validator | Planned | Active — CI/E2E ผ่าน |
-| Base64 Encoder / Decoder | Planned | Active — CI/E2E ผ่าน |
-| Text Formatter | Planned | Active — CI/E2E ผ่าน |
-| QR Code Generator | Planned | Active — CI/E2E ผ่าน |
-| Image Resizer | Planned | Active — CI/E2E ผ่าน |
-| Image Converter | Planned | Active — CI/E2E ผ่าน |
-| QR Code Reader | Planned | Active — CI/E2E ผ่าน |
+| Foundation Demo | Active | Active |
+| Core Tools 7 รายการ | Active — CI/E2E ผ่าน | Active |
+| Image Compressor | ไม่มี | Active — Local tests ผ่าน |
+| Images to PDF | ไม่มี | Active — Local tests ผ่าน |
+| PDF Merge | ไม่มี | Active — Local tests ผ่าน |
+| PDF Split | ไม่มี | Active — Local tests ผ่าน |
+| PDF to Image | ไม่มี | Active — Local tests ผ่าน |
+| File Metadata Viewer | ไม่มี | Active — Local tests ผ่าน |
 
 ---
 
-## 6. ปัญหาและงานค้าง
+## 7. ปัญหาและงานค้าง
 
 ### Blocking
 
-- ไม่มีปัญหาที่ขวางการตรวจและ Merge PR #8
+- ไม่มีปัญหาที่ขวางการเตรียม Commit/PR ของ Phase 3
 
 ### Non-blocking / ต้องตรวจภายหลัง
 
 - ทดสอบติดตั้ง PWA บนอุปกรณ์ Android จริง
 - ทดสอบ Offline App Shell บนอุปกรณ์จริงหลังเคยเปิดเว็บไซต์อย่างน้อยหนึ่งครั้ง
 - ทดสอบ QR Reader ด้วยกล้องจริงบน Android หลัง Merge; automated suite ตรวจ flow จากไฟล์ QR ส่วน lifecycle กล้องตรวจจาก Source/DOM
+- ยืนยัน File Tools Browser E2E 20 executions ด้วย GitHub Actions หลัง Push
+- ทดสอบ PDF ขนาดใกล้เพดานและไฟล์จากมือถือ Android จริงหลัง Deploy
 - ต้องทบทวน Service Worker cache version ทุกครั้งที่เปลี่ยน Production assets เพื่อป้องกันหน้าเก่าค้าง
 
 ---
 
-## 7. การตัดสินใจสำคัญ
+## 8. การตัดสินใจสำคัญ
 
 | วันที่ | การตัดสินใจ | เหตุผล |
 |---|---|---|
@@ -218,10 +258,13 @@
 | 12 ส.ค. 2026 | ใช้ self-hosted SVG sprite เป็น Production Asset | คมชัด ไฟล์เล็ก รองรับ Offline และไม่พึ่ง CDN/API |
 | 12 ส.ค. 2026 | ใช้ `qrcode` และ `jsqr` เฉพาะ Tool ที่เกี่ยวข้องแบบ Lazy | Browser API ไม่มีมาตรฐานสร้าง QR และการรองรับ BarcodeDetector ยังไม่สม่ำเสมอ |
 | 12 ส.ค. 2026 | จำกัด Image input 15 MB, 12,000 px/ด้าน และ 24 MP | ลดความเสี่ยง Memory สูงบน Android และให้ Error ที่เข้าใจได้ก่อนประมวลผล |
+| 12 ส.ค. 2026 | ใช้ `pdf-lib` สำหรับสร้าง/รวม/แยก PDF และ PDF.js สำหรับเรนเดอร์ | รองรับ Client-side โดยไม่ต้องมี Backend และแยกโหลดตาม Tool ได้ |
+| 12 ส.ค. 2026 | จำกัด File Tools ที่ 40 MB, 200 หน้า, 10 PDF หรือ 20 รูป | ควบคุม Memory บนอุปกรณ์ Android ระดับเริ่มต้น |
+| 12 ส.ค. 2026 | Dynamic import PDF.js หลังเลือกไฟล์ | ไม่ให้ API/Worker ขนาดใหญ่กระทบหน้า Hub และ Tool อื่น |
 
 ---
 
-## 8. กติกาการอัปเดตไฟล์นี้
+## 9. กติกาการอัปเดตไฟล์นี้
 
 ต้องอัปเดต `PROGRESS.md` ในเหตุการณ์ต่อไปนี้:
 
@@ -245,7 +288,7 @@
 
 ---
 
-## 9. เอกสารอ้างอิง
+## 10. เอกสารอ้างอิง
 
 - [PRD.md](PRD.md) — ข้อกำหนดและ Roadmap ของผลิตภัณฑ์
 - [README.md](README.md) — วิธีติดตั้ง พัฒนา และโครงสร้างระบบ

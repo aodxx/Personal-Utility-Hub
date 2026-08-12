@@ -201,5 +201,69 @@
         <path d="M102 94c-17 17-47 19-66 7l1 11M36 101l12-1" stroke="url(#cyan)"/>
       </g>
     </symbol>
+
+    <symbol id="tool-image-compressor" viewBox="0 0 128 128">
+      <g filter="url(#soft-shadow)">
+        <rect x="24" y="23" width="80" height="82" rx="17" fill="url(#paper)" stroke="#7d90c3" stroke-width="3"/>
+        <circle cx="78" cy="44" r="9" fill="#ffc74a"/>
+        <path d="M34 91 50 66l13 15 10-11 21 21z" fill="url(#blue)"/>
+        <path d="M17 44h25M29 32v25M111 84H86M99 71v26" fill="none" stroke="url(#lime)" stroke-width="8" stroke-linecap="round"/>
+        <path d="m18 44 11-11 11 11M110 84 99 95 88 84" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+      </g>
+    </symbol>
+
+    <symbol id="tool-images-to-pdf" viewBox="0 0 128 128">
+      <g filter="url(#soft-shadow)">
+        <rect x="15" y="28" width="66" height="68" rx="14" fill="url(#cyan)" transform="rotate(-7 48 62)"/>
+        <circle cx="56" cy="48" r="7" fill="#ffc74a"/>
+        <path d="M24 84 39 64l11 12 9-10 15 18z" fill="url(#blue)"/>
+        <path d="M66 17h31l17 18v69a11 11 0 0 1-11 11H66a11 11 0 0 1-11-11V28a11 11 0 0 1 11-11z" fill="url(#paper)" stroke="#7d90c3" stroke-width="3"/>
+        <path d="M97 17v19h17" fill="#ff675f"/>
+        <path d="M72 63h26M72 78h26M72 93h18" stroke="url(#violet)" stroke-width="7" stroke-linecap="round"/>
+      </g>
+    </symbol>
+
+    <symbol id="tool-pdf-merge" viewBox="0 0 128 128">
+      <g filter="url(#soft-shadow)">
+        <path d="M16 23h47l14 15v63a10 10 0 0 1-10 10H16z" fill="url(#cyan)" stroke="#2684aa" stroke-width="3"/>
+        <path d="M66 17h33l16 17v67a11 11 0 0 1-11 11H66z" fill="url(#paper)" stroke="#7d90c3" stroke-width="3"/>
+        <path d="M99 17v18h16" fill="#ff675f"/>
+        <path d="M75 57h25M75 73h25M75 89h18" stroke="url(#violet)" stroke-width="7" stroke-linecap="round"/>
+        <circle cx="61" cy="66" r="20" fill="url(#blue)" stroke="#283994" stroke-width="3"/>
+        <path d="M61 54v24M49 66h24" stroke="#fff" stroke-width="7" stroke-linecap="round"/>
+      </g>
+    </symbol>
+
+    <symbol id="tool-pdf-split" viewBox="0 0 128 128">
+      <g filter="url(#soft-shadow)">
+        <path d="M24 17h66l17 18v70a11 11 0 0 1-11 11H24a11 11 0 0 1-11-11V28a11 11 0 0 1 11-11z" fill="url(#paper)" stroke="#7d90c3" stroke-width="3"/>
+        <path d="M90 17v19h17" fill="#ff675f"/>
+        <path d="M35 52h50M35 70h50M35 88h50" stroke="url(#blue)" stroke-width="7" stroke-linecap="round"/>
+        <circle cx="90" cy="92" r="24" fill="url(#violet)" stroke="#43299d" stroke-width="3"/>
+        <path d="m78 80 24 24M102 80 78 104" stroke="#fff" stroke-width="7" stroke-linecap="round"/>
+      </g>
+    </symbol>
+
+    <symbol id="tool-pdf-to-image" viewBox="0 0 128 128">
+      <g filter="url(#soft-shadow)">
+        <path d="M17 18h54l15 16v69a11 11 0 0 1-11 11H17z" fill="url(#paper)" stroke="#7d90c3" stroke-width="3"/>
+        <path d="M71 18v17h15" fill="#ff675f"/>
+        <path d="M30 56h40M30 72h31" stroke="url(#violet)" stroke-width="7" stroke-linecap="round"/>
+        <rect x="60" y="48" width="56" height="58" rx="14" fill="url(#cyan)" stroke="#267fa9" stroke-width="3"/>
+        <circle cx="98" cy="66" r="7" fill="#ffc74a"/>
+        <path d="M68 96 80 78l9 11 7-8 13 15z" fill="url(#blue)"/>
+      </g>
+    </symbol>
+
+    <symbol id="tool-file-metadata" viewBox="0 0 128 128">
+      <g filter="url(#soft-shadow)">
+        <path d="M24 14h58l18 19v72a11 11 0 0 1-11 11H24a11 11 0 0 1-11-11V25a11 11 0 0 1 11-11z" fill="url(#paper)" stroke="#7d90c3" stroke-width="3"/>
+        <path d="M82 14v20h18" fill="url(#violet)"/>
+        <path d="M31 51h49M31 68h38M31 85h30" stroke="url(#blue)" stroke-width="7" stroke-linecap="round"/>
+        <circle cx="91" cy="89" r="25" fill="url(#blue)" stroke="#283994" stroke-width="3"/>
+        <circle cx="91" cy="89" r="11" fill="none" stroke="#fff" stroke-width="6"/>
+        <path d="m99 98 12 12" stroke="#fff" stroke-width="7" stroke-linecap="round"/>
+      </g>
+    </symbol>
   </defs>
 </svg>

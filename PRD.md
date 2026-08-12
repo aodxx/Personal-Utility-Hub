@@ -4,9 +4,9 @@
 
 **ชื่อโครงการ:** Personal Utility Hub  
 **ประเภทผลิตภัณฑ์:** Utility Web Tools Hub / Static Progressive Web App  
-**เอกสารฉบับ:** 1.0  
+**เอกสารฉบับ:** 1.2
 **วันที่จัดทำ:** 11 สิงหาคม 2026  
-**สถานะ:** Draft สำหรับเริ่มพัฒนา Phase 0  
+**สถานะ:** Phase 0–2 เสร็จสิ้น; Phase 3 กำลังพัฒนา
 **ภาษาเริ่มต้น:** ภาษาไทย  
 **แพลตฟอร์มเป้าหมาย:** Desktop, Tablet และ Android Mobile
 
@@ -435,12 +435,13 @@ Tool Card ต้องแสดงป้ายตามจริง เช่น
 
 ### Phase 3: File Tools
 
-- Image Compressor
-- Images to PDF
-- PDF Merge
-- PDF Split
-- PDF to Image
-- File Metadata Viewer
+- Image Compressor — WebP/JPEG, Quality และด้านยาวสูงสุด
+- Images to PDF — สูงสุด 20 รูป รวมไม่เกิน 40 MB, หนึ่งหน้า A4 ต่อรูป
+- PDF Merge — สูงสุด 10 ไฟล์ รวมไม่เกิน 40 MB และไม่เกิน 200 หน้า
+- PDF Split — เลือกหน้าหรือช่วงหน้าออกเป็น PDF ใหม่
+- PDF to Image — เลือกหน้า/ความละเอียดและส่งออก PNG/JPEG
+- File Metadata Viewer — ข้อมูลทั่วไป, SHA-256, ขนาดรูป และ PDF metadata
+- ทุกเครื่องมือประมวลผล Client-side, Lazy-loaded และล้าง Object URL/หน่วยความจำชั่วคราวเมื่อออกจาก Tool
 
 ### Phase 4: Performance and Offline
 

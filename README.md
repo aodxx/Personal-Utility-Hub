@@ -2,7 +2,7 @@
 
 ศูนย์รวม Utility Web Tools แบบ Static PWA ที่เน้น Privacy by Design, Client-side Processing และ Modular Tool Registry
 
-โครงการอยู่ใน **Phase 2: Core Tools** โดย Phase 0 Foundation, Phase 1 Hub MVP และ 3D Visual System เผยแพร่บน `main` แล้ว ส่วน Core Tools ทั้ง 7 รายการถูกพัฒนาเป็น Lazy-loaded Module บน Branch `agent/phase-2-core-tools`
+โครงการอยู่ใน **Phase 3: File Tools** โดย Phase 0–2 เผยแพร่บน `main` แล้ว และ File Tools 6 รายการกำลังพัฒนาบน Branch `agent/phase-3-file-tools`
 
 ## เครื่องมือ Core
 
@@ -15,6 +15,17 @@
 7. Image Converter ระหว่าง PNG, JPEG และ WebP
 
 ทุกเครื่องมือประมวลผลในเบราว์เซอร์ ไม่มี Backend และไม่อัปโหลดข้อความ รูปภาพ หรือข้อมูลจากกล้องไปยังเซิร์ฟเวอร์
+
+## เครื่องมือไฟล์ Phase 3
+
+1. Image Compressor เป็น WebP/JPEG
+2. Images to PDF สูงสุด 20 รูป
+3. PDF Merge
+4. PDF Split ด้วยช่วงหน้า
+5. PDF to Image เป็น PNG/JPEG
+6. File Metadata Viewer พร้อม SHA-256
+
+เครื่องมือ PDF ใช้ `pdf-lib` และ PDF.js แบบ Lazy-loaded เฉพาะเมื่อเปิดใช้งาน ไฟล์ยังคงอยู่ในอุปกรณ์ผู้ใช้ตลอดกระบวนการ
 
 ## เริ่มพัฒนา
 
@@ -52,5 +63,6 @@ npm run test:e2e
 - ไม่มี Login, Analytics, Backend, Cloud Storage หรือ Server-side Processing
 - Favorites, Recent Tools และ Theme เก็บเฉพาะใน LocalStorage; หาก LocalStorage ใช้ไม่ได้ Hub จะใช้ Memory fallback
 - Image Tools รองรับ PNG/JPEG/WebP ไม่เกิน 15 MB, ด้านละไม่เกิน 12,000 px และผลลัพธ์ไม่เกิน 24 ล้านพิกเซล
+- File Tools จำกัดไฟล์รวม 40 MB, PDF ไม่เกิน 200 หน้า, รวมได้สูงสุด 10 PDF หรือ 20 รูปต่อครั้ง
 - QR Reader ขอสิทธิ์กล้องเมื่อผู้ใช้กดเปิดเท่านั้น และหยุด Media Track เมื่อปิดกล้อง อ่านสำเร็จ หรือออกจาก Tool
-- `qrcode` และ `jsqr` ถูก Bundle แบบ Lazy ภายในเว็บ ไม่มี CDN, telemetry หรือ Runtime API request
+- `qrcode`, `jsqr`, `pdf-lib` และ PDF.js ถูก Bundle แบบ Lazy ภายในเว็บ ไม่มี CDN, telemetry หรือ Runtime API request

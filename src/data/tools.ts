@@ -7,6 +7,12 @@ import { metadata as jsonFormatterMetadata } from '../tools/json-formatter/metad
 import { metadata as qrGeneratorMetadata } from '../tools/qr-generator/metadata';
 import { metadata as qrReaderMetadata } from '../tools/qr-reader/metadata';
 import { metadata as textFormatterMetadata } from '../tools/text-formatter/metadata';
+import { metadata as fileMetadata } from '../tools/file-metadata/metadata';
+import { metadata as imageCompressorMetadata } from '../tools/image-compressor/metadata';
+import { metadata as imagesToPdfMetadata } from '../tools/images-to-pdf/metadata';
+import { metadata as pdfMergeMetadata } from '../tools/pdf-merge/metadata';
+import { metadata as pdfSplitMetadata } from '../tools/pdf-split/metadata';
+import { metadata as pdfToImageMetadata } from '../tools/pdf-to-image/metadata';
 
 export const toolRegistry = [
   {
@@ -40,6 +46,30 @@ export const toolRegistry = [
   {
     metadata: qrReaderMetadata,
     load: () => import('../tools/qr-reader'),
+  },
+  {
+    metadata: imageCompressorMetadata,
+    load: () => import('../tools/image-compressor'),
+  },
+  {
+    metadata: imagesToPdfMetadata,
+    load: () => import('../tools/images-to-pdf'),
+  },
+  {
+    metadata: pdfMergeMetadata,
+    load: () => import('../tools/pdf-merge'),
+  },
+  {
+    metadata: pdfSplitMetadata,
+    load: () => import('../tools/pdf-split'),
+  },
+  {
+    metadata: pdfToImageMetadata,
+    load: () => import('../tools/pdf-to-image'),
+  },
+  {
+    metadata: fileMetadata,
+    load: () => import('../tools/file-metadata'),
   },
 ] satisfies readonly ToolRegistryEntry[];
 

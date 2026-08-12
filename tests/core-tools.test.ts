@@ -14,7 +14,8 @@ describe('Phase 2 Core Tools', () => {
   });
 
   it('lazy-loads every Core Tool with metadata matching its Registry entry', async () => {
-    const entries = toolRegistry.filter(({ metadata }) => metadata.id !== 'foundation-demo');
+    const coreIds = new Set<string>(coreTools.map(({ id }) => id));
+    const entries = toolRegistry.filter(({ metadata }) => coreIds.has(metadata.id));
     for (const entry of entries) {
       const module = await entry.load();
       expect(() => assertToolModule(module, entry.metadata.id)).not.toThrow();
