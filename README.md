@@ -2,7 +2,7 @@
 
 ศูนย์รวม Utility Web Tools แบบ Static PWA ที่เน้น Privacy by Design, Client-side Processing และ Modular Tool Registry
 
-โครงการอยู่ใน **Phase 4: Performance and Offline** โดย Phase 0–3 เผยแพร่บน `main` แล้ว และกำลังพัฒนา Web Worker, IndexedDB, Offline Cache รายเครื่องมือ และการทดสอบ Android หลายระดับบน Branch `agent/phase-4-performance-offline`
+โครงการอยู่ใน **Phase 5: Product Expansion** โดย Phase 0–4 และ UX/UI Refinement เผยแพร่บน `main` แล้ว ส่วนภาษาไทย/English, Settings Import/Export, การเรียงเครื่องมือที่ใช้บ่อย และ Compatibility Check พัฒนาอยู่บน Branch `agent/phase-5-product-expansion`
 
 ## เครื่องมือ Core
 
@@ -36,6 +36,15 @@
 - Bundle Budget บังคับใน CI: Entry ≤45 KB gzip, Lazy chunk ≤900 KB gzip และ JavaScript รวม ≤1,600 KB gzip
 - Playwright ตรวจ Desktop, Android ระดับเริ่มต้น 360 px และ Android รุ่นปัจจุบัน
 
+## Product Expansion Phase 5
+
+- App Shell, Tool Catalog, Category และ Tool header รองรับภาษาไทย/English
+- Settings Center เก็บภาษาและรูปแบบการเรียงเฉพาะในอุปกรณ์
+- ส่งออก/นำเข้า JSON แบบมี Schema version สำหรับ Theme, Favorites, Recent Tools, ภาษา, ลำดับ และสถิติการใช้งาน
+- เลือกเรียง Tool Catalog ตาม Registry เดิมหรือจำนวนครั้งที่เปิด โดยใช้ Registry order เป็นตัวตัดสินเมื่อคะแนนเท่ากัน
+- Compatibility Check แยกความสามารถจำเป็นและส่วนเสริมของ Browser
+- ยังไม่มี Backend เพราะความสามารถ Phase 5 ทั้งหมดทำงาน Client-side ได้
+
 ## เริ่มพัฒนา
 
 ต้องใช้ Node.js 22.12 ขึ้นไป
@@ -59,7 +68,7 @@ npm run test:e2e
 ## สถาปัตยกรรม
 
 - `src/app` — App Shell และ Hash Router
-- `src/core` — Tool Contract, Loader, Search, Local Preferences, PWA, Offline/IndexedDB และ Worker client
+- `src/core` — Tool Contract, Loader, Search, i18n, Portable Settings, Compatibility, PWA, Offline/IndexedDB และ Worker client
 - `src/workers` — งานประมวลผลหนักที่แยกออกจาก UI thread
 - `src/data` — Registry, Core Tool metadata และข้อมูลกลาง
 - `src/tools` — Tool Module ที่โหลดแบบ Lazy
@@ -72,7 +81,7 @@ npm run test:e2e
 ## Privacy Baseline
 
 - ไม่มี Login, Analytics, Backend, Cloud Storage หรือ Server-side Processing
-- Favorites, Recent Tools และ Theme เก็บเฉพาะใน LocalStorage; หาก LocalStorage ใช้ไม่ได้ Hub จะใช้ Memory fallback
+- Favorites, Recent Tools, Theme, ภาษา, Tool order และสถิติการเปิดใช้เก็บเฉพาะใน LocalStorage; หาก LocalStorage ใช้ไม่ได้ Hub จะใช้ Memory fallback
 - IndexedDB เก็บเฉพาะสถานะว่า Tool version ใดเตรียม Offline แล้ว ไม่เก็บไฟล์หรือเนื้อหาของผู้ใช้
 - Image Tools รองรับ PNG/JPEG/WebP ไม่เกิน 15 MB, ด้านละไม่เกิน 12,000 px และผลลัพธ์ไม่เกิน 24 ล้านพิกเซล
 - File Tools จำกัดไฟล์รวม 40 MB, PDF ไม่เกิน 200 หน้า, รวมได้สูงสุด 10 PDF หรือ 20 รูปต่อครั้ง

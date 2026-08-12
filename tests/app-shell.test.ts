@@ -87,4 +87,28 @@ describe('AppShell integration', () => {
     app.start();
     await vi.waitFor(() => expect(root.textContent).toContain('ไม่พบหน้าที่คุณต้องการ'));
   });
+
+  it('renders the English Hub and opens the local Settings Center', async () => {
+    window.localStorage.setItem('utility-hub:locale', 'en');
+    const root = startApp();
+    await vi.waitFor(() => expect(root.textContent).toContain('Every tool you need'));
+    expect(document.documentElement.lang).toBe('en');
+    expect(root.querySelector('[data-category="รูปภาพ"]')?.textContent).toContain('Images');
+    expect(root.querySelector('[data-tool-id="image-compressor"]')?.textContent).toContain('Reduce JPEG or WebP');
+
+    root.querySelector<HTMLButtonElement>('#settings-toggle')?.click();
+    const dialog = root.querySelector<HTMLDialogElement>('#settings-dialog');
+    expect(dialog?.hasAttribute('open')).toBe(true);
+    expect(dialog?.textContent).toContain('Settings and local data');
+    expect(dialog?.querySelectorAll('#compatibility-list li')).toHaveLength(7);
+    expect(dialog?.textContent).toContain('No backend');
+  });
+
+  it('orders the catalog by locally recorded usage', async () => {
+    window.localStorage.setItem('utility-hub:tool-order', 'frequent');
+    window.localStorage.setItem('utility-hub:usage', JSON.stringify({ 'pdf-merge': 8, base64: 2 }));
+    const root = startApp();
+    await vi.waitFor(() => expect(root.querySelectorAll('#tool-grid .tool-card')).toHaveLength(14));
+    expect(root.querySelector<HTMLElement>('#tool-grid .tool-card')?.dataset.toolId).toBe('pdf-merge');
+  });
 });

@@ -21,7 +21,9 @@
 
 Phase 1 ไม่มี Runtime Dependency, Phase 2 เพิ่ม Dependency สำหรับ QR Code และ Phase 3 เพิ่ม Dependency สำหรับสร้าง/แก้ไข/เรนเดอร์ PDF ทุกตัวถูก Bundle ภายใน Production build โดยไม่โหลด Third-party Script หรือ CDN
 
-ข้อมูล Favorites, Recent Tools และ Theme เก็บเฉพาะใน LocalStorage ของอุปกรณ์ ไม่เก็บเนื้อหาไฟล์หรือข้อมูลที่ผู้ใช้ป้อน หาก LocalStorage ใช้งานไม่ได้ Hub จะทำงานต่อด้วยข้อมูลชั่วคราวใน Memory
+ข้อมูล Favorites, Recent Tools, Theme, ภาษา, Tool order และจำนวนครั้งที่เปิดเครื่องมือเก็บเฉพาะใน LocalStorage ของอุปกรณ์ ไม่เก็บเนื้อหาไฟล์หรือข้อมูลที่ผู้ใช้ป้อน หาก LocalStorage ใช้งานไม่ได้ Hub จะทำงานต่อด้วยข้อมูลชั่วคราวใน Memory
+
+Phase 5 ให้ผู้ใช้ส่งออกข้อมูลเหล่านี้เป็น JSON `schemaVersion: 1` และนำกลับเข้ามาได้ด้วยการเลือกไฟล์บนอุปกรณ์ ไฟล์ถูกอ่านใน Browser เท่านั้น, จำกัดขนาด 256 KB และตรวจ Schema/Tool ID ก่อนบันทึก ไม่มีการ Upload, Sync หรือ Backend account
 
 Phase 4 ใช้ IndexedDB เก็บเฉพาะ `toolId`, Tool/Cache version, เวลาเตรียม Offline และจำนวน Resource ที่ Cache แล้ว ไม่มีชื่อไฟล์ เนื้อหาไฟล์ Hash หรือผลลัพธ์ถูกเก็บใน IndexedDB
 
