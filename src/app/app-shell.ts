@@ -182,13 +182,14 @@ export class AppShell {
 
       <section id="favorites-section" class="section-block" aria-labelledby="favorites-title"></section>
       <section id="recent-section" class="section-block" aria-labelledby="recent-title"></section>
+      <output id="favorite-status" class="visually-hidden" aria-live="polite"></output>
     `;
 
     const searchInput = main.querySelector<HTMLInputElement>('#tool-search');
     const favoritesCheckbox = main.querySelector<HTMLInputElement>('#favorites-only');
     const categoryTabs = main.querySelector<HTMLElement>('#category-tabs');
 
-    const refresh = (): void => {
+    const refresh = (animatedFavoriteId?: string): void => {
       const favorites = this.preferences.getFavorites();
       const filtered = filterTools(toolCatalog, { query, category: activeCategory, favorites, favoritesOnly });
       const grid = main.querySelector<HTMLElement>('#tool-grid');
@@ -196,11 +197,14 @@ export class AppShell {
       if (count) count.textContent = `${filtered.length} เครื่องมือ`;
       if (grid) {
         grid.innerHTML = filtered.length
-          ? filtered.map((tool) => this.toolCard(tool, favorites)).join('')
+          ? filtered.map((tool) => this.toolCard(tool, favorites, animatedFavoriteId)).join('')
           : this.emptyState('ไม่พบเครื่องมือที่ตรงกับการค้นหา', 'ลองเปลี่ยนคำค้น หมวดหมู่ หรือตัวกรองรายการโปรด');
       }
-      this.renderFavorites(main, favorites);
-      this.renderRecent(main, favorites);
+      this.renderFavorites(main, favorites, animatedFavoriteId);
+      this.renderRecent(main, favorites, animatedFavoriteId);
+      main.querySelectorAll<HTMLElement>('.favorite-button.is-bouncing').forEach((button) => {
+        button.addEventListener('animationend', () => button.classList.remove('is-bouncing'), { once: true });
+      });
       void this.refreshOfflineButtons(main);
     };
 
@@ -226,8 +230,12 @@ export class AppShell {
       if (!target) return;
       const action = target.dataset.action;
       if (action === 'favorite' && target.dataset.id) {
-        this.preferences.toggleFavorite(target.dataset.id);
-        refresh();
+        const toolId = target.dataset.id;
+        const isFavorite = this.preferences.toggleFavorite(toolId);
+        refresh(toolId);
+        const live = main.querySelector<HTMLOutputElement>('#favorite-status');
+        const tool = toolCatalog.find(({ id }) => id === toolId);
+        if (live && tool) live.textContent = `${isFavorite ? 'เพิ่ม' : 'นำ'} ${tool.title} ${isFavorite ? 'ใน' : 'ออกจาก'}รายการโปรดแล้ว`;
       }
       if (action === 'clear-recent') {
         this.preferences.clearRecent();
@@ -260,17 +268,17 @@ export class AppShell {
     refresh();
   }
 
-  private renderFavorites(main: HTMLElement, favorites: ReadonlySet<string>): void {
+  private renderFavorites(main: HTMLElement, favorites: ReadonlySet<string>, animatedFavoriteId?: string): void {
     const section = main.querySelector<HTMLElement>('#favorites-section');
     if (!section) return;
     const tools = toolCatalog.filter((tool) => favorites.has(tool.id));
     section.innerHTML = `
       <div class="section-heading"><div><div class="eyebrow">Saved locally</div><h2 id="favorites-title">รายการโปรด</h2></div><span class="result-count">${tools.length}</span></div>
-      ${tools.length ? `<div class="tool-grid tool-grid--compact">${tools.map((tool) => this.toolCard(tool, favorites)).join('')}</div>` : this.emptyState('ยังไม่มีรายการโปรด', 'กดรูปดาวบน Tool Card เพื่อเก็บเครื่องมือไว้ในอุปกรณ์นี้')}
+      ${tools.length ? `<div class="tool-grid tool-grid--compact">${tools.map((tool) => this.toolCard(tool, favorites, animatedFavoriteId)).join('')}</div>` : this.emptyState('ยังไม่มีรายการโปรด', 'กดรูปดาวบน Tool Card เพื่อเก็บเครื่องมือไว้ในอุปกรณ์นี้')}
     `;
   }
 
-  private renderRecent(main: HTMLElement, favorites: ReadonlySet<string>): void {
+  private renderRecent(main: HTMLElement, favorites: ReadonlySet<string>, animatedFavoriteId?: string): void {
     const section = main.querySelector<HTMLElement>('#recent-section');
     if (!section) return;
     const recentIds = this.preferences.getRecent();
@@ -280,17 +288,18 @@ export class AppShell {
         <div><div class="eyebrow">On this device</div><h2 id="recent-title">เปิดล่าสุด</h2></div>
         ${tools.length ? '<button class="text-button" type="button" data-action="clear-recent">ล้างประวัติ</button>' : ''}
       </div>
-      ${tools.length ? `<div class="tool-grid tool-grid--compact">${tools.map((tool) => this.toolCard(tool, favorites)).join('')}</div>` : this.emptyState('ยังไม่มีประวัติ', 'เครื่องมือที่คุณเปิดจะปรากฏตรงนี้โดยเก็บเฉพาะในอุปกรณ์')}
+      ${tools.length ? `<div class="tool-grid tool-grid--compact">${tools.map((tool) => this.toolCard(tool, favorites, animatedFavoriteId)).join('')}</div>` : this.emptyState('ยังไม่มีประวัติ', 'เครื่องมือที่คุณเปิดจะปรากฏตรงนี้โดยเก็บเฉพาะในอุปกรณ์')}
     `;
   }
 
-  private toolCard(tool: ToolMetadata, favorites: ReadonlySet<string>): string {
+  private toolCard(tool: ToolMetadata, favorites: ReadonlySet<string>, animatedFavoriteId?: string): string {
     const isFavorite = favorites.has(tool.id);
+    const animationClass = animatedFavoriteId === tool.id ? ' is-bouncing' : '';
     return `
       <article class="tool-card" data-tool-id="${tool.id}">
         <div class="tool-card__top">
           <span class="tool-card__visual">${toolAssetIcon(tool.icon)}</span>
-          <button class="favorite-button" type="button" data-action="favorite" data-id="${tool.id}" aria-label="${isFavorite ? 'นำออกจาก' : 'เพิ่มใน'}รายการโปรด: ${this.escapeHtml(tool.title)}" aria-pressed="${isFavorite}"><span aria-hidden="true">${isFavorite ? '★' : '☆'}</span></button>
+          <button class="favorite-button${animationClass}" type="button" data-action="favorite" data-id="${tool.id}" aria-label="${isFavorite ? 'นำออกจาก' : 'เพิ่มใน'}รายการโปรด: ${this.escapeHtml(tool.title)}" aria-pressed="${isFavorite}"><span aria-hidden="true">${isFavorite ? '★' : '☆'}</span></button>
         </div>
         <div class="tool-card__body">
           <div class="tool-card__meta"><span>${this.escapeHtml(tool.category)}</span>${this.statusBadge(tool)}</div>
