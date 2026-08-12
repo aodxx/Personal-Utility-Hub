@@ -297,19 +297,20 @@ export class AppShell {
     const animationClass = animatedFavoriteId === tool.id ? ' is-bouncing' : '';
     return `
       <article class="tool-card" data-tool-id="${tool.id}">
+        <a class="tool-card__tap-target" href="#${tool.route}" aria-label="${this.escapeHtml(tool.title)}"></a>
         <div class="tool-card__top">
           <span class="tool-card__visual">${toolAssetIcon(tool.icon)}</span>
-          <button class="favorite-button${animationClass}" type="button" data-action="favorite" data-id="${tool.id}" aria-label="${isFavorite ? 'นำออกจาก' : 'เพิ่มใน'}รายการโปรด: ${this.escapeHtml(tool.title)}" aria-pressed="${isFavorite}"><span aria-hidden="true">${isFavorite ? '★' : '☆'}</span></button>
         </div>
+        <button class="favorite-button${animationClass}" type="button" data-action="favorite" data-id="${tool.id}" aria-label="${isFavorite ? 'นำออกจาก' : 'เพิ่มใน'}รายการโปรด: ${this.escapeHtml(tool.title)}" aria-pressed="${isFavorite}"><span aria-hidden="true">${isFavorite ? '★' : '☆'}</span></button>
         <div class="tool-card__body">
           <div class="tool-card__meta"><span>${this.escapeHtml(tool.category)}</span>${this.statusBadge(tool)}</div>
-          <h3><a href="#${tool.route}">${this.escapeHtml(tool.title)}</a></h3>
+          <h3>${this.escapeHtml(tool.title)}</h3>
           <p>${this.escapeHtml(tool.description)}</p>
         </div>
         <div class="tool-card__footer">
           <span class="privacy-badge">✓ ในเครื่อง</span>
           ${tool.supportsOffline ? `<button class="offline-cache-button" type="button" data-action="offline" data-id="${tool.id}" data-offline-state="not-ready" aria-label="เตรียม ${this.escapeHtml(tool.title)} ไว้ใช้ Offline">เตรียม Offline</button>` : ''}
-          <a class="tool-card__link" href="#${tool.route}" aria-label="เปิด ${this.escapeHtml(tool.title)}">เปิด <span aria-hidden="true">→</span></a>
+          <span class="tool-card__arrow" aria-hidden="true">→</span>
         </div>
       </article>
     `;
