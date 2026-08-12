@@ -258,6 +258,10 @@ PR #10 Merge แล้ว และ Production GitHub Pages ตอบ HTTP 200 �
 - TypeScript, Unit/Integration 40/40, Production build, Bundle Budget, audit 0 vulnerabilities และ `git diff --check` ผ่านในเครื่อง
 - เพิ่ม Playwright ตรวจ Mobile 360 × 740 ว่ามี Tool Cards เต็มอย่างน้อย 3 ใบใน viewport และ Layout/สถานะปุ่มถูกต้อง
 - Draft PR #11 และ GitHub Actions CI Run #40 ผ่าน: Playwright 37 executions ผ่านทั้งหมด พร้อม 2 skips ที่ตั้งใจไว้สำหรับ test เฉพาะ Android entry บน Desktop/Pixel 7
+- PR #11 Merge เข้า `main` ที่ `41a646b95c9c857eb93d13590c1e2cc118e86325`
+- หลังทดสอบ Production พบไอคอน Mobile ล้นลงทับ Privacy/Offline footer และจุดเปิด Tool ยังเล็ก จึงแยก Draft PR #12 บน Branch `agent/fix-tool-card-interaction`
+- PR #12 เปลี่ยน Icon wrapper เป็น Grid area ที่มีขอบเขตชัดเจน, นำ `display: contents` ออก, จำกัด SVG overflow และทำ Full-card semantic link โดยแยก Favorite/Offline controls ไว้เหนือ Link layer
+- GitHub Actions CI Run #44 ผ่าน: 40/40 Unit/Integration, Playwright 37 ผ่าน พร้อม 2 intentional skips, TypeScript, Production build และ Bundle Budget ผ่านครบ
 
 ---
 
