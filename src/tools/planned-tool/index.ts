@@ -1,4 +1,5 @@
 import type { ToolMetadata, ToolModule } from '../../core/tool-contract';
+import { toolAssetIcon } from '../../components/asset-icon';
 
 export function createPlannedTool(metadata: ToolMetadata): ToolModule {
   return {
@@ -7,7 +8,7 @@ export function createPlannedTool(metadata: ToolMetadata): ToolModule {
       const section = document.createElement('section');
       section.className = 'planned-panel';
       section.innerHTML = `
-        <span class="planned-panel__icon" aria-hidden="true">${metadata.icon ?? '◇'}</span>
+        <span class="planned-panel__visual">${toolAssetIcon(metadata.icon)}</span>
         <div>
           <p class="eyebrow">กำลังพัฒนาใน Phase 2</p>
           <h2>เครื่องมือนี้อยู่ในแผน Core Tools</h2>

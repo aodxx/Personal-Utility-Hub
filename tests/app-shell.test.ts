@@ -28,6 +28,8 @@ describe('AppShell integration', () => {
     const root = startApp();
     await vi.waitFor(() => expect(root.textContent).toContain('เครื่องมือที่ต้องใช้'));
     expect(root.querySelectorAll('#tool-grid .tool-card')).toHaveLength(8);
+    expect(root.querySelectorAll('.category-tab .asset-icon')).toHaveLength(8);
+    expect(root.querySelectorAll('#tool-grid .tool-card .asset-icon')).toHaveLength(8);
 
     const search = root.querySelector<HTMLInputElement>('#tool-search');
     if (!search) throw new Error('missing search input');

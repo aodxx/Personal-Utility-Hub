@@ -4,8 +4,8 @@
 > ข้อกำหนดผลิตภัณฑ์ให้อ้างอิง `PRD.md` ส่วนผลการทดสอบโดยละเอียดให้อ้างอิง `TEST_REPORT.md`
 
 **อัปเดตล่าสุด:** 12 สิงหาคม 2026  
-**สถานะโครงการ:** Phase 0 และ Phase 1 เสร็จสิ้นแล้ว  
-**Phase ปัจจุบัน:** เตรียมเริ่ม Phase 2 — Core Tools  
+**สถานะโครงการ:** Phase 0 และ Phase 1 เสร็จสิ้น; Phase 2 เริ่มงาน Visual System Upgrade
+**Phase ปัจจุบัน:** Phase 2 — Visual System Foundation ก่อน Core Tools
 **เวอร์ชันปัจจุบัน:** `0.2.0`  
 **เว็บไซต์:** https://aodxx.github.io/Personal-Utility-Hub/
 
@@ -17,7 +17,7 @@
 |---|---|---|---|
 | Phase 0 | Foundation | ✅ เสร็จสิ้นและเผยแพร่แล้ว | PR #1, Foundation CI ผ่าน, GitHub Pages ทำงาน |
 | Phase 1 | Hub MVP | ✅ เสร็จสิ้น Merge และเผยแพร่แล้ว | PR #6, CI 22/22, E2E 8/8, Deploy ผ่าน |
-| Phase 2 | Core Tools | ⏳ ยังไม่เริ่ม | เครื่องมือ 7 รายการยังเป็นสถานะ “เร็ว ๆ นี้” |
+| Phase 2 | Visual System + Core Tools | 🚧 กำลังดำเนินการ | เริ่ม 3D Asset System ก่อนพัฒนาเครื่องมือ 7 รายการ |
 | Phase 3 | File Tools | ⬜ ยังไม่เริ่ม | รอ Phase 2 |
 | Phase 4 | Performance and Offline | ⬜ ยังไม่เริ่ม | รอ Phase 3 |
 | Phase 5 | Product Expansion | ⬜ ยังไม่เริ่ม | รอ Phase 4 |
@@ -95,9 +95,24 @@
 
 ## 4. Phase 2 — Core Tools
 
-**สถานะ:** ⏳ ยังไม่เริ่ม  
-**Branch:** ยังไม่มี  
-**Pull Request:** ยังไม่มี
+**สถานะ:** 🚧 กำลังดำเนินการ
+**Branch:** `agent/phase-2-visual-system`
+**Pull Request:** [#7 — Build Phase 2 3D visual system](https://github.com/aodxx/Personal-Utility-Hub/pull/7) (Draft)
+**Visual System commit:** `3c1f395c72e2001941514c28d3a26b019a282299`
+
+### Visual System Upgrade — กำลังดำเนินการ
+
+- สร้าง Art Direction แบบ 3D clay/glass โทน Indigo–Violet–Cyan พร้อม Lime accent
+- สร้างชุด Asset สำหรับ 8 Category states และ 7 Core Tools
+- ใช้ self-hosted SVG sprite เพื่อความคมชัด ไฟล์เล็ก และใช้งาน Offline
+- เพิ่ม typed asset renderer และ Category/Tool asset mapping
+- ปรับ Hero, Tool Card, Category tabs และ Planned Tool panel ให้รองรับภาพ 3D
+- เพิ่ม Design Tokens สำหรับ gradient, shadow, visual surface และขนาด Asset ใน Light/Dark Mode
+- เพิ่ม Asset เข้า Service Worker precache
+- เพิ่มเอกสาร `docs/VISUAL_SYSTEM.md` และ automated asset validation
+- GitHub Actions CI Run #20 ผ่าน: TypeScript, 25/25 Unit/Integration, Production build และ Playwright 8/8 บน Desktop/Android
+
+งานนี้เป็น Foundation ชุดแรกของ Phase 2 และยังไม่ถือว่า Core Tools ทั้ง 7 ทำงานแล้ว
 
 ### ขอบเขตตาม PRD
 
@@ -122,7 +137,7 @@
 
 ### ขั้นตอนถัดไป
 
-เริ่ม Phase 2 บน Branch ใหม่ โดยวาง shared utilities ที่จำเป็น แล้วพัฒนา Core Tools เป็นชุดย่อยที่ทดสอบและตรวจ Privacy ได้ ก่อนเปิด Pull Request และเผยแพร่
+ปิด Visual System Upgrade ให้ผ่าน CI และ Browser validation ก่อน แล้วจึงพัฒนา Core Tools เป็นชุดย่อยที่ทดสอบและตรวจ Privacy ได้
 
 ---
 
@@ -164,7 +179,8 @@
 
 ### Blocking
 
-- ไม่มีปัญหาที่ขวางการเริ่ม Phase 2
+- ไม่มีปัญหาที่ขวางการพัฒนา Source
+- Browser E2E ใน Local workspace ยังรันไม่ได้เพราะไม่มี Playwright Chromium แต่ยืนยันผ่าน GitHub Actions CI Run #20 แล้ว
 
 ### Non-blocking / ต้องตรวจภายหลัง
 
@@ -186,6 +202,8 @@
 | 12 ส.ค. 2026 | Core Tools 7 รายการแสดงเป็น Planned ใน Phase 1 | ให้ผู้ใช้เห็น Roadmap โดยยังไม่อ้างว่าเครื่องมือทำงานแล้ว |
 | 12 ส.ค. 2026 | ใช้ GitHub Actions เป็น GitHub Pages source | เผยแพร่ Vite `dist` แทน Source code ที่ยังไม่ Build |
 | 12 ส.ค. 2026 | เพิ่ม `PROGRESS.md` เป็นสถานะกลาง | ลดความคลาดเคลื่อนระหว่าง PRD, PR, CI และเว็บไซต์จริง |
+| 12 ส.ค. 2026 | เริ่ม Phase 2 ด้วย 3D Visual System Upgrade | ทำให้ Category และ Tool UI ใช้ภาพคุณภาพสูงในทิศทางเดียวกันก่อนเปิดใช้ Core Tools |
+| 12 ส.ค. 2026 | ใช้ self-hosted SVG sprite เป็น Production Asset | คมชัด ไฟล์เล็ก รองรับ Offline และไม่พึ่ง CDN/API |
 
 ---
 
@@ -220,5 +238,6 @@
 - [TEST_REPORT.md](TEST_REPORT.md) — ผลการทดสอบล่าสุด
 - [docs/ADDING_A_TOOL.md](docs/ADDING_A_TOOL.md) — มาตรฐานการเพิ่ม Tool
 - [docs/PRIVACY_AND_DEPENDENCIES.md](docs/PRIVACY_AND_DEPENDENCIES.md) — Privacy และ Dependency policy
+- [docs/VISUAL_SYSTEM.md](docs/VISUAL_SYSTEM.md) — Art direction, Asset IDs และกฎการใช้งาน 3D Visual System
 
 ลำดับความสำคัญของข้อมูลคือ: `PRD.md` กำหนดว่า **ต้องสร้างอะไร**, `PROGRESS.md` ระบุว่า **ทำถึงไหนแล้ว**, และ `TEST_REPORT.md` แสดงว่า **ตรวจสอบอย่างไรและผ่านหรือไม่**
