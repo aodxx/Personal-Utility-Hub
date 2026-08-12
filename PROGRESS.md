@@ -4,9 +4,9 @@
 > ข้อกำหนดผลิตภัณฑ์ให้อ้างอิง `PRD.md` ส่วนผลการทดสอบโดยละเอียดให้อ้างอิง `TEST_REPORT.md`
 
 **อัปเดตล่าสุด:** 12 สิงหาคม 2026  
-**สถานะโครงการ:** Phase 0 และ Phase 1 เสร็จสิ้น; Phase 2 เริ่มงาน Visual System Upgrade
-**Phase ปัจจุบัน:** Phase 2 — Visual System Foundation ก่อน Core Tools
-**เวอร์ชันปัจจุบัน:** `0.2.0`  
+**สถานะโครงการ:** Phase 0 และ Phase 1 เสร็จสิ้น; Phase 2 Visual System เผยแพร่แล้วและ Core Tools ผ่าน CI/Browser validation ใน Draft PR
+**Phase ปัจจุบัน:** Phase 2 — Core Tools
+**เวอร์ชันปัจจุบัน:** `0.4.0`
 **เว็บไซต์:** https://aodxx.github.io/Personal-Utility-Hub/
 
 ---
@@ -17,7 +17,7 @@
 |---|---|---|---|
 | Phase 0 | Foundation | ✅ เสร็จสิ้นและเผยแพร่แล้ว | PR #1, Foundation CI ผ่าน, GitHub Pages ทำงาน |
 | Phase 1 | Hub MVP | ✅ เสร็จสิ้น Merge และเผยแพร่แล้ว | PR #6, CI 22/22, E2E 8/8, Deploy ผ่าน |
-| Phase 2 | Visual System + Core Tools | 🚧 กำลังดำเนินการ | เริ่ม 3D Asset System ก่อนพัฒนาเครื่องมือ 7 รายการ |
+| Phase 2 | Visual System + Core Tools | 🧪 พร้อมตรวจและ Merge | Visual System Merge แล้ว; Core Tools 7 รายการผ่าน CI 31/31 และ E2E 14/14 ใน PR #8 |
 | Phase 3 | File Tools | ⬜ ยังไม่เริ่ม | รอ Phase 2 |
 | Phase 4 | Performance and Offline | ⬜ ยังไม่เริ่ม | รอ Phase 3 |
 | Phase 5 | Product Expansion | ⬜ ยังไม่เริ่ม | รอ Phase 4 |
@@ -95,12 +95,23 @@
 
 ## 4. Phase 2 — Core Tools
 
-**สถานะ:** 🚧 กำลังดำเนินการ
-**Branch:** `agent/phase-2-visual-system`
-**Pull Request:** [#7 — Build Phase 2 3D visual system](https://github.com/aodxx/Personal-Utility-Hub/pull/7) (Draft)
-**Visual System commit:** `3c1f395c72e2001941514c28d3a26b019a282299`
+**สถานะ:** 🧪 รอตรวจสอบ
 
-### Visual System Upgrade — กำลังดำเนินการ
+**Core Tools Branch:** `agent/phase-2-core-tools`
+
+**Core Tools Pull Request:** [#8 — Build Phase 2 core tools](https://github.com/aodxx/Personal-Utility-Hub/pull/8) (Draft)
+
+**Core Tools source commit:** [`f87df1d37bb75bf38cc0638612d9730991a3338f`](https://github.com/aodxx/Personal-Utility-Hub/commit/f87df1d37bb75bf38cc0638612d9730991a3338f)
+
+**Local source commit:** `bdf2a64a041e5c5b14c7a71b4321d656a861d0ea` (Git tree ตรงกับ Remote Head)
+
+**Visual System PR:** [#7 — Build Phase 2 3D visual system](https://github.com/aodxx/Personal-Utility-Hub/pull/7)
+
+**Visual System Merge commit:** [`f128766b13796298739890cb3ade7fa5938d6f50`](https://github.com/aodxx/Personal-Utility-Hub/commit/f128766b13796298739890cb3ade7fa5938d6f50)
+
+**Merged:** 12 สิงหาคม 2026
+
+### Visual System Upgrade — ✅ Merge และเผยแพร่แล้ว
 
 - สร้าง Art Direction แบบ 3D clay/glass โทน Indigo–Violet–Cyan พร้อม Lime accent
 - สร้างชุด Asset สำหรับ 8 Category states และ 7 Core Tools
@@ -110,34 +121,36 @@
 - เพิ่ม Design Tokens สำหรับ gradient, shadow, visual surface และขนาด Asset ใน Light/Dark Mode
 - เพิ่ม Asset เข้า Service Worker precache
 - เพิ่มเอกสาร `docs/VISUAL_SYSTEM.md` และ automated asset validation
-- GitHub Actions CI Run #20 ผ่าน: TypeScript, 25/25 Unit/Integration, Production build และ Playwright 8/8 บน Desktop/Android
+- GitHub Actions CI Run #22 ผ่าน: TypeScript, 25/25 Unit/Integration, Production build และ Playwright 8/8 บน Desktop/Android
+- GitHub Pages Deploy Run #9 หลัง Merge — ผ่าน
 
-งานนี้เป็น Foundation ชุดแรกของ Phase 2 และยังไม่ถือว่า Core Tools ทั้ง 7 ทำงานแล้ว
+### Core Tools — 🧪 พัฒนาเสร็จและผ่าน GitHub Actions
 
-### ขอบเขตตาม PRD
+- JSON Formatter / Validator — Format, Minify, Validate และ Copy
+- Base64 Encoder / Decoder — รองรับ UTF-8 ภาษาไทยและอีโมจิ
+- Text Formatter — Trim lines, Collapse spaces, Remove blank lines และ Case conversion
+- QR Code Generator — PNG 256/512/1024 px ด้วย `qrcode`
+- Image Resizer — กำหนด Width/Height, Lock ratio, Preview และ Download
+- Image Converter — PNG/JPEG/WebP, Quality, Preview และ Download
+- QR Code Reader — อ่านจาก PNG/JPEG/WebP หรือกล้องด้วย `jsqr`
+- ทุก Tool เปลี่ยน Metadata จาก `planned` เป็น `active` และโหลด Bundle แบบ Lazy
+- เพิ่ม Responsive Tool UI, Loading/Success/Error states และ Keyboard-friendly controls
+- เพิ่ม file size/dimension limits, ImageBitmap cleanup, Object URL cleanup และ Camera lifecycle
+- Service Worker cache version เปลี่ยนเป็น `utility-hub-v0.4.0-core-tools`
 
-1. JSON Formatter / Validator
-2. Base64 Encoder / Decoder
-3. Text Formatter
-4. QR Code Generator
-5. Image Resizer
-6. Image Converter
-7. QR Code Reader
+### ผลการตรวจในเครื่อง
 
-### เกณฑ์ร่วมของทุก Tool
-
-- ทำตาม `ToolModule` และ `ToolMetadata` contract
-- ประมวลผลภายใน Browser และไม่ส่งข้อมูลผู้ใช้ไป Backend/API
-- ตรวจสอบข้อมูลหรือไฟล์ก่อนประมวลผล
-- มี Loading, Success และ Error state ที่เข้าใจง่าย
-- ล้าง Event Listener, Object URL, Worker และข้อมูลชั่วคราวเมื่อ `unmount()`
-- รองรับมือถือและ Keyboard ในส่วนสำคัญ
-- มี Unit tests และ Browser flow สำหรับพฤติกรรมหลัก
-- อัปเดต `README.md`, `TEST_REPORT.md` และ `PROGRESS.md` ก่อน Merge
+- TypeScript strict typecheck — ผ่าน
+- Unit/Integration — 31/31
+- Production build และ GitHub Pages subpath — ผ่าน
+- Service Worker syntax และ `git diff --check` — ผ่าน
+- Dependency audit — 0 vulnerabilities
+- GitHub Actions CI Run #24 — ผ่าน
+- Playwright 7 cases × 2 viewports = 14 executions — ผ่าน 14/14 บน Desktop Chromium และ Android Pixel 7
 
 ### ขั้นตอนถัดไป
 
-ปิด Visual System Upgrade ให้ผ่าน CI และ Browser validation ก่อน แล้วจึงพัฒนา Core Tools เป็นชุดย่อยที่ทดสอบและตรวจ Privacy ได้
+ตรวจ Draft PR #8 และ Merge เข้า `main` เมื่อพร้อม จากนั้นตรวจ GitHub Pages deployment และทดสอบ QR Reader ด้วยกล้องบน Android จริง
 
 ---
 
@@ -158,20 +171,20 @@
 - ไม่มี Analytics ที่เก็บข้อมูลส่วนบุคคลหรือเนื้อหาไฟล์
 - Favorites, Recent Tools และ Theme เก็บใน LocalStorage ของอุปกรณ์
 - เมื่อ LocalStorage ใช้งานไม่ได้ ระบบทำงานต่อด้วย Memory fallback
-- ไม่มี Runtime Dependency หรือ Third-party Script ใน Phase 1
+- Runtime Dependency มีเฉพาะ `qrcode@1.5.4` และ `jsqr@1.4.0`; Bundle แบบ Lazy ไม่มี CDN/API/telemetry
 
 ### สถานะเครื่องมือ
 
-| Tool | สถานะปัจจุบัน | Phase เป้าหมาย |
+| Tool | Production `main` | Branch `agent/phase-2-core-tools` |
 |---|---|---|
-| Foundation Lifecycle Demo | Active | Phase 0 |
-| JSON Formatter / Validator | Planned | Phase 2 |
-| Base64 Encoder / Decoder | Planned | Phase 2 |
-| Text Formatter | Planned | Phase 2 |
-| QR Code Generator | Planned | Phase 2 |
-| Image Resizer | Planned | Phase 2 |
-| Image Converter | Planned | Phase 2 |
-| QR Code Reader | Planned | Phase 2 |
+| Foundation Lifecycle Demo | Active | Active |
+| JSON Formatter / Validator | Planned | Active — CI/E2E ผ่าน |
+| Base64 Encoder / Decoder | Planned | Active — CI/E2E ผ่าน |
+| Text Formatter | Planned | Active — CI/E2E ผ่าน |
+| QR Code Generator | Planned | Active — CI/E2E ผ่าน |
+| Image Resizer | Planned | Active — CI/E2E ผ่าน |
+| Image Converter | Planned | Active — CI/E2E ผ่าน |
+| QR Code Reader | Planned | Active — CI/E2E ผ่าน |
 
 ---
 
@@ -179,14 +192,13 @@
 
 ### Blocking
 
-- ไม่มีปัญหาที่ขวางการพัฒนา Source
-- Browser E2E ใน Local workspace ยังรันไม่ได้เพราะไม่มี Playwright Chromium แต่ยืนยันผ่าน GitHub Actions CI Run #20 แล้ว
+- ไม่มีปัญหาที่ขวางการตรวจและ Merge PR #8
 
 ### Non-blocking / ต้องตรวจภายหลัง
 
 - ทดสอบติดตั้ง PWA บนอุปกรณ์ Android จริง
 - ทดสอบ Offline App Shell บนอุปกรณ์จริงหลังเคยเปิดเว็บไซต์อย่างน้อยหนึ่งครั้ง
-- เมื่อเริ่มเครื่องมือรูปภาพและ QR Reader ต้องกำหนดขนาดไฟล์สูงสุด การคืน Object URL และการขอสิทธิ์กล้องอย่างชัดเจน
+- ทดสอบ QR Reader ด้วยกล้องจริงบน Android หลัง Merge; automated suite ตรวจ flow จากไฟล์ QR ส่วน lifecycle กล้องตรวจจาก Source/DOM
 - ต้องทบทวน Service Worker cache version ทุกครั้งที่เปลี่ยน Production assets เพื่อป้องกันหน้าเก่าค้าง
 
 ---
@@ -204,6 +216,8 @@
 | 12 ส.ค. 2026 | เพิ่ม `PROGRESS.md` เป็นสถานะกลาง | ลดความคลาดเคลื่อนระหว่าง PRD, PR, CI และเว็บไซต์จริง |
 | 12 ส.ค. 2026 | เริ่ม Phase 2 ด้วย 3D Visual System Upgrade | ทำให้ Category และ Tool UI ใช้ภาพคุณภาพสูงในทิศทางเดียวกันก่อนเปิดใช้ Core Tools |
 | 12 ส.ค. 2026 | ใช้ self-hosted SVG sprite เป็น Production Asset | คมชัด ไฟล์เล็ก รองรับ Offline และไม่พึ่ง CDN/API |
+| 12 ส.ค. 2026 | ใช้ `qrcode` และ `jsqr` เฉพาะ Tool ที่เกี่ยวข้องแบบ Lazy | Browser API ไม่มีมาตรฐานสร้าง QR และการรองรับ BarcodeDetector ยังไม่สม่ำเสมอ |
+| 12 ส.ค. 2026 | จำกัด Image input 15 MB, 12,000 px/ด้าน และ 24 MP | ลดความเสี่ยง Memory สูงบน Android และให้ Error ที่เข้าใจได้ก่อนประมวลผล |
 
 ---
 

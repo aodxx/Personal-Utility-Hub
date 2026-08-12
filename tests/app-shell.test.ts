@@ -51,7 +51,7 @@ describe('AppShell integration', () => {
 
     window.location.hash = '#/tools/json-formatter';
     window.dispatchEvent(new HashChangeEvent('hashchange'));
-    await vi.waitFor(() => expect(root.textContent).toContain('เครื่องมือนี้อยู่ในแผน Core Tools'));
+    await vi.waitFor(() => expect(root.textContent).toContain('จัดรูปแบบและตรวจสอบ JSON'));
 
     window.location.hash = '#/';
     window.dispatchEvent(new HashChangeEvent('hashchange'));

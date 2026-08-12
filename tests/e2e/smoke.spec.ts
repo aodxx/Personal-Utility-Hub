@@ -16,10 +16,10 @@ test('searches, filters and saves a favorite', async ({ page }) => {
   await expect(page.locator('#favorites-section')).toContainText('JSON Formatter');
 });
 
-test('opens a planned tool, records history and toggles theme', async ({ page }) => {
+test('opens an active tool, records history and toggles theme', async ({ page }) => {
   await page.goto('./');
   await page.getByRole('link', { name: 'JSON Formatter / Validator', exact: true }).click();
-  await expect(page.getByRole('heading', { name: 'เครื่องมือนี้อยู่ในแผน Core Tools' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'จัดรูปแบบและตรวจสอบ JSON' })).toBeVisible();
   await page.getByRole('link', { name: 'กลับหน้า Hub' }).first().click();
   await expect(page.locator('#recent-section')).toContainText('JSON Formatter');
   await page.getByRole('button', { name: 'เปลี่ยนเป็นธีมมืด' }).click();

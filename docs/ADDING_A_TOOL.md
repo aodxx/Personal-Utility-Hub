@@ -1,6 +1,6 @@
 # คู่มือเพิ่ม Tool Module
 
-เอกสารนี้ใช้กับสถาปัตยกรรม Phase 0 ของ Personal Utility Hub เครื่องมือใหม่ต้องเพิ่มผ่าน Registry และไม่แก้ Router หรือ Search Core โดยตรง
+เอกสารนี้ใช้กับสถาปัตยกรรม Modular Tool ของ Personal Utility Hub เครื่องมือใหม่ต้องเพิ่มผ่าน Registry และไม่แก้ Router หรือ Search Core โดยตรง
 
 ## 1. สร้างโฟลเดอร์
 
