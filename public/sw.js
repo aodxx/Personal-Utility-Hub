@@ -57,7 +57,7 @@ self.addEventListener('fetch', (event) => {
   }
 
   event.respondWith((async () => {
-    const cached = await caches.match(request);
+    const cached = await caches.match(request, { ignoreVary: true });
     if (cached) return cached;
 
     const response = await fetch(request);

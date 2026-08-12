@@ -35,6 +35,7 @@ describe('PWA assets', () => {
     expect(serviceWorker).toContain('cache.addAll(urls)');
     expect(serviceWorker).toContain("const APP_SHELL_URL = new URL('index.html', APP_SCOPE).href");
     expect(serviceWorker.indexOf('caches.match(APP_SHELL_URL)')).toBeLessThan(serviceWorker.indexOf('caches.match(APP_SCOPE)'));
+    expect(serviceWorker).toContain('caches.match(request, { ignoreVary: true })');
     expect(serviceWorker).toContain('await cache.put(request, response.clone())');
   });
 });
