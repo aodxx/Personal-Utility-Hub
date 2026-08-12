@@ -79,4 +79,6 @@ Phase 4 ไม่เพิ่ม WebAssembly dependency ในรอบนี้
 - Category button ต้องอัปเดต `aria-pressed` หลังแตะ
 - Favorite button ต้องอัปเดต `aria-pressed`, บันทึกรายการโปรด และประกาศผลผ่าน `aria-live`
 
-Local workspace ไม่มี Chromium executable จึงยังเริ่ม Browser process ไม่ได้ การเรียก Playwright หยุดก่อนโหลดแอปและไม่ใช่ Source failure; Browser contract ใหม่นี้ต้องยืนยันผ่าน GitHub Actions หลัง Push
+Local workspace ไม่มี Chromium executable จึงยังเริ่ม Browser process ไม่ได้ การเรียก Playwright หยุดก่อนโหลดแอปและไม่ใช่ Source failure
+
+GitHub Actions CI Run #40 ยืนยัน Browser contract ใหม่แล้ว: Playwright ผ่าน **37 executions** บน Desktop Chromium, Android entry 360 × 740 และ Android Pixel 7 พร้อม **2 skips ที่ตั้งใจไว้** เนื่องจาก Compact UI case ถูกจำกัดให้รันเฉพาะ Android entry profile ผล Unit/Integration ผ่าน 40/40 และ TypeScript, Production build กับ Bundle Budget ผ่านครบ

@@ -256,7 +256,8 @@ PR #10 Merge แล้ว และ Production GitHub Pages ตอบ HTTP 200 �
 - เพิ่ม Favorite bounce หลัง LocalStorage เปลี่ยนสถานะสำเร็จ พร้อม `aria-live` feedback
 - เคารพ `prefers-reduced-motion` และคงพื้นที่แตะ Favorites 44 × 44px
 - TypeScript, Unit/Integration 40/40, Production build, Bundle Budget, audit 0 vulnerabilities และ `git diff --check` ผ่านในเครื่อง
-- เพิ่ม Playwright ตรวจ Mobile 360 × 740 ว่ามี Tool Cards เต็มอย่างน้อย 3 ใบใน viewport และ Layout/สถานะปุ่มถูกต้อง; รอ GitHub Actions เป็น Browser runtime หลัง Push
+- เพิ่ม Playwright ตรวจ Mobile 360 × 740 ว่ามี Tool Cards เต็มอย่างน้อย 3 ใบใน viewport และ Layout/สถานะปุ่มถูกต้อง
+- Draft PR #11 และ GitHub Actions CI Run #40 ผ่าน: Playwright 37 executions ผ่านทั้งหมด พร้อม 2 skips ที่ตั้งใจไว้สำหรับ test เฉพาะ Android entry บน Desktop/Pixel 7
 
 ---
 
