@@ -4,9 +4,9 @@
 > ข้อกำหนดผลิตภัณฑ์ให้อ้างอิง `PRD.md` ส่วนผลการทดสอบโดยละเอียดให้อ้างอิง `TEST_REPORT.md`
 
 **อัปเดตล่าสุด:** 12 สิงหาคม 2026  
-**สถานะโครงการ:** Phase 0–4 เสร็จสิ้นและเผยแพร่แล้ว; กำลังปรับ Compact UI และ Touch feedback ก่อนเริ่ม Phase 5
-**Phase ปัจจุบัน:** Pre-Phase 5 — UX/UI Refinement
-**เวอร์ชันปัจจุบัน:** `0.6.0`
+**สถานะโครงการ:** Phase 0–4 และ UX/UI Refinement เผยแพร่แล้ว; Phase 5 พัฒนาและผ่าน Local validation รอเปิด Draft PR
+**Phase ปัจจุบัน:** Phase 5 — Product Expansion
+**เวอร์ชันปัจจุบัน:** `0.7.0`
 **เว็บไซต์:** https://aodxx.github.io/Personal-Utility-Hub/
 
 ---
@@ -20,8 +20,8 @@
 | Phase 2 | Visual System + Core Tools | ✅ เสร็จสิ้นและเผยแพร่แล้ว | PR #7 และ #8 Merge; CI Run #26 และ Pages Run #10 ผ่าน |
 | Phase 3 | File Tools | ✅ เสร็จสิ้นและเผยแพร่แล้ว | PR #9 Merge; CI 36/36, E2E 20/20 และ Production ตอบ 200 |
 | Phase 4 | Performance and Offline | ✅ เสร็จสิ้นและเผยแพร่แล้ว | PR #10 Merge; CI Run #38 ผ่าน 40/40 Unit/Integration และ E2E 36/36 |
-| Pre-Phase 5 | UX/UI Refinement | 🟡 พัฒนาในเครื่อง | Compact Tool Cards, Touch/Ripple feedback และ Favorite bounce |
-| Phase 5 | Product Expansion | ⬜ ยังไม่เริ่ม | รอปิดงาน UX/UI Refinement |
+| Pre-Phase 5 | UX/UI Refinement | ✅ เสร็จสิ้นและเผยแพร่แล้ว | PR #11–12; Compact cards, Full-card navigation และ Touch feedback |
+| Phase 5 | Product Expansion | 🧪 รอตรวจสอบ | TH/EN, Portable Settings, Usage order และ Compatibility Check ผ่าน Local validation |
 
 ความคืบหน้าตาม Roadmap: **เสร็จแล้ว 5 จาก 6 Phase**
 
@@ -247,7 +247,7 @@ Phase 2 ปิดแล้ว เริ่ม Phase 3 จาก Merge commit `64
 
 PR #10 Merge แล้ว และ Production GitHub Pages ตอบ HTTP 200 หลัง Merge จากนั้นแยก Branch `agent/pre-phase-5-compact-ui` เพื่อปรับ UX/UI ก่อนเริ่ม Phase 5
 
-### Pre-Phase 5 UX/UI Refinement — กำลังพัฒนา
+### Pre-Phase 5 UX/UI Refinement — ✅ Merge และเผยแพร่แล้ว
 
 - ลด Tool Card บน Desktop จากความสูงขั้นต่ำ 23rem เป็น 17rem พร้อมลดขนาด Visual, Padding และตัวอักษรอย่างพอดี
 - บน Mobile 360px เปลี่ยนเป็น Horizontal card: ไอคอนซ้าย, เนื้อหากลาง, Favorites ขวา และ Footer แบบสั้นด้านล่าง
@@ -262,10 +262,43 @@ PR #10 Merge แล้ว และ Production GitHub Pages ตอบ HTTP 200 �
 - หลังทดสอบ Production พบไอคอน Mobile ล้นลงทับ Privacy/Offline footer และจุดเปิด Tool ยังเล็ก จึงแยก Draft PR #12 บน Branch `agent/fix-tool-card-interaction`
 - PR #12 เปลี่ยน Icon wrapper เป็น Grid area ที่มีขอบเขตชัดเจน, นำ `display: contents` ออก, จำกัด SVG overflow และทำ Full-card semantic link โดยแยก Favorite/Offline controls ไว้เหนือ Link layer
 - GitHub Actions CI Run #44 ผ่าน: 40/40 Unit/Integration, Playwright 37 ผ่าน พร้อม 2 intentional skips, TypeScript, Production build และ Bundle Budget ผ่านครบ
+- PR #12 Merge เข้า `main` ที่ `949103b45bdc7054181aadb6321ac89eb26ae722`
 
 ---
 
-## 7. สถานะระบบปัจจุบัน
+## 7. Phase 5 — Product Expansion
+
+**สถานะ:** 🧪 พัฒนาแล้วและรอ Browser CI/Review
+
+**Branch:** `agent/phase-5-product-expansion`
+
+**ฐาน Branch:** PR #12 Merge commit `949103b45bdc7054181aadb6321ac89eb26ae722`
+
+### สิ่งที่พัฒนาแล้วใน Branch
+
+- เพิ่มภาษาไทย/English สำหรับ App Shell, Tool Catalog, Category, Settings และ Tool header พร้อมบันทึกภาษาบนอุปกรณ์
+- เพิ่ม Settings Center สำหรับภาษา, ลำดับเครื่องมือ, Compatibility Check และข้อมูลการตัดสินใจไม่ใช้ Backend
+- ส่งออก/นำเข้าการตั้งค่า JSON `schemaVersion: 1` ครอบคลุม Theme, Favorites, Recent, ภาษา, Tool order และสถิติการเปิดใช้
+- ตรวจ Schema, Enum, Tool ID และเพดานไฟล์นำเข้า 256 KB ก่อนเขียน LocalStorage
+- บันทึกจำนวนครั้งที่เปิด Tool และเลือกเรียงแบบ Registry เดิมหรือใช้บ่อยก่อน โดยใช้ Registry order เมื่อตัวเลขเท่ากัน
+- ตรวจ File/Blob, Canvas และ Worker เป็นความสามารถจำเป็น; IndexedDB, Service Worker, Clipboard และ Camera เป็นความสามารถเสริม
+- คงสถาปัตยกรรม Static PWA โดยไม่เพิ่ม Backend หรือ Runtime dependency
+- อัปเดต Service Worker cache เป็น `v0.7.0-product-expansion`
+
+### ผลตรวจในเครื่อง
+
+- TypeScript strict typecheck — ผ่าน
+- Unit/DOM integration — 47/47
+- Production build — ผ่าน
+- Bundle Budget — Entry 15.9 KB gzip; Largest lazy 366.1 KB; JavaScript รวม 934.8 KB/24 chunks
+- Dependency audit — 0 vulnerabilities
+- Service Worker syntax และ `git diff --check` — ผ่าน
+- เตรียม Playwright เพิ่ม 4 cases × 3 profiles สำหรับภาษา, Usage order/Full-card navigation, Compatibility และ Settings round-trip
+- Local ไม่มี Chromium executable จึงรอ GitHub Actions ตรวจ Browser suite รวม 51 executions
+
+---
+
+## 8. สถานะระบบปัจจุบัน
 
 ### Architecture
 
@@ -282,22 +315,23 @@ PR #10 Merge แล้ว และ Production GitHub Pages ตอบ HTTP 200 �
 
 - ไม่มีการอัปโหลดไฟล์ผู้ใช้
 - ไม่มี Analytics ที่เก็บข้อมูลส่วนบุคคลหรือเนื้อหาไฟล์
-- Favorites, Recent Tools และ Theme เก็บใน LocalStorage ของอุปกรณ์
+- Favorites, Recent Tools, Theme, ภาษา, Tool order และสถิติการเปิดใช้เก็บใน LocalStorage ของอุปกรณ์
 - เมื่อ LocalStorage ใช้งานไม่ได้ ระบบทำงานต่อด้วย Memory fallback
 - Runtime Dependency คือ `qrcode@1.5.4`, `jsqr@1.4.0`, `pdf-lib@1.17.1` และ `pdfjs-dist@6.2.108`; ทุกตัว Bundle แบบ Lazy ไม่มี CDN/API/telemetry
 
 ### สถานะเครื่องมือ
 
-| Tool group | Production `main` | Branch `agent/phase-4-performance-offline` |
+| Tool group | Production `main` | Branch `agent/phase-5-product-expansion` |
 |---|---|---|
 | Foundation Demo | Active | Active |
-| Core Tools 7 รายการ | Active — CI/E2E ผ่าน | Active |
-| File Tools 6 รายการ | Active — CI/E2E ผ่าน | Active + Worker/Progress/Cancel |
-| Offline ราย Tool | ไม่มี | IndexedDB + Service Worker cache |
+| Core Tools 7 รายการ | Active — CI/E2E ผ่าน | Active + localized metadata |
+| File Tools 6 รายการ | Active — CI/E2E ผ่าน | Active + localized metadata |
+| Offline ราย Tool | IndexedDB + Service Worker cache | คงเดิม + Compatibility status |
+| Product Expansion | ไม่มี | TH/EN + Portable Settings + Usage order |
 
 ---
 
-## 8. ปัญหาและงานค้าง
+## 9. ปัญหาและงานค้าง
 
 ### Blocking
 
@@ -309,12 +343,12 @@ PR #10 Merge แล้ว และ Production GitHub Pages ตอบ HTTP 200 �
 - ทดสอบ Offline App Shell บนอุปกรณ์จริงหลังเคยเปิดเว็บไซต์อย่างน้อยหนึ่งครั้ง
 - ทดสอบ QR Reader ด้วยกล้องจริงบน Android หลัง Merge; automated suite ตรวจ flow จากไฟล์ QR ส่วน lifecycle กล้องตรวจจาก Source/DOM
 - ทดสอบ PDF ขนาดใกล้เพดานและไฟล์จากมือถือ Android จริงหลัง Deploy
-- Browser suite 36 executions ต้องรันใน GitHub Actions เพราะ Local ไม่มี Chromium executable
+- Browser suite 51 executions ต้องรันใน GitHub Actions เพราะ Local ไม่มี Chromium executable
 - ต้องทบทวน Service Worker cache version ทุกครั้งที่เปลี่ยน Production assets เพื่อป้องกันหน้าเก่าค้าง
 
 ---
 
-## 9. การตัดสินใจสำคัญ
+## 10. การตัดสินใจสำคัญ
 
 | วันที่ | การตัดสินใจ | เหตุผล |
 |---|---|---|
@@ -336,10 +370,11 @@ PR #10 Merge แล้ว และ Production GitHub Pages ตอบ HTTP 200 �
 | 12 ส.ค. 2026 | IndexedDB เก็บเฉพาะ Offline readiness | รองรับ Cache ราย Tool โดยไม่เก็บไฟล์หรือข้อมูลผู้ใช้ |
 | 12 ส.ค. 2026 | ยังไม่เพิ่ม WebAssembly ใน Phase 4 | ไม่มี benchmark ที่ยืนยันว่าคุ้มกับ Bundle/Compatibility cost; Worker เพียงพอกับงานปัจจุบัน |
 | 12 ส.ค. 2026 | บังคับ Bundle Budget ใน CI | ป้องกัน Initial Hub และ Lazy chunks โตขึ้นโดยไม่ตั้งใจ |
+| 12 ส.ค. 2026 | Phase 5 ยังคงไม่ใช้ Backend | ภาษา, Portable Settings, Usage order และ Compatibility Check ทำงาน Client-side ได้ครบและไม่จำเป็นต้องส่งข้อมูลออกจากอุปกรณ์ |
 
 ---
 
-## 10. กติกาการอัปเดตไฟล์นี้
+## 11. กติกาการอัปเดตไฟล์นี้
 
 ต้องอัปเดต `PROGRESS.md` ในเหตุการณ์ต่อไปนี้:
 
@@ -363,7 +398,7 @@ PR #10 Merge แล้ว และ Production GitHub Pages ตอบ HTTP 200 �
 
 ---
 
-## 11. เอกสารอ้างอิง
+## 12. เอกสารอ้างอิง
 
 - [PRD.md](PRD.md) — ข้อกำหนดและ Roadmap ของผลิตภัณฑ์
 - [README.md](README.md) — วิธีติดตั้ง พัฒนา และโครงสร้างระบบ

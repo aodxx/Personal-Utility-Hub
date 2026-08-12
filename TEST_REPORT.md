@@ -1,4 +1,4 @@
-# Phase 4 Performance and Offline Test Report
+# Latest Validation Report — Phase 5 Product Expansion
 
 วันที่ตรวจ: 12 สิงหาคม 2026
 
@@ -88,3 +88,27 @@ GitHub Actions CI Run #40 ยืนยัน Browser contract ใหม่แล
 การทดสอบ Production พบว่า Mobile icon สามารถล้นกรอบลงทับ Privacy/Offline footer และผู้ใช้ยังต้องแตะลิงก์ “เปิด →” ขนาดเล็ก Draft PR #12 แก้ด้วย Icon Grid area ที่มี `overflow: clip`, ยกเลิก `display: contents`, แยก Favorite control เป็น Layer ของตนเอง และใช้ Semantic link ครอบพื้นที่การ์ดทั้งหมด โดย Favorite/Offline controls อยู่เหนือ Link layer
 
 Playwright เพิ่มการตรวจว่า Icon bounding box ไม่ทับ Footer, Favorite click ไม่เปลี่ยน URL และ Full-card click เปลี่ยนไป `#/tools/base64` พร้อมแสดง H1 จริง GitHub Actions CI Run #44 ผ่าน **37 executions** พร้อม **2 intentional skips**; Unit/Integration ผ่าน 40/40 และ TypeScript, Build, Bundle Budget ผ่านครบ
+
+## Phase 5 Product Expansion
+
+Phase 5 เพิ่มภาษาไทย/English ใน App Shell และ metadata ของเครื่องมือ, Settings Center, Portable Settings JSON, การเรียงตามจำนวนครั้งที่เปิด และ Browser Compatibility Check โดยไม่เพิ่ม Backend หรือ Runtime dependency
+
+### Automated validation ในเครื่อง
+
+- TypeScript strict typecheck — **ผ่าน**
+- Vitest — **ผ่าน 47/47 tests** ใน 12 test files
+- Vite production build — **ผ่าน**
+- Bundle Budget — **ผ่าน**; Entry 15.9 KB gzip, Lazy chunk ใหญ่สุด 366.1 KB, JavaScript รวม 934.8 KB/24 chunks
+- Service Worker syntax — **ผ่าน**
+- Dependency audit — **0 vulnerabilities**
+- `git diff --check` — **ผ่าน**
+
+### Phase 5 contracts ที่เพิ่ม
+
+- Translation keys และ metadata อังกฤษของ Tool Catalog ทุกเครื่องมือ
+- Usage sorting แบบมากไปน้อย พร้อม Registry-order tie-break
+- Portable Settings `schemaVersion: 1` ตรวจ Theme, Locale, Tool order, Tool IDs, Usage counts และ Recent limit
+- Settings Center เปลี่ยนภาษา/ลำดับและตรวจ Browser capabilities ได้
+- Playwright ตรวจ TH→EN, Usage order พร้อม Full-card navigation, Compatibility/No-backend message และ Export/Import round-trip
+
+Playwright suite มี **17 test cases × 3 profiles = 51 executions** แต่ Local workspace ไม่มี Chromium executable จึงหยุดที่ Browser launch ตามข้อจำกัด environment ผล Browser จริงจะยืนยันผ่าน GitHub Actions หลัง Push Branch

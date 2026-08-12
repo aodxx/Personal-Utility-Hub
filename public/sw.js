@@ -1,5 +1,5 @@
-const SHELL_CACHE = 'utility-hub-shell-v0.6.0-performance-offline';
-const TOOL_CACHE = 'utility-hub-tools-v0.6.0-performance-offline';
+const SHELL_CACHE = 'utility-hub-shell-v0.7.0-product-expansion';
+const TOOL_CACHE = 'utility-hub-tools-v0.7.0-product-expansion';
 const CACHE_NAMES = [SHELL_CACHE, TOOL_CACHE];
 const APP_SCOPE = self.registration.scope;
 const APP_SHELL_URL = new URL('index.html', APP_SCOPE).href;
