@@ -11,6 +11,15 @@ export function setToolStatus(output: HTMLOutputElement, message: string, tone: 
   output.dataset.tone = tone;
 }
 
+export function setProgressStatus(output: HTMLOutputElement, progress: number, message: string): void {
+  const percent = Math.max(0, Math.min(100, Math.round(progress)));
+  setToolStatus(output, `${message} · ${percent}%`, 'working');
+}
+
+export function isAbortError(error: unknown): boolean {
+  return error instanceof DOMException && error.name === 'AbortError';
+}
+
 export function formatBytes(bytes: number): string {
   if (!Number.isFinite(bytes) || bytes < 0) return '0 B';
   if (bytes < 1024) return `${bytes} B`;

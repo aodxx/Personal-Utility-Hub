@@ -84,6 +84,22 @@ export function canvasToBlob(canvas: HTMLCanvasElement, type: SupportedImageType
   });
 }
 
+export async function processImageOnMainThread(
+  file: File,
+  options: { width?: number; height?: number; maxSide?: number; quality: number; type: SupportedImageType; background?: string },
+): Promise<{ blob: Blob; width: number; height: number }> {
+  const bitmap = await loadImageBitmap(file);
+  try {
+    const dimensions = options.width && options.height
+      ? { width: options.width, height: options.height }
+      : fitWithin({ width: bitmap.width, height: bitmap.height }, options.maxSide ?? Math.max(bitmap.width, bitmap.height));
+    const canvas = renderBitmap(bitmap, dimensions, options.background);
+    return { blob: await canvasToBlob(canvas, options.type, options.quality), ...dimensions };
+  } finally {
+    bitmap.close();
+  }
+}
+
 export function extensionForType(type: SupportedImageType): string {
   if (type === 'image/jpeg') return 'jpg';
   if (type === 'image/webp') return 'webp';

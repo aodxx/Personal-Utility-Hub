@@ -26,4 +26,12 @@ describe('PWA assets', () => {
     expect(existsSync(resolve(publicDir, 'offline.html'))).toBe(true);
     expect(existsSync(resolve(publicDir, 'sw.js'))).toBe(true);
   });
+
+  it('supports versioned shell and per-tool offline caches', () => {
+    const serviceWorker = readFileSync(resolve(publicDir, 'sw.js'), 'utf8');
+    expect(serviceWorker).toContain('utility-hub-shell-v0.6.0-performance-offline');
+    expect(serviceWorker).toContain('utility-hub-tools-v0.6.0-performance-offline');
+    expect(serviceWorker).toContain("event.data?.type !== 'CACHE_TOOL'");
+    expect(serviceWorker).toContain('cache.addAll(urls)');
+  });
 });

@@ -3,6 +3,7 @@ import workerUrl from 'pdfjs-dist/build/pdf.worker.min.mjs?url';
 import { MAX_PDF_PAGES, validatePdfFile } from './file-processing';
 
 GlobalWorkerOptions.workerSrc = workerUrl;
+export const PDF_RENDERING_WORKER_URL = workerUrl;
 
 export async function getPdfPageCount(file: File): Promise<number> {
   validatePdfFile(file);

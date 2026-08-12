@@ -4,9 +4,9 @@
 > ข้อกำหนดผลิตภัณฑ์ให้อ้างอิง `PRD.md` ส่วนผลการทดสอบโดยละเอียดให้อ้างอิง `TEST_REPORT.md`
 
 **อัปเดตล่าสุด:** 12 สิงหาคม 2026  
-**สถานะโครงการ:** Phase 0–2 เสร็จสิ้นและเผยแพร่แล้ว; Phase 3 File Tools ผ่าน CI/Browser validation ใน Draft PR
-**Phase ปัจจุบัน:** Phase 3 — File Tools
-**เวอร์ชันปัจจุบัน:** `0.5.0`
+**สถานะโครงการ:** Phase 0–3 เสร็จสิ้นและเผยแพร่แล้ว; Phase 4 Performance and Offline กำลังพัฒนา
+**Phase ปัจจุบัน:** Phase 4 — Performance and Offline
+**เวอร์ชันปัจจุบัน:** `0.6.0`
 **เว็บไซต์:** https://aodxx.github.io/Personal-Utility-Hub/
 
 ---
@@ -18,11 +18,11 @@
 | Phase 0 | Foundation | ✅ เสร็จสิ้นและเผยแพร่แล้ว | PR #1, Foundation CI ผ่าน, GitHub Pages ทำงาน |
 | Phase 1 | Hub MVP | ✅ เสร็จสิ้น Merge และเผยแพร่แล้ว | PR #6, CI 22/22, E2E 8/8, Deploy ผ่าน |
 | Phase 2 | Visual System + Core Tools | ✅ เสร็จสิ้นและเผยแพร่แล้ว | PR #7 และ #8 Merge; CI Run #26 และ Pages Run #10 ผ่าน |
-| Phase 3 | File Tools | 🧪 พร้อมตรวจและ Merge | PR #9 ผ่าน CI 36/36 และ Browser E2E 20/20 |
-| Phase 4 | Performance and Offline | ⬜ ยังไม่เริ่ม | รอ Phase 3 |
+| Phase 3 | File Tools | ✅ เสร็จสิ้นและเผยแพร่แล้ว | PR #9 Merge; CI 36/36, E2E 20/20 และ Production ตอบ 200 |
+| Phase 4 | Performance and Offline | 🚧 กำลังดำเนินการ | Branch `agent/phase-4-performance-offline`; Local 40/40, Build และ Bundle Budget ผ่าน |
 | Phase 5 | Product Expansion | ⬜ ยังไม่เริ่ม | รอ Phase 4 |
 
-ความคืบหน้าตาม Roadmap: **เสร็จแล้ว 3 จาก 6 Phase**
+ความคืบหน้าตาม Roadmap: **เสร็จแล้ว 4 จาก 6 Phase**
 
 ---
 
@@ -157,11 +157,13 @@ Phase 2 ปิดแล้ว เริ่ม Phase 3 จาก Merge commit `64
 
 ## 5. Phase 3 — File Tools
 
-**สถานะ:** 🧪 พร้อมตรวจและ Merge
+**สถานะ:** ✅ เสร็จสิ้น Merge และเผยแพร่แล้ว
 
 **Branch:** `agent/phase-3-file-tools`
 
-**Pull Request:** [#9 — Build Phase 3 file tools](https://github.com/aodxx/Personal-Utility-Hub/pull/9) (Draft)
+**Pull Request:** [#9 — Build Phase 3 file tools](https://github.com/aodxx/Personal-Utility-Hub/pull/9)
+
+**Merge commit:** [`0b3cf36e0640f2f4fdcbc17c34a96a4dc980a3da`](https://github.com/aodxx/Personal-Utility-Hub/commit/0b3cf36e0640f2f4fdcbc17c34a96a4dc980a3da)
 
 **Source commit:** [`77bb6e84714e9334f63368bd1da2c6abd8bb23f2`](https://github.com/aodxx/Personal-Utility-Hub/commit/77bb6e84714e9334f63368bd1da2c6abd8bb23f2)
 
@@ -193,13 +195,51 @@ Phase 2 ปิดแล้ว เริ่ม Phase 3 จาก Merge commit `64
 - Playwright 10 cases × 2 viewports = 20 executions — ผ่าน 20/20 บน Desktop Chromium และ Android Pixel 7
 - CI Run #27 พบ Smoke assertion เดิมคาด 8 Cards; แก้ให้ตรงกับ Phase 3 ที่มี 14 Cards แล้ว Run #28 ผ่าน
 
-### ขั้นตอนถัดไป
+### ผลหลัง Merge
 
-ตรวจ Draft PR #9 และ Merge เข้า `main` เมื่อพร้อม จากนั้นตรวจ GitHub Pages deployment และทดสอบไฟล์จริงบน Android
+- PR #9 Merge เมื่อ 12 สิงหาคม 2026 เวลา 07:58 UTC
+- Production GitHub Pages ตอบ HTTP 200 และ `last-modified` หลังเวลา Merge
+- Phase 4 เริ่มจาก Merge commit `0b3cf36e…`
 
 ---
 
-## 6. สถานะระบบปัจจุบัน
+## 6. Phase 4 — Performance and Offline
+
+**สถานะ:** 🚧 กำลังดำเนินการ
+
+**Branch:** `agent/phase-4-performance-offline`
+
+**ฐาน Branch:** Phase 3 Merge commit `0b3cf36e0640f2f4fdcbc17c34a96a4dc980a3da`
+
+### สิ่งที่พัฒนาแล้วใน Branch
+
+- Dedicated Web Worker สำหรับ Image Resize/Convert/Compress, Images to PDF, PDF Merge/Split/Inspect และ SHA-256
+- Progress status และปุ่ม Cancel; Worker ถูก terminate หลัง Success/Error/Cancel/Unmount
+- Main-thread fallback สำหรับ Browser ที่ไม่มี Worker หรือ OffscreenCanvas
+- IndexedDB เก็บ Offline readiness ต่อ Tool/version โดยไม่เก็บไฟล์หรือเนื้อหาผู้ใช้
+- Tool Card มีปุ่ม “เตรียม Offline” และ Service Worker แยก App Shell cache/Tool cache
+- Tool Registry รองรับ `prepareOffline()` เพื่อ Cache Worker และ PDF.js asset ที่ Lazy-loaded
+- เพิ่ม Bundle Budget ใน CI และแก้ Worker build ให้เป็น JavaScript asset จริง
+- Playwright เพิ่ม Android entry profile 360 × 740 ควบคู่ Desktop และ Pixel 7
+- WebAssembly review: ยังไม่เพิ่ม Dependency เพราะ Worker + Browser API แก้ UI blocking ได้โดยไม่เพิ่ม Bundle
+
+### ผลตรวจปัจจุบัน
+
+- TypeScript strict typecheck — ผ่าน
+- Unit/Integration — 40/40
+- Production build และ Worker bundle — ผ่าน
+- Bundle Budget — Entry 10.8 KB gzip; Largest lazy 366.1 KB; JavaScript รวม 929.6 KB/24 chunks
+- Dependency audit — 0 vulnerabilities
+- Service Worker syntax และ `git diff --check` — ผ่าน
+- Playwright 12 cases × 3 profiles = 36 executions — เตรียมแล้ว; รอ GitHub Actions เพราะ Local ไม่มี Chromium executable
+
+### ขั้นตอนถัดไป
+
+Push Branch และเปิด Draft PR หลังได้รับคำยืนยัน จากนั้นใช้ GitHub Actions ยืนยัน Browser E2E 36/36 executions
+
+---
+
+## 7. สถานะระบบปัจจุบัน
 
 ### Architecture
 
@@ -207,6 +247,8 @@ Phase 2 ปิดแล้ว เริ่ม Phase 3 จาก Merge commit `64
 - Modular Tool Registry และ Lazy Loading
 - Client-side Hash Routing
 - Client-side Processing เป็นค่าเริ่มต้น
+- Dedicated Worker + Main-thread fallback สำหรับงานหนัก
+- IndexedDB เฉพาะ Offline readiness และ Cache API สำหรับ Tool assets
 - Hosting ผ่าน GitHub Pages
 - ไม่มี Backend, Database, Login, Cloud Storage หรือ Server-side Processing
 
@@ -220,37 +262,33 @@ Phase 2 ปิดแล้ว เริ่ม Phase 3 จาก Merge commit `64
 
 ### สถานะเครื่องมือ
 
-| Tool group | Production `main` | Branch `agent/phase-3-file-tools` |
+| Tool group | Production `main` | Branch `agent/phase-4-performance-offline` |
 |---|---|---|
 | Foundation Demo | Active | Active |
 | Core Tools 7 รายการ | Active — CI/E2E ผ่าน | Active |
-| Image Compressor | ไม่มี | Active — Local tests ผ่าน |
-| Images to PDF | ไม่มี | Active — Local tests ผ่าน |
-| PDF Merge | ไม่มี | Active — Local tests ผ่าน |
-| PDF Split | ไม่มี | Active — Local tests ผ่าน |
-| PDF to Image | ไม่มี | Active — Local tests ผ่าน |
-| File Metadata Viewer | ไม่มี | Active — Local tests ผ่าน |
+| File Tools 6 รายการ | Active — CI/E2E ผ่าน | Active + Worker/Progress/Cancel |
+| Offline ราย Tool | ไม่มี | IndexedDB + Service Worker cache |
 
 ---
 
-## 7. ปัญหาและงานค้าง
+## 8. ปัญหาและงานค้าง
 
 ### Blocking
 
-- ไม่มีปัญหาที่ขวางการตรวจและ Merge PR #9
+- ไม่มี Source/Build/Unit test blocker
 
 ### Non-blocking / ต้องตรวจภายหลัง
 
 - ทดสอบติดตั้ง PWA บนอุปกรณ์ Android จริง
 - ทดสอบ Offline App Shell บนอุปกรณ์จริงหลังเคยเปิดเว็บไซต์อย่างน้อยหนึ่งครั้ง
 - ทดสอบ QR Reader ด้วยกล้องจริงบน Android หลัง Merge; automated suite ตรวจ flow จากไฟล์ QR ส่วน lifecycle กล้องตรวจจาก Source/DOM
-- ตรวจ GitHub Pages deployment หลัง Merge PR #9
 - ทดสอบ PDF ขนาดใกล้เพดานและไฟล์จากมือถือ Android จริงหลัง Deploy
+- Browser suite 36 executions ต้องรันใน GitHub Actions เพราะ Local ไม่มี Chromium executable
 - ต้องทบทวน Service Worker cache version ทุกครั้งที่เปลี่ยน Production assets เพื่อป้องกันหน้าเก่าค้าง
 
 ---
 
-## 8. การตัดสินใจสำคัญ
+## 9. การตัดสินใจสำคัญ
 
 | วันที่ | การตัดสินใจ | เหตุผล |
 |---|---|---|
@@ -268,10 +306,14 @@ Phase 2 ปิดแล้ว เริ่ม Phase 3 จาก Merge commit `64
 | 12 ส.ค. 2026 | ใช้ `pdf-lib` สำหรับสร้าง/รวม/แยก PDF และ PDF.js สำหรับเรนเดอร์ | รองรับ Client-side โดยไม่ต้องมี Backend และแยกโหลดตาม Tool ได้ |
 | 12 ส.ค. 2026 | จำกัด File Tools ที่ 40 MB, 200 หน้า, 10 PDF หรือ 20 รูป | ควบคุม Memory บนอุปกรณ์ Android ระดับเริ่มต้น |
 | 12 ส.ค. 2026 | Dynamic import PDF.js หลังเลือกไฟล์ | ไม่ให้ API/Worker ขนาดใหญ่กระทบหน้า Hub และ Tool อื่น |
+| 12 ส.ค. 2026 | ใช้ Dedicated Worker แบบหนึ่ง Worker ต่อหนึ่งงาน | ยกเลิก/คืน Memory ได้แน่นอนด้วย `terminate()` และไม่ให้ UI thread ค้าง |
+| 12 ส.ค. 2026 | IndexedDB เก็บเฉพาะ Offline readiness | รองรับ Cache ราย Tool โดยไม่เก็บไฟล์หรือข้อมูลผู้ใช้ |
+| 12 ส.ค. 2026 | ยังไม่เพิ่ม WebAssembly ใน Phase 4 | ไม่มี benchmark ที่ยืนยันว่าคุ้มกับ Bundle/Compatibility cost; Worker เพียงพอกับงานปัจจุบัน |
+| 12 ส.ค. 2026 | บังคับ Bundle Budget ใน CI | ป้องกัน Initial Hub และ Lazy chunks โตขึ้นโดยไม่ตั้งใจ |
 
 ---
 
-## 9. กติกาการอัปเดตไฟล์นี้
+## 10. กติกาการอัปเดตไฟล์นี้
 
 ต้องอัปเดต `PROGRESS.md` ในเหตุการณ์ต่อไปนี้:
 
@@ -295,7 +337,7 @@ Phase 2 ปิดแล้ว เริ่ม Phase 3 จาก Merge commit `64
 
 ---
 
-## 10. เอกสารอ้างอิง
+## 11. เอกสารอ้างอิง
 
 - [PRD.md](PRD.md) — ข้อกำหนดและ Roadmap ของผลิตภัณฑ์
 - [README.md](README.md) — วิธีติดตั้ง พัฒนา และโครงสร้างระบบ

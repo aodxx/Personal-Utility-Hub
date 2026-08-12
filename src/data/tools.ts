@@ -14,6 +14,11 @@ import { metadata as pdfMergeMetadata } from '../tools/pdf-merge/metadata';
 import { metadata as pdfSplitMetadata } from '../tools/pdf-split/metadata';
 import { metadata as pdfToImageMetadata } from '../tools/pdf-to-image/metadata';
 
+const processingWorkerAssets = async (): Promise<readonly string[]> => {
+  const { PROCESSING_WORKER_URL } = await import('../core/processing-client');
+  return [PROCESSING_WORKER_URL];
+};
+
 export const toolRegistry = [
   {
     metadata: foundationDemoMetadata,
@@ -38,10 +43,12 @@ export const toolRegistry = [
   {
     metadata: imageResizerMetadata,
     load: () => import('../tools/image-resizer'),
+    prepareOffline: processingWorkerAssets,
   },
   {
     metadata: imageConverterMetadata,
     load: () => import('../tools/image-converter'),
+    prepareOffline: processingWorkerAssets,
   },
   {
     metadata: qrReaderMetadata,
@@ -50,26 +57,35 @@ export const toolRegistry = [
   {
     metadata: imageCompressorMetadata,
     load: () => import('../tools/image-compressor'),
+    prepareOffline: processingWorkerAssets,
   },
   {
     metadata: imagesToPdfMetadata,
     load: () => import('../tools/images-to-pdf'),
+    prepareOffline: processingWorkerAssets,
   },
   {
     metadata: pdfMergeMetadata,
     load: () => import('../tools/pdf-merge'),
+    prepareOffline: processingWorkerAssets,
   },
   {
     metadata: pdfSplitMetadata,
     load: () => import('../tools/pdf-split'),
+    prepareOffline: processingWorkerAssets,
   },
   {
     metadata: pdfToImageMetadata,
     load: () => import('../tools/pdf-to-image'),
+    prepareOffline: async () => {
+      const { PDF_RENDERING_WORKER_URL } = await import('../core/pdf-rendering');
+      return [PDF_RENDERING_WORKER_URL];
+    },
   },
   {
     metadata: fileMetadata,
     load: () => import('../tools/file-metadata'),
+    prepareOffline: processingWorkerAssets,
   },
 ] satisfies readonly ToolRegistryEntry[];
 

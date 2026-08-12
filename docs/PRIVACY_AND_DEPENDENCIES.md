@@ -23,6 +23,8 @@ Phase 1 ไม่มี Runtime Dependency, Phase 2 เพิ่ม Dependency �
 
 ข้อมูล Favorites, Recent Tools และ Theme เก็บเฉพาะใน LocalStorage ของอุปกรณ์ ไม่เก็บเนื้อหาไฟล์หรือข้อมูลที่ผู้ใช้ป้อน หาก LocalStorage ใช้งานไม่ได้ Hub จะทำงานต่อด้วยข้อมูลชั่วคราวใน Memory
 
+Phase 4 ใช้ IndexedDB เก็บเฉพาะ `toolId`, Tool/Cache version, เวลาเตรียม Offline และจำนวน Resource ที่ Cache แล้ว ไม่มีชื่อไฟล์ เนื้อหาไฟล์ Hash หรือผลลัพธ์ถูกเก็บใน IndexedDB
+
 ## Phase 2 Runtime Dependencies
 
 | Dependency | Version | License | ใช้ทำอะไร | Privacy / Network | Lazy bundle |
@@ -59,3 +61,12 @@ Phase 1 ไม่มี Runtime Dependency, Phase 2 เพิ่ม Dependency �
 - File Metadata Viewer รับไฟล์ไม่เกิน 40 MB และคำนวณ SHA-256 ด้วย Web Crypto ภายในอุปกรณ์
 - Object URL ของผลลัพธ์ถูกยกเลิกเมื่อสร้างผลลัพธ์ใหม่หรือออกจาก Tool
 - ไม่รองรับ PDF ที่ล็อกรหัสผ่าน และไม่มีการเก็บสำเนาไฟล์ใน LocalStorage/IndexedDB
+
+## Phase 4 Worker และ Offline Lifecycle
+
+- Image Resizer, Image Converter, Image Compressor, Images to PDF, PDF Merge/Split/Inspect และ SHA-256 ใช้ Dedicated Web Worker เมื่อ Browser รองรับ
+- Worker แต่ละงานถูก `terminate()` หลัง Success, Error, Cancel หรือเมื่อออกจาก Tool และใช้ Main-thread fallback เมื่อ Worker/OffscreenCanvas ไม่พร้อม
+- Progress message ส่งเฉพาะเปอร์เซ็นต์และข้อความสถานะ ไม่ส่งชื่อไฟล์หรือเนื้อหาไปภายนอก
+- ปุ่ม “เตรียม Offline” โหลด Module/Worker แบบ same-origin แล้วให้ Service Worker เก็บใน Tool cache รายเวอร์ชัน
+- Service Worker ปฏิเสธ URL ต่าง origin และ URL นอก GitHub Pages app scope
+- Phase 4 ไม่เพิ่ม WebAssembly dependency เพราะ Web Worker + Browser API เดิมแก้ปัญหา UI blocking ได้โดยไม่เพิ่ม Runtime ขนาดใหญ่; จะใช้ WASM ภายหลังเมื่อมี benchmark ยืนยันความจำเป็น

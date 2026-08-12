@@ -4,9 +4,9 @@
 
 **ชื่อโครงการ:** Personal Utility Hub  
 **ประเภทผลิตภัณฑ์:** Utility Web Tools Hub / Static Progressive Web App  
-**เอกสารฉบับ:** 1.2
+**เอกสารฉบับ:** 1.3
 **วันที่จัดทำ:** 11 สิงหาคม 2026  
-**สถานะ:** Phase 0–2 เสร็จสิ้น; Phase 3 กำลังพัฒนา
+**สถานะ:** Phase 0–3 เสร็จสิ้น; Phase 4 กำลังพัฒนา
 **ภาษาเริ่มต้น:** ภาษาไทย  
 **แพลตฟอร์มเป้าหมาย:** Desktop, Tablet และ Android Mobile
 

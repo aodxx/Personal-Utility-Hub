@@ -1,61 +1,51 @@
-# Phase 3 File Tools Test Report
+# Phase 4 Performance and Offline Test Report
 
 วันที่ตรวจ: 12 สิงหาคม 2026
 
 ## ขอบเขตที่ตรวจ
 
-- สถานะ Production หลัง Merge Phase 2: PR #8, CI Run #26 และ GitHub Pages Run #10
-- Tool Registry และ Lazy Loading ของ Core Tools 7 + File Tools 6 รายการ
-- Image Compressor และ Images to PDF
-- PDF Merge, PDF Split และ PDF to Image
-- File Metadata Viewer และ SHA-256
-- Resource cleanup: Event Listener, Object URL, ImageBitmap, PDF document/worker task
-- 3D Asset IDs ใหม่ 6 รายการ, Responsive UI, PWA cache และ GitHub Pages subpath build
+- สถานะ Production หลัง Merge Phase 3: PR #9 และ Merge commit `0b3cf36e0640f2f4fdcbc17c34a96a4dc980a3da`
+- Dedicated Worker สำหรับงานรูปภาพ, Images to PDF, PDF Merge/Split/Inspect และ SHA-256
+- Progress, Cancel, Worker termination และ Main-thread fallback
+- IndexedDB record สำหรับ Offline readiness โดยไม่เก็บไฟล์ผู้ใช้
+- App Shell cache และ Tool cache รายเวอร์ชันผ่าน Service Worker
+- Lazy Worker/PDF assets, Bundle Budget และ GitHub Pages subpath
+- Playwright บน Desktop, Android ระดับเริ่มต้น 360 px และ Android รุ่นปัจจุบัน
 
 ## Automated validation ในเครื่อง
 
 - TypeScript strict typecheck — **ผ่าน**
-- Vitest: Route, Tool contract, Tool loader, Search, Storage fallback, PWA, App Shell, 3D Assets, Core Tools และ File Tools — **ผ่าน 36/36 tests**
-- Vite production build สำหรับ GitHub Pages subpath — **ผ่าน**
+- Vitest: Route, Tool contract/loader, Search, Storage fallback, PWA, App Shell, 3D Assets, Core/File Tools, Worker fallback และ Offline store — **ผ่าน 40/40 tests**
+- Vite production build — **ผ่าน**
+- Worker output — **ผ่าน**; `processing.worker-*.js` เป็น JavaScript ที่ Bundle แล้ว ไม่ใช่ TypeScript source
 - Service Worker syntax — **ผ่าน**
 - `git diff --check` — **ผ่าน**
-- `npm audit` — **0 vulnerabilities**
+- Dependency audit — **0 vulnerabilities**
 
-## Production bundles
+## Bundle Budget
 
-| Chunk | Raw | Gzip | หมายเหตุ |
+| Budget | ผลปัจจุบัน | เกณฑ์ | สถานะ |
 |---|---:|---:|---|
-| Hub main | 31.84 kB | 9.46 kB | ไม่รวมโค้ดประมวลผลของแต่ละ Tool |
-| CSS | 23.68 kB | 5.39 kB | รวม Responsive File Tool UI |
-| Image Compressor | 4.76 kB | 1.96 kB | Lazy |
-| Images to PDF | 3.69 kB | 1.70 kB | Lazy |
-| PDF Merge | 3.43 kB | 1.65 kB | Lazy |
-| PDF Split | 3.97 kB | 1.78 kB | Lazy |
-| PDF to Image shell | 5.02 kB | 2.05 kB | Lazy; dynamic import PDF.js หลังเลือกไฟล์ |
-| File Metadata | 3.65 kB | 1.76 kB | Lazy |
-| `pdf-lib` shared | 422.32 kB | 176.48 kB | ใช้เฉพาะ File Tool ที่เกี่ยวข้อง |
-| PDF.js API | 427.59 kB | 127.75 kB | Dynamic import |
-| PDF.js worker | 1.26 MB | — | Self-hosted Worker asset |
+| Hub entry gzip | 10.8 KB | ≤45 KB | ผ่าน |
+| Lazy chunk ใหญ่สุด | 366.1 KB | ≤900 KB | ผ่าน |
+| JavaScript รวม gzip | 929.6 KB / 24 chunks | ≤1,600 KB | ผ่าน |
+
+`npm run check:bundle` ถูกเพิ่มเข้า GitHub Actions หลัง Production build เพื่อป้องกัน Bundle โตเกินงบโดยไม่ทราบตัว
 
 ## Browser validation
 
-Playwright เตรียมไว้ **10 test cases** และรันทั้ง Desktop Chromium กับ Android Pixel 7 รวม **20 executions** ครอบคลุม:
+Playwright มี **12 test cases × 3 projects = 36 executions**:
 
-- Search, Favorites, History, Theme, Not Found และ Lifecycle
-- Core Tools ทั้ง 7 รายการจาก Phase 2
-- บีบอัด PNG และรวม 2 รูปเป็น PDF
-- รวม PDF 2+1 หน้า และแยกหน้า 2–3 จาก PDF 3 หน้า
-- เรนเดอร์ PDF หน้าแรกเป็น PNG ด้วย PDF.js
-- อ่านชื่อ/ขนาด/SHA-256 ด้วย File Metadata Viewer
+- Desktop Chromium
+- Android entry profile: viewport 360 × 740, device scale factor 2
+- Android current profile: Pixel 7
 
-Local workspace ยังเปิด Chromium ไม่ได้ เพราะ Playwright CDN คืน Archive ขนาด 0 MiB และไม่ใช่ ZIP ที่สมบูรณ์ จึงใช้ GitHub Actions เป็น Browser runtime หลัก CI Run #27 พบ Smoke assertion เดิมยังคาด 8 Tool Cards; ปรับเป็น 14 Cards และผลค้นหา “รูปภาพ” 6 รายการแล้ว CI Run #28 ผ่านครบ
+ครอบคลุม 14 Tool Cards, Core/File Tools, Worker-backed processing, Offline preparation, reload แบบไม่มี Network, Lazy Worker loading, PWA, Theme, Favorites, History และ Not Found
 
-**สถานะ Browser E2E:** ผ่าน 20/20 executions บน Desktop Chromium และ Android Pixel 7 ใน GitHub Actions CI Run #28
+Local workspace ยังไม่มี Chromium executable จึงเริ่ม Browser suite ไม่ได้ การล้มเหลวเกิดก่อนเปิด Browser ทุกกรณีและไม่มี Test assertion ใดทำงาน GitHub Actions จะเป็น Browser runtime หลักหลัง Push Branch
 
-## Dependency review
+**สถานะ Browser E2E:** รอ GitHub Actions ยืนยัน 36/36 executions
 
-- `qrcode@1.5.4` — MIT, Lazy, ไม่มี network/telemetry
-- `jsqr@1.4.0` — Apache-2.0, Lazy, ไม่มี network/telemetry
-- `pdf-lib@1.17.1` — MIT, สร้าง/รวม/แยก/อ่าน PDF ใน Browser
-- `pdfjs-dist@6.2.108` — Apache-2.0, Self-hosted API + Worker สำหรับเรนเดอร์ PDF
-- Dependency audit ปัจจุบัน: 0 vulnerabilities
+## WebAssembly decision
+
+Phase 4 ไม่เพิ่ม WebAssembly dependency ในรอบนี้ เพราะ PDF.js มี Worker ของตนเอง และงานที่ UI-blocking ถูกย้ายไป Dedicated Worker ได้โดยไม่เพิ่ม Runtime/Memory overhead ใหม่ การเพิ่ม WASM จะทำเมื่อมี Tool Audio/Video หรือ benchmark จริงยืนยันว่าประโยชน์สูงกว่าขนาด Bundle และ Compatibility cost

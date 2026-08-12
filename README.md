@@ -2,7 +2,7 @@
 
 ศูนย์รวม Utility Web Tools แบบ Static PWA ที่เน้น Privacy by Design, Client-side Processing และ Modular Tool Registry
 
-โครงการอยู่ใน **Phase 3: File Tools** โดย Phase 0–2 เผยแพร่บน `main` แล้ว และ File Tools 6 รายการกำลังพัฒนาบน Branch `agent/phase-3-file-tools`
+โครงการอยู่ใน **Phase 4: Performance and Offline** โดย Phase 0–3 เผยแพร่บน `main` แล้ว และกำลังพัฒนา Web Worker, IndexedDB, Offline Cache รายเครื่องมือ และการทดสอบ Android หลายระดับบน Branch `agent/phase-4-performance-offline`
 
 ## เครื่องมือ Core
 
@@ -27,6 +27,15 @@
 
 เครื่องมือ PDF ใช้ `pdf-lib` และ PDF.js แบบ Lazy-loaded เฉพาะเมื่อเปิดใช้งาน ไฟล์ยังคงอยู่ในอุปกรณ์ผู้ใช้ตลอดกระบวนการ
 
+## Performance และ Offline Phase 4
+
+- งานรูปภาพ, Images to PDF, PDF Merge/Split/Inspect และ SHA-256 ย้ายไป Web Worker เมื่อ Browser รองรับ พร้อม Main-thread fallback
+- งานที่ใช้เวลานานแสดง Progress และกดยกเลิกได้; Worker ถูก terminate เมื่อจบงาน ยกเลิก หรือออกจาก Tool
+- Tool Card มีปุ่มเตรียม Offline เป็นรายเครื่องมือ และบันทึกสถานะเวอร์ชันใน IndexedDB
+- Service Worker แยก App Shell cache และ Tool asset cache พร้อมล้าง Cache เวอร์ชันเก่า
+- Bundle Budget บังคับใน CI: Entry ≤45 KB gzip, Lazy chunk ≤900 KB gzip และ JavaScript รวม ≤1,600 KB gzip
+- Playwright ตรวจ Desktop, Android ระดับเริ่มต้น 360 px และ Android รุ่นปัจจุบัน
+
 ## เริ่มพัฒนา
 
 ต้องใช้ Node.js 22.12 ขึ้นไป
@@ -42,6 +51,7 @@ npm run dev
 npm run typecheck
 npm test
 npm run build
+npm run check:bundle
 npx playwright install chromium
 npm run test:e2e
 ```
@@ -49,7 +59,8 @@ npm run test:e2e
 ## สถาปัตยกรรม
 
 - `src/app` — App Shell และ Hash Router
-- `src/core` — Tool Contract, Loader, Search, Local Preferences, PWA และ Browser processing utilities
+- `src/core` — Tool Contract, Loader, Search, Local Preferences, PWA, Offline/IndexedDB และ Worker client
+- `src/workers` — งานประมวลผลหนักที่แยกออกจาก UI thread
 - `src/data` — Registry, Core Tool metadata และข้อมูลกลาง
 - `src/tools` — Tool Module ที่โหลดแบบ Lazy
 - `src/styles` — Design Tokens และ Custom CSS
@@ -62,6 +73,7 @@ npm run test:e2e
 
 - ไม่มี Login, Analytics, Backend, Cloud Storage หรือ Server-side Processing
 - Favorites, Recent Tools และ Theme เก็บเฉพาะใน LocalStorage; หาก LocalStorage ใช้ไม่ได้ Hub จะใช้ Memory fallback
+- IndexedDB เก็บเฉพาะสถานะว่า Tool version ใดเตรียม Offline แล้ว ไม่เก็บไฟล์หรือเนื้อหาของผู้ใช้
 - Image Tools รองรับ PNG/JPEG/WebP ไม่เกิน 15 MB, ด้านละไม่เกิน 12,000 px และผลลัพธ์ไม่เกิน 24 ล้านพิกเซล
 - File Tools จำกัดไฟล์รวม 40 MB, PDF ไม่เกิน 200 หน้า, รวมได้สูงสุด 10 PDF หรือ 20 รูปต่อครั้ง
 - QR Reader ขอสิทธิ์กล้องเมื่อผู้ใช้กดเปิดเท่านั้น และหยุด Media Track เมื่อปิดกล้อง อ่านสำเร็จ หรือออกจาก Tool

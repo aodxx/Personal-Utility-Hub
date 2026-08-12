@@ -25,6 +25,7 @@ export interface ToolModule {
 export interface ToolRegistryEntry {
   metadata: ToolMetadata;
   load: () => Promise<ToolModule>;
+  prepareOffline?: () => Promise<readonly string[]>;
 }
 
 const ID_PATTERN = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;

@@ -1,5 +1,6 @@
 import { getErrorMessage, ToolNotFoundError } from '../core/errors';
 import { PwaController } from '../core/pwa';
+import { OfflineToolManager } from '../core/offline-tools';
 import { filterTools } from '../core/search';
 import { LocalPreferences, type ThemePreference } from '../core/storage';
 import type { ToolMetadata } from '../core/tool-contract';
@@ -16,6 +17,7 @@ export class AppShell {
   private readonly toolLoader = new ToolLoader(toolRegistry);
   private readonly preferences = new LocalPreferences();
   private readonly pwa = new PwaController();
+  private readonly offlineTools = new OfflineToolManager(toolRegistry);
   private navigationId = 0;
   private cleanupHome: (() => void) | undefined;
   private themeButton: HTMLButtonElement | undefined;
@@ -175,6 +177,7 @@ export class AppShell {
           ${allCategories.map((category) => `<button class="category-tab" type="button" data-category="${this.escapeHtml(category)}" aria-pressed="${category === 'ทั้งหมด'}">${assetIcon(categoryVisuals[category], 'asset-icon--category')}<span>${this.escapeHtml(category)}</span></button>`).join('')}
         </div>
         <div id="tool-grid" class="tool-grid"></div>
+        <output id="offline-status" class="visually-hidden" aria-live="polite"></output>
       </section>
 
       <section id="favorites-section" class="section-block" aria-labelledby="favorites-title"></section>
@@ -198,6 +201,7 @@ export class AppShell {
       }
       this.renderFavorites(main, favorites);
       this.renderRecent(main, favorites);
+      void this.refreshOfflineButtons(main);
     };
 
     const handleInput = (): void => {
@@ -228,6 +232,9 @@ export class AppShell {
       if (action === 'clear-recent') {
         this.preferences.clearRecent();
         refresh();
+      }
+      if (action === 'offline' && target.dataset.id) {
+        void this.prepareToolOffline(main, target.dataset.id, target as HTMLButtonElement);
       }
     };
     const handleShortcut = (event: KeyboardEvent): void => {
@@ -292,11 +299,49 @@ export class AppShell {
         </div>
         <div class="tool-card__footer">
           <span class="privacy-badge">✓ ในเครื่อง</span>
-          ${tool.supportsOffline ? '<span class="offline-badge">Offline</span>' : ''}
+          ${tool.supportsOffline ? `<button class="offline-cache-button" type="button" data-action="offline" data-id="${tool.id}" data-offline-state="not-ready" aria-label="เตรียม ${this.escapeHtml(tool.title)} ไว้ใช้ Offline">เตรียม Offline</button>` : ''}
           <a class="tool-card__link" href="#${tool.route}" aria-label="เปิด ${this.escapeHtml(tool.title)}">เปิด <span aria-hidden="true">→</span></a>
         </div>
       </article>
     `;
+  }
+
+  private async refreshOfflineButtons(main: HTMLElement): Promise<void> {
+    const buttons = [...main.querySelectorAll<HTMLButtonElement>('[data-action="offline"][data-id]')];
+    await Promise.all(buttons.map(async (button) => {
+      const toolId = button.dataset.id;
+      if (!toolId) return;
+      const state = await this.offlineTools.getStatus(toolId);
+      if (!button.isConnected) return;
+      button.dataset.offlineState = state;
+      button.textContent = state === 'ready' ? '✓ Offline พร้อม' : 'เตรียม Offline';
+      button.setAttribute('aria-pressed', String(state === 'ready'));
+    }));
+  }
+
+  private async prepareToolOffline(main: HTMLElement, toolId: string, button: HTMLButtonElement): Promise<void> {
+    if (button.dataset.offlineState === 'ready' || button.disabled) return;
+    const live = main.querySelector<HTMLOutputElement>('#offline-status');
+    button.disabled = true;
+    button.setAttribute('aria-busy', 'true');
+    button.textContent = 'กำลังเตรียม…';
+    if (live) live.textContent = `กำลังเตรียม ${toolId} สำหรับใช้งาน Offline`;
+    try {
+      const cached = await this.offlineTools.prepare(toolId);
+      button.dataset.offlineState = 'ready';
+      button.setAttribute('aria-pressed', 'true');
+      button.textContent = '✓ Offline พร้อม';
+      if (live) live.textContent = `เตรียมเครื่องมือ Offline สำเร็จ เก็บทรัพยากร ${cached} รายการ`;
+    } catch (error) {
+      button.dataset.offlineState = 'not-ready';
+      button.textContent = 'ลองเตรียมอีกครั้ง';
+      button.title = getErrorMessage(error);
+      if (live) live.textContent = `เตรียม Offline ไม่สำเร็จ: ${getErrorMessage(error)}`;
+    } finally {
+      button.disabled = false;
+      button.removeAttribute('aria-busy');
+      void this.refreshOfflineButtons(main);
+    }
   }
 
   private statusBadge(tool: ToolMetadata): string {

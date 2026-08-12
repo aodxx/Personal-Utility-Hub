@@ -1,16 +1,15 @@
 import {
-  canvasToBlob,
   extensionForType,
   loadImageBitmap,
   proportionalHeight,
-  renderBitmap,
   validateDimensions,
   validateImageFile,
   type Dimensions,
   type SupportedImageType,
 } from '../../core/image-processing';
+import { processImageAsync } from '../../core/processing-client';
 import type { ToolModule } from '../../core/tool-contract';
-import { downloadUrl, formatBytes, getErrorMessage, requiredElement, setToolStatus } from '../../core/tool-ui';
+import { downloadUrl, formatBytes, getErrorMessage, isAbortError, requiredElement, setProgressStatus, setToolStatus } from '../../core/tool-ui';
 import { metadata } from './metadata';
 
 let panel: HTMLElement | undefined;
@@ -19,6 +18,13 @@ let sourceDimensions: Dimensions | undefined;
 let outputUrl = '';
 let outputFilename = '';
 let operationId = 0;
+let activeJob: AbortController | undefined;
+
+function setRunning(running: boolean): void {
+  if (!panel) return;
+  requiredElement<HTMLButtonElement>(panel, '#resize-submit').disabled = running;
+  requiredElement<HTMLButtonElement>(panel, '[data-resize-action="cancel"]').hidden = !running;
+}
 
 function clearOutput(): void {
   if (outputUrl) URL.revokeObjectURL(outputUrl);
@@ -37,6 +43,8 @@ const handleFileChange = async (event: Event): Promise<void> => {
   if (!file || !panel) return;
   const status = requiredElement<HTMLOutputElement>(panel, '#resize-status');
   const currentOperation = ++operationId;
+  activeJob?.abort();
+  activeJob = undefined;
   try {
     sourceFile = undefined;
     sourceDimensions = undefined;
@@ -76,21 +84,20 @@ const handleSubmit = async (event: SubmitEvent): Promise<void> => {
   if (!panel) return;
   const currentOperation = ++operationId;
   const status = requiredElement<HTMLOutputElement>(panel, '#resize-status');
+  activeJob?.abort();
+  const controller = new AbortController();
+  activeJob = controller;
   try {
     if (!sourceFile) throw new Error('กรุณาเลือกรูปภาพก่อนเริ่มปรับขนาด');
     const file = sourceFile;
     const width = Math.round(Number(requiredElement<HTMLInputElement>(panel, '#resize-width').value));
     const height = Math.round(Number(requiredElement<HTMLInputElement>(panel, '#resize-height').value));
     validateDimensions({ width, height });
-    setToolStatus(status, 'กำลังปรับขนาดรูปภาพในเบราว์เซอร์…', 'working');
-    const bitmap = await loadImageBitmap(file);
-    let blob: Blob;
-    try {
-      const canvas = renderBitmap(bitmap, { width, height });
-      blob = await canvasToBlob(canvas, file.type as SupportedImageType, 0.92);
-    } finally {
-      bitmap.close();
-    }
+    setRunning(true);
+    const { blob } = await processImageAsync(file, { width, height, type: file.type as SupportedImageType, quality: 0.92 }, {
+      signal: controller.signal,
+      onProgress: (progress, message) => setProgressStatus(status, progress, message),
+    });
     if (!panel || currentOperation !== operationId) return;
     clearOutput();
     outputUrl = URL.createObjectURL(blob);
@@ -103,7 +110,13 @@ const handleSubmit = async (event: SubmitEvent): Promise<void> => {
     requiredElement<HTMLElement>(panel, '#resize-result-meta').textContent = `${width} × ${height} px · ${formatBytes(blob.size)}`;
     setToolStatus(status, 'ปรับขนาดสำเร็จ ไฟล์พร้อมดาวน์โหลด', 'success');
   } catch (error) {
-    setToolStatus(status, getErrorMessage(error), 'error');
+    if (!panel || currentOperation !== operationId) return;
+    setToolStatus(status, isAbortError(error) ? 'ยกเลิกการปรับขนาดแล้ว' : getErrorMessage(error), isAbortError(error) ? 'neutral' : 'error');
+  } finally {
+    if (activeJob === controller) {
+      activeJob = undefined;
+      if (panel) setRunning(false);
+    }
   }
 };
 
@@ -111,6 +124,7 @@ const handleClick = (event: Event): void => {
   const button = (event.target as HTMLElement).closest<HTMLButtonElement>('[data-resize-action]');
   if (!button || !panel) return;
   if (button.dataset.resizeAction === 'download' && outputUrl) downloadUrl(outputUrl, outputFilename);
+  if (button.dataset.resizeAction === 'cancel') activeJob?.abort();
 };
 
 const handleFileInput = (event: Event): void => void handleFileChange(event);
@@ -132,7 +146,7 @@ const tool: ToolModule = {
           <label class="field" for="resize-height"><span>ความสูง (px)</span><input id="resize-height" type="number" min="1" max="12000" required /></label>
         </div>
         <label class="check-field"><input id="resize-lock-ratio" type="checkbox" checked /> รักษาอัตราส่วนเมื่อเปลี่ยนความกว้าง</label>
-        <button class="button button--primary" type="submit">ปรับขนาดรูปภาพ</button>
+        <div class="tool-actions"><button id="resize-submit" class="button button--primary" type="submit">ปรับขนาดรูปภาพ</button><button class="button" type="button" data-resize-action="cancel" hidden>ยกเลิก</button></div>
       </form>
       <section id="resize-result" class="image-result" hidden>
         <img id="resize-preview" alt="รูปภาพผลลัพธ์" />
@@ -148,6 +162,8 @@ const tool: ToolModule = {
   },
   unmount() {
     operationId += 1;
+    activeJob?.abort();
+    activeJob = undefined;
     panel?.querySelector<HTMLInputElement>('#resize-file')?.removeEventListener('change', handleFileInput);
     panel?.querySelector<HTMLInputElement>('#resize-width')?.removeEventListener('input', handleWidthInput);
     panel?.querySelector<HTMLFormElement>('#resize-form')?.removeEventListener('submit', handleFormSubmit);

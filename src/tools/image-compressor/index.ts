@@ -1,8 +1,8 @@
 import { extensionForType, validateImageFile, type SupportedImageType } from '../../core/image-processing';
 import { compressionSavingPercent, replaceFileExtension } from '../../core/file-processing';
-import { compressImage } from '../../core/pdf-processing';
+import { processImageAsync } from '../../core/processing-client';
 import type { ToolModule } from '../../core/tool-contract';
-import { downloadUrl, formatBytes, getErrorMessage, requiredElement, setToolStatus } from '../../core/tool-ui';
+import { downloadUrl, formatBytes, getErrorMessage, isAbortError, requiredElement, setProgressStatus, setToolStatus } from '../../core/tool-ui';
 import { metadata } from './metadata';
 
 type CompressorType = Exclude<SupportedImageType, 'image/png'>;
@@ -11,6 +11,13 @@ let sourceFile: File | undefined;
 let outputUrl = '';
 let outputName = '';
 let operationId = 0;
+let activeJob: AbortController | undefined;
+
+function setRunning(running: boolean): void {
+  if (!panel) return;
+  requiredElement<HTMLButtonElement>(panel, '[data-compress-action="cancel"]').hidden = !running;
+  requiredElement<HTMLButtonElement>(panel, '#compress-submit').disabled = running;
+}
 
 function clearOutput(): void {
   if (outputUrl) URL.revokeObjectURL(outputUrl);
@@ -26,6 +33,8 @@ const handleFileChange = (event: Event): void => {
   const file = (event.currentTarget as HTMLInputElement).files?.[0];
   const status = requiredElement<HTMLOutputElement>(panel, '#compress-status');
   operationId += 1;
+  activeJob?.abort();
+  activeJob = undefined;
   clearOutput();
   try {
     if (!file) throw new Error('กรุณาเลือกรูปภาพ');
@@ -48,14 +57,20 @@ const handleSubmit = async (event: SubmitEvent): Promise<void> => {
   if (!panel) return;
   const request = ++operationId;
   const status = requiredElement<HTMLOutputElement>(panel, '#compress-status');
+  activeJob?.abort();
+  const controller = new AbortController();
+  activeJob = controller;
   try {
     if (!sourceFile) throw new Error('กรุณาเลือกรูปภาพก่อนเริ่มบีบอัด');
     const file = sourceFile;
     const type = requiredElement<HTMLSelectElement>(panel, '#compress-type').value as CompressorType;
     const quality = Number(requiredElement<HTMLInputElement>(panel, '#compress-quality').value) / 100;
     const maxSide = Number(requiredElement<HTMLSelectElement>(panel, '#compress-max-side').value);
-    setToolStatus(status, 'กำลังบีบอัดรูปภาพในอุปกรณ์…', 'working');
-    const result = await compressImage(file, { maxSide, quality, type });
+    setRunning(true);
+    const result = await processImageAsync(file, { maxSide, quality, type }, {
+      signal: controller.signal,
+      onProgress: (progress, message) => setProgressStatus(status, progress, message),
+    });
     if (!panel || request !== operationId) return;
     clearOutput();
     outputUrl = URL.createObjectURL(result.blob);
@@ -69,12 +84,20 @@ const handleSubmit = async (event: SubmitEvent): Promise<void> => {
     requiredElement<HTMLElement>(panel, '#compress-result-meta').textContent = `${result.width} × ${result.height} px · ${formatBytes(result.blob.size)} · ${saving >= 0 ? `เล็กลง ${saving}%` : `ใหญ่ขึ้น ${Math.abs(saving)}%`}`;
     setToolStatus(status, 'บีบอัดสำเร็จ ไฟล์พร้อมดาวน์โหลด', 'success');
   } catch (error) {
-    setToolStatus(status, getErrorMessage(error), 'error');
+    if (!panel || request !== operationId) return;
+    setToolStatus(status, isAbortError(error) ? 'ยกเลิกการบีบอัดแล้ว' : getErrorMessage(error), isAbortError(error) ? 'neutral' : 'error');
+  } finally {
+    if (activeJob === controller) {
+      activeJob = undefined;
+      if (panel) setRunning(false);
+    }
   }
 };
 
 const handleClick = (event: Event): void => {
-  if ((event.target as HTMLElement).closest('[data-compress-action="download"]') && outputUrl) downloadUrl(outputUrl, outputName);
+  const action = (event.target as HTMLElement).closest<HTMLElement>('[data-compress-action]')?.dataset.compressAction;
+  if (action === 'download' && outputUrl) downloadUrl(outputUrl, outputName);
+  if (action === 'cancel') activeJob?.abort();
 };
 
 const handleFormSubmit = (event: SubmitEvent): void => void handleSubmit(event);
@@ -93,7 +116,7 @@ const tool: ToolModule = {
           <label class="field" for="compress-max-side"><span>ด้านยาวสูงสุด</span><select id="compress-max-side"><option value="12000">คงขนาดเดิม</option><option value="2560">2,560 px</option><option value="1920" selected>1,920 px</option><option value="1280">1,280 px</option></select></label>
         </div>
         <label class="field" for="compress-quality"><span>คุณภาพ <output id="compress-quality-value">82%</output></span><input id="compress-quality" type="range" min="35" max="95" value="82" /></label>
-        <button class="button button--primary" type="submit">บีบอัดรูปภาพ</button>
+        <div class="tool-actions"><button id="compress-submit" class="button button--primary" type="submit">บีบอัดรูปภาพ</button><button class="button" type="button" data-compress-action="cancel" hidden>ยกเลิก</button></div>
       </form>
       <section id="compress-result" class="image-result" hidden><img id="compress-preview" alt="รูปภาพผลลัพธ์" /><div><strong>ไฟล์ผลลัพธ์</strong><p id="compress-result-meta"></p><button class="button" type="button" data-compress-action="download">ดาวน์โหลดรูปภาพ</button></div></section>
       <output id="compress-status" class="tool-status" aria-live="polite">ไฟล์จะถูกประมวลผลด้วย Canvas ภายในอุปกรณ์</output>`;
@@ -105,6 +128,8 @@ const tool: ToolModule = {
   },
   unmount() {
     operationId += 1;
+    activeJob?.abort();
+    activeJob = undefined;
     panel?.querySelector<HTMLInputElement>('#compress-file')?.removeEventListener('change', handleFileChange);
     panel?.querySelector<HTMLInputElement>('#compress-quality')?.removeEventListener('input', handleQuality);
     panel?.querySelector<HTMLFormElement>('#compress-form')?.removeEventListener('submit', handleFormSubmit);
