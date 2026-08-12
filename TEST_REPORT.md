@@ -48,9 +48,9 @@ Playwright เตรียมไว้ **10 test cases** และรันท�
 - เรนเดอร์ PDF หน้าแรกเป็น PNG ด้วย PDF.js
 - อ่านชื่อ/ขนาด/SHA-256 ด้วย File Metadata Viewer
 
-Local workspace ยังเปิด Chromium ไม่ได้ เพราะ Playwright CDN คืน Archive ขนาด 0 MiB และไม่ใช่ ZIP ที่สมบูรณ์ จึงไม่มี Browser assertion ใดได้เริ่มรันในเครื่อง ขั้นยืนยัน Browser จริงจะใช้ GitHub Actions หลัง Push Branch
+Local workspace ยังเปิด Chromium ไม่ได้ เพราะ Playwright CDN คืน Archive ขนาด 0 MiB และไม่ใช่ ZIP ที่สมบูรณ์ จึงใช้ GitHub Actions เป็น Browser runtime หลัก CI Run #27 พบ Smoke assertion เดิมยังคาด 8 Tool Cards; ปรับเป็น 14 Cards และผลค้นหา “รูปภาพ” 6 รายการแล้ว CI Run #28 ผ่านครบ
 
-**สถานะ Browser E2E:** เตรียม 20 executions แล้ว; รอ GitHub Actions ของ Phase 3 Branch
+**สถานะ Browser E2E:** ผ่าน 20/20 executions บน Desktop Chromium และ Android Pixel 7 ใน GitHub Actions CI Run #28
 
 ## Dependency review
 

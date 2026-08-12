@@ -4,7 +4,7 @@
 > ข้อกำหนดผลิตภัณฑ์ให้อ้างอิง `PRD.md` ส่วนผลการทดสอบโดยละเอียดให้อ้างอิง `TEST_REPORT.md`
 
 **อัปเดตล่าสุด:** 12 สิงหาคม 2026  
-**สถานะโครงการ:** Phase 0–2 เสร็จสิ้นและเผยแพร่แล้ว; Phase 3 File Tools กำลังพัฒนาบน Branch แยก
+**สถานะโครงการ:** Phase 0–2 เสร็จสิ้นและเผยแพร่แล้ว; Phase 3 File Tools ผ่าน CI/Browser validation ใน Draft PR
 **Phase ปัจจุบัน:** Phase 3 — File Tools
 **เวอร์ชันปัจจุบัน:** `0.5.0`
 **เว็บไซต์:** https://aodxx.github.io/Personal-Utility-Hub/
@@ -18,7 +18,7 @@
 | Phase 0 | Foundation | ✅ เสร็จสิ้นและเผยแพร่แล้ว | PR #1, Foundation CI ผ่าน, GitHub Pages ทำงาน |
 | Phase 1 | Hub MVP | ✅ เสร็จสิ้น Merge และเผยแพร่แล้ว | PR #6, CI 22/22, E2E 8/8, Deploy ผ่าน |
 | Phase 2 | Visual System + Core Tools | ✅ เสร็จสิ้นและเผยแพร่แล้ว | PR #7 และ #8 Merge; CI Run #26 และ Pages Run #10 ผ่าน |
-| Phase 3 | File Tools | 🚧 กำลังดำเนินการ | เครื่องมือ 6 รายการผ่าน Local 36/36; รอ Browser CI 20 executions |
+| Phase 3 | File Tools | 🧪 พร้อมตรวจและ Merge | PR #9 ผ่าน CI 36/36 และ Browser E2E 20/20 |
 | Phase 4 | Performance and Offline | ⬜ ยังไม่เริ่ม | รอ Phase 3 |
 | Phase 5 | Product Expansion | ⬜ ยังไม่เริ่ม | รอ Phase 4 |
 
@@ -157,9 +157,15 @@ Phase 2 ปิดแล้ว เริ่ม Phase 3 จาก Merge commit `64
 
 ## 5. Phase 3 — File Tools
 
-**สถานะ:** 🚧 กำลังดำเนินการ
+**สถานะ:** 🧪 พร้อมตรวจและ Merge
 
 **Branch:** `agent/phase-3-file-tools`
+
+**Pull Request:** [#9 — Build Phase 3 file tools](https://github.com/aodxx/Personal-Utility-Hub/pull/9) (Draft)
+
+**Source commit:** [`77bb6e84714e9334f63368bd1da2c6abd8bb23f2`](https://github.com/aodxx/Personal-Utility-Hub/commit/77bb6e84714e9334f63368bd1da2c6abd8bb23f2)
+
+**Browser assertion fix:** [`072f4006d62f3103ad459c9c06d370f48be846a8`](https://github.com/aodxx/Personal-Utility-Hub/commit/072f4006d62f3103ad459c9c06d370f48be846a8)
 
 **ฐาน Branch:** Phase 2 Merge commit `643cf81c67d2ea8fd8f0da30dfb67f838e481a3a`
 
@@ -183,12 +189,13 @@ Phase 2 ปิดแล้ว เริ่ม Phase 3 จาก Merge commit `64
 - Production build และ GitHub Pages subpath — ผ่าน
 - Service Worker syntax, `git diff --check` — ผ่าน
 - Dependency audit — 0 vulnerabilities
-- Playwright เตรียม 10 cases × 2 viewports = 20 executions
-- Local Chromium ติดตั้งไม่ได้เพราะ CDN คืน Archive 0 MiB; รอ GitHub Actions เป็น Browser runtime
+- GitHub Actions CI Run #28 — ผ่าน
+- Playwright 10 cases × 2 viewports = 20 executions — ผ่าน 20/20 บน Desktop Chromium และ Android Pixel 7
+- CI Run #27 พบ Smoke assertion เดิมคาด 8 Cards; แก้ให้ตรงกับ Phase 3 ที่มี 14 Cards แล้ว Run #28 ผ่าน
 
 ### ขั้นตอนถัดไป
 
-ตรวจ Source/เอกสารรอบสุดท้าย, Commit, Push Branch, เปิด Draft PR และให้ GitHub Actions ยืนยัน Browser E2E ทั้ง Desktop/Android
+ตรวจ Draft PR #9 และ Merge เข้า `main` เมื่อพร้อม จากนั้นตรวจ GitHub Pages deployment และทดสอบไฟล์จริงบน Android
 
 ---
 
@@ -230,14 +237,14 @@ Phase 2 ปิดแล้ว เริ่ม Phase 3 จาก Merge commit `64
 
 ### Blocking
 
-- ไม่มีปัญหาที่ขวางการเตรียม Commit/PR ของ Phase 3
+- ไม่มีปัญหาที่ขวางการตรวจและ Merge PR #9
 
 ### Non-blocking / ต้องตรวจภายหลัง
 
 - ทดสอบติดตั้ง PWA บนอุปกรณ์ Android จริง
 - ทดสอบ Offline App Shell บนอุปกรณ์จริงหลังเคยเปิดเว็บไซต์อย่างน้อยหนึ่งครั้ง
 - ทดสอบ QR Reader ด้วยกล้องจริงบน Android หลัง Merge; automated suite ตรวจ flow จากไฟล์ QR ส่วน lifecycle กล้องตรวจจาก Source/DOM
-- ยืนยัน File Tools Browser E2E 20 executions ด้วย GitHub Actions หลัง Push
+- ตรวจ GitHub Pages deployment หลัง Merge PR #9
 - ทดสอบ PDF ขนาดใกล้เพดานและไฟล์จากมือถือ Android จริงหลัง Deploy
 - ต้องทบทวน Service Worker cache version ทุกครั้งที่เปลี่ยน Production assets เพื่อป้องกันหน้าเก่าค้าง
 
