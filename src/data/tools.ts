@@ -1,4 +1,5 @@
 import { assertValidRegistry, type ToolRegistryEntry } from '../core/tool-contract';
+import { metadata as audioTrimmerMetadata } from '../tools/audio-trimmer/metadata';
 import { metadata as base64Metadata } from '../tools/base64/metadata';
 import { foundationDemoMetadata } from '../tools/foundation-demo/metadata';
 import { metadata as imageConverterMetadata } from '../tools/image-converter/metadata';
@@ -85,6 +86,11 @@ export const toolRegistry = [
   {
     metadata: fileMetadata,
     load: () => import('../tools/file-metadata'),
+    prepareOffline: processingWorkerAssets,
+  },
+  {
+    metadata: audioTrimmerMetadata,
+    load: () => import('../tools/audio-trimmer'),
     prepareOffline: processingWorkerAssets,
   },
 ] satisfies readonly ToolRegistryEntry[];

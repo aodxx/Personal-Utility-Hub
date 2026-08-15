@@ -3,8 +3,8 @@
 > ไฟล์นี้เป็นแหล่งข้อมูลกลางสำหรับติดตามสถานะการพัฒนา การทดสอบ การ Merge การเผยแพร่ ปัญหาค้าง และขั้นตอนถัดไปของโครงการ  
 > ข้อกำหนดผลิตภัณฑ์ให้อ้างอิง `PRD.md` ส่วนผลการทดสอบโดยละเอียดให้อ้างอิง `TEST_REPORT.md`
 
-**อัปเดตล่าสุด:** 12 สิงหาคม 2026  
-**สถานะโครงการ:** Phase 0–4 และ UX/UI Refinement เผยแพร่แล้ว; Phase 5 พัฒนาและผ่าน Local validation รอเปิด Draft PR
+**อัปเดตล่าสุด:** 15 สิงหาคม 2026
+**สถานะโครงการ:** Phase 0–4 และ UX/UI Refinement เผยแพร่แล้ว; Phase 5 พัฒนา Audio Trimmer และผ่าน Local validation
 **Phase ปัจจุบัน:** Phase 5 — Product Expansion
 **เวอร์ชันปัจจุบัน:** `0.7.0`
 **เว็บไซต์:** https://aodxx.github.io/Personal-Utility-Hub/
@@ -296,6 +296,16 @@ PR #10 Merge แล้ว และ Production GitHub Pages ตอบ HTTP 200 �
 - เตรียม Playwright เพิ่ม 4 cases × 3 profiles สำหรับภาษา, Usage order/Full-card navigation, Compatibility และ Settings round-trip
 - Local ไม่มี Chromium executable จึงรอ GitHub Actions ตรวจ Browser suite รวม 51 executions
 
+### Audio Trimmer — ✅ พัฒนาและตรวจสอบในเครื่องแล้ว
+
+- เพิ่ม Audio Trimmer แบบ client-side สำหรับ MP3, WAV, M4A, OGG และ WebM สูงสุด 80 MB / 30 นาที
+- เพิ่ม waveform preview, range controls สำหรับเวลาเริ่ม/จบ, preview เฉพาะช่วง และ Fade in/out
+- เพิ่มการตัดและ encode เป็น WAV PCM 16-bit พร้อมแสดง duration, channels, sample rate และ output size
+- เพิ่ม `audio-trim` processing protocol, Dedicated Worker และ main-thread fallback พร้อม progress/cancel lifecycle
+- เชื่อม Tool Registry, Offline preparation, file-tools catalog และ TH/EN localization
+- เพิ่ม unit tests สำหรับ validation, bounds, fade, WAV header และ Playwright E2E สำหรับ workflow จริง
+- ผลตรวจล่าสุด: TypeScript ผ่าน, Unit/Integration 51/51, Production build ผ่าน, Bundle Budget ผ่าน และ Playwright 52 ผ่าน / 2 intentional skips จาก 54 executions
+
 ---
 
 ## 8. สถานะระบบปัจจุบัน
@@ -325,7 +335,7 @@ PR #10 Merge แล้ว และ Production GitHub Pages ตอบ HTTP 200 �
 |---|---|---|
 | Foundation Demo | Active | Active |
 | Core Tools 7 รายการ | Active — CI/E2E ผ่าน | Active + localized metadata |
-| File Tools 6 รายการ | Active — CI/E2E ผ่าน | Active + localized metadata |
+| File Tools 7 รายการ | Active — CI/E2E ผ่าน | Active + localized metadata + Audio Trimmer |
 | Offline ราย Tool | IndexedDB + Service Worker cache | คงเดิม + Compatibility status |
 | Product Expansion | ไม่มี | TH/EN + Portable Settings + Usage order |
 

@@ -1,6 +1,7 @@
+import type { AudioPcmData, AudioTrimOptions, AudioTrimResult } from './audio-processing';
 import type { SupportedImageType } from './image-processing';
 
-export type ProcessingJobKind = 'images-to-pdf' | 'pdf-inspect' | 'pdf-merge' | 'pdf-split' | 'sha256' | 'image-process';
+export type ProcessingJobKind = 'images-to-pdf' | 'pdf-inspect' | 'pdf-merge' | 'pdf-split' | 'sha256' | 'image-process' | 'audio-trim';
 
 export interface ImageProcessOptions {
   width?: number;
@@ -27,6 +28,7 @@ export interface ProcessingPayloadMap {
   'pdf-split': { file: File; selection: string };
   sha256: { file: File };
   'image-process': { file: File; options: ImageProcessOptions };
+  'audio-trim': { pcm: AudioPcmData; options: AudioTrimOptions };
 }
 
 export interface ProcessingResultMap {
@@ -36,6 +38,7 @@ export interface ProcessingResultMap {
   'pdf-split': { bytes: Uint8Array; selectedPages: number[]; totalPages: number };
   sha256: { value: string };
   'image-process': { blob: Blob; width: number; height: number };
+  'audio-trim': AudioTrimResult;
 }
 
 export interface ProcessingRequest<K extends ProcessingJobKind = ProcessingJobKind> {

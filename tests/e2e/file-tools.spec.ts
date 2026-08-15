@@ -13,6 +13,31 @@ async function pdfBuffer(pages: number, title: string): Promise<Buffer> {
   return Buffer.from(await document.save());
 }
 
+function wavBuffer(durationSeconds = 1): Buffer {
+  const sampleRate = 8_000;
+  const frames = sampleRate * durationSeconds;
+  const buffer = Buffer.alloc(44 + frames * 2);
+  buffer.write('RIFF', 0); buffer.writeUInt32LE(36 + frames * 2, 4); buffer.write('WAVE', 8);
+  buffer.write('fmt ', 12); buffer.writeUInt32LE(16, 16); buffer.writeUInt16LE(1, 20); buffer.writeUInt16LE(1, 22);
+  buffer.writeUInt32LE(sampleRate, 24); buffer.writeUInt32LE(sampleRate * 2, 28); buffer.writeUInt16LE(2, 32); buffer.writeUInt16LE(16, 34);
+  buffer.write('data', 36); buffer.writeUInt32LE(frames * 2, 40);
+  for (let index = 0; index < frames; index += 1) buffer.writeInt16LE(Math.round(Math.sin(index / 8) * 8_000), 44 + index * 2);
+  return buffer;
+}
+
+test('trims an audio clip locally with preview and WAV output', async ({ page }) => {
+  await page.goto('./#/tools/audio-trimmer');
+  await page.locator('#trim-file').setInputFiles({ name: 'voice.wav', mimeType: 'audio/wav', buffer: wavBuffer() });
+  await expect(page.locator('#trim-editor')).toBeVisible();
+  await expect(page.locator('#trim-waveform')).toBeVisible();
+  await page.locator('#trim-fade-in').fill('0.1');
+  await page.locator('#trim-fade-out').fill('0.1');
+  await page.getByRole('button', { name: 'ตัดเสียงและสร้าง WAV' }).click();
+  await expect(page.locator('#trim-result')).toBeVisible();
+  await expect(page.locator('#trim-result-meta')).toContainText('WAV PCM 16-bit');
+  await expect(page.locator('#trim-status')).toContainText('สำเร็จ');
+});
+
 test('compresses an image and combines images into PDF locally', async ({ page }) => {
   await page.goto('./#/tools/image-compressor');
   await page.locator('#compress-file').setInputFiles({ name: 'pixel.png', mimeType: 'image/png', buffer: onePixelPng });

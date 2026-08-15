@@ -1,4 +1,5 @@
 import { PDFDocument, type PDFImage } from 'pdf-lib';
+import { trimPcm } from '../core/audio-processing';
 import { MAX_IMAGE_BYTES, MAX_IMAGE_DIMENSION, MAX_IMAGE_PIXELS, SUPPORTED_IMAGE_TYPES } from '../core/image-processing';
 import { MAX_PDF_PAGES, parsePageSelection } from '../core/file-processing';
 import type {
@@ -116,6 +117,10 @@ async function splitPdf(file: File, selection: string, jobId: string): Promise<P
   return { bytes: await output.save(), selectedPages, totalPages };
 }
 
+async function trimAudio(pcm: ProcessingPayloadMap['audio-trim']['pcm'], options: ProcessingPayloadMap['audio-trim']['options'], jobId: string): Promise<ProcessingResultMap['audio-trim']> {
+  return trimPcm(pcm, options, (progress, message) => report(jobId, progress, message));
+}
+
 async function sha256(file: File, jobId: string): Promise<ProcessingResultMap['sha256']> {
   report(jobId, 20, 'กำลังอ่านข้อมูลสำหรับ SHA-256');
   const hash = await crypto.subtle.digest('SHA-256', await file.arrayBuffer());
@@ -170,6 +175,10 @@ async function execute<K extends ProcessingJobKind>(request: ProcessingRequest<K
     return splitPdf(value.file, value.selection, jobId) as Promise<ProcessingResultMap[K]>;
   }
   if (kind === 'sha256') return sha256((payload as ProcessingPayloadMap['sha256']).file, jobId) as Promise<ProcessingResultMap[K]>;
+  if (kind === 'audio-trim') {
+    const value = payload as ProcessingPayloadMap['audio-trim'];
+    return trimAudio(value.pcm, value.options, jobId) as Promise<ProcessingResultMap[K]>;
+  }
   const value = payload as ProcessingPayloadMap['image-process'];
   return processImage(value.file, value.options, jobId) as Promise<ProcessingResultMap[K]>;
 }

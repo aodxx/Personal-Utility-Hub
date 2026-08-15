@@ -1,4 +1,5 @@
 import type { ToolMetadata } from '../core/tool-contract';
+import { metadata as audioTrimmer } from '../tools/audio-trimmer/metadata';
 import { metadata as fileMetadata } from '../tools/file-metadata/metadata';
 import { metadata as imageCompressor } from '../tools/image-compressor/metadata';
 import { metadata as imagesToPdf } from '../tools/images-to-pdf/metadata';
@@ -7,6 +8,7 @@ import { metadata as pdfSplit } from '../tools/pdf-split/metadata';
 import { metadata as pdfToImage } from '../tools/pdf-to-image/metadata';
 
 export const fileTools = [
+  audioTrimmer,
   imageCompressor,
   imagesToPdf,
   pdfMerge,

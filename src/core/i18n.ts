@@ -54,7 +54,8 @@ const categoryEnglish: Record<string, string> = {
   'QR Code และบาร์โค้ด': 'QR & Barcodes', 'เสียงและวิดีโอ': 'Audio & Video', 'Developer Tools': 'Developer Tools', 'อื่น ๆ': 'Other',
 };
 
-const toolEnglish: Record<string, Pick<ToolMetadata, 'title' | 'description'>> = {
+  const toolEnglish: Record<string, Pick<ToolMetadata, 'title' | 'description'>> = {
+  'audio-trimmer': { title: 'Audio Trimmer', description: 'Trim, preview and fade audio locally without uploading the file.' },
   'foundation-demo': { title: 'Foundation Demo', description: 'Verify the registry, routing, lazy loading and module lifecycle.' },
   'json-formatter': { title: 'JSON Formatter / Validator', description: 'Format, minify and validate JSON directly in your browser.' },
   base64: { title: 'Base64 Encoder / Decoder', description: 'Encode and decode Unicode text or Base64 data in your browser.' },
