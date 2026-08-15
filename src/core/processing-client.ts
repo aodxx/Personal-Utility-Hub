@@ -49,7 +49,8 @@ async function runFallback<K extends ProcessingJobKind>(
     result = await splitPdf(splitPayload.file, splitPayload.selection);
   } else if (kind === 'sha256') {
     const file = (payload as ProcessingPayloadMap['sha256']).file;
-    const hash = await crypto.subtle.digest('SHA-256', await file.arrayBuffer());
+    const bytes = new Uint8Array(await file.arrayBuffer());
+    const hash = await crypto.subtle.digest('SHA-256', bytes);
     result = { value: Array.from(new Uint8Array(hash), (byte) => byte.toString(16).padStart(2, '0')).join('') };
   } else {
     const { processImageOnMainThread } = await import('./image-processing');

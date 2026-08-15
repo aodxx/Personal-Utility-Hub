@@ -13,7 +13,7 @@ test('switches the Hub between Thai and English', async ({ page }) => {
 
   await expect(page.locator('html')).toHaveAttribute('lang', 'en');
   await expect(page.getByRole('heading', { name: /Every tool you need/ })).toBeVisible();
-  await expect(page.getByRole('button', { name: /Images/ })).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Images', exact: true })).toBeVisible();
   await expect(page.locator('[data-tool-id="image-compressor"]')).toContainText('Reduce JPEG or WebP');
 });
 
