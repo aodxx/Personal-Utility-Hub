@@ -27,9 +27,9 @@ describe('AppShell integration', () => {
   it('renders the Hub and filters tools by Thai search and category', async () => {
     const root = startApp();
     await vi.waitFor(() => expect(root.textContent).toContain('เครื่องมือที่ต้องใช้'));
-    expect(root.querySelectorAll('#tool-grid .tool-card')).toHaveLength(15);
+    expect(root.querySelectorAll('#tool-grid .tool-card')).toHaveLength(20);
     expect(root.querySelectorAll('.category-tab .asset-icon')).toHaveLength(8);
-    expect(root.querySelectorAll('#tool-grid .tool-card .asset-icon')).toHaveLength(15);
+    expect(root.querySelectorAll('#tool-grid .tool-card .asset-icon')).toHaveLength(20);
 
     const search = root.querySelector<HTMLInputElement>('#tool-search');
     if (!search) throw new Error('missing search input');
@@ -45,7 +45,7 @@ describe('AppShell integration', () => {
 
   it('persists favorites, records recent tools and clears history', async () => {
     const root = startApp();
-    await vi.waitFor(() => expect(root.querySelectorAll('#tool-grid .tool-card')).toHaveLength(15));
+    await vi.waitFor(() => expect(root.querySelectorAll('#tool-grid .tool-card')).toHaveLength(20));
     const jsonCard = root.querySelector<HTMLElement>('[data-tool-id="json-formatter"]');
     expect(jsonCard?.querySelector('.tool-card__tap-target')?.getAttribute('href')).toBe('#/tools/json-formatter');
     expect(jsonCard?.querySelector('.tool-card__link')).toBeNull();
@@ -108,7 +108,7 @@ describe('AppShell integration', () => {
     window.localStorage.setItem('utility-hub:tool-order', 'frequent');
     window.localStorage.setItem('utility-hub:usage', JSON.stringify({ 'pdf-merge': 8, base64: 2 }));
     const root = startApp();
-    await vi.waitFor(() => expect(root.querySelectorAll('#tool-grid .tool-card')).toHaveLength(15));
+    await vi.waitFor(() => expect(root.querySelectorAll('#tool-grid .tool-card')).toHaveLength(20));
     expect(root.querySelector<HTMLElement>('#tool-grid .tool-card')?.dataset.toolId).toBe('pdf-merge');
   });
 });

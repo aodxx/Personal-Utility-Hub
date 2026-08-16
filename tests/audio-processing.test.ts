@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { encodeWav, replaceAudioExtension, trimPcm, validateAudioFile, validateTrimOptions } from '../src/core/audio-processing';
+import { encodeWav, processAudio, replaceAudioExtension, trimPcm, validateAudioFile, validateTrimOptions } from '../src/core/audio-processing';
 
 describe('Audio processing', () => {
   it('validates audio file size and extensions', () => {
@@ -30,5 +30,20 @@ describe('Audio processing', () => {
     expect(view.getUint32(24, true)).toBe(8);
     expect(view.getUint16(34, true)).toBe(16);
     expect(view.getUint32(40, true)).toBe(6);
+  });
+
+  it('runs the five production audio operations with real output metrics', () => {
+    const source = { sampleRate: 100, channels: [new Float32Array(Array.from({ length: 100 }, (_, index) => index % 20 < 10 ? 0.7 : 0))] };
+    const compressor = processAudio(source, { kind: 'compress', targetBytes: 500, preset: 'speech' });
+    const merger = processAudio(source, { kind: 'merge', segments: [source, source], gap: 0.1, crossfade: 0, format: 'wav-compact' });
+    const silence = processAudio(source, { kind: 'silence', thresholdDb: -30, minimum: 0.05, padding: 0.01 });
+    const finisher = processAudio(source, { kind: 'finish', normalize: true, gainDb: 3, fadeIn: 0.05, fadeOut: 0.05 });
+    const speedPitch = processAudio(source, { kind: 'speed-pitch', speed: 1.5, semitones: 2 });
+    expect(compressor.bytes.length).toBeGreaterThan(44);
+    expect(merger.outputFormat).toBe('wav-compact');
+    expect(merger.duration).toBeGreaterThan(1.9);
+    expect(silence.duration).toBeLessThan(1);
+    expect(finisher.peak).toBeLessThanOrEqual(1);
+    expect(speedPitch.sampleRate).toBeGreaterThan(source.sampleRate);
   });
 });

@@ -1,5 +1,10 @@
 import { assertValidRegistry, type ToolRegistryEntry } from '../core/tool-contract';
+import { metadata as audioCompressorMetadata } from '../tools/audio-compressor/metadata';
+import { metadata as audioFinisherMetadata } from '../tools/audio-finisher/metadata';
+import { metadata as audioMergerMetadata } from '../tools/audio-merger/metadata';
+import { metadata as audioSpeedPitchMetadata } from '../tools/audio-speed-pitch/metadata';
 import { metadata as audioTrimmerMetadata } from '../tools/audio-trimmer/metadata';
+import { metadata as silenceRemoverMetadata } from '../tools/silence-remover/metadata';
 import { metadata as base64Metadata } from '../tools/base64/metadata';
 import { foundationDemoMetadata } from '../tools/foundation-demo/metadata';
 import { metadata as imageConverterMetadata } from '../tools/image-converter/metadata';
@@ -91,6 +96,31 @@ export const toolRegistry = [
   {
     metadata: audioTrimmerMetadata,
     load: () => import('../tools/audio-trimmer'),
+    prepareOffline: processingWorkerAssets,
+  },
+  {
+    metadata: audioCompressorMetadata,
+    load: () => import('../tools/audio-compressor'),
+    prepareOffline: processingWorkerAssets,
+  },
+  {
+    metadata: audioMergerMetadata,
+    load: () => import('../tools/audio-merger'),
+    prepareOffline: processingWorkerAssets,
+  },
+  {
+    metadata: silenceRemoverMetadata,
+    load: () => import('../tools/silence-remover'),
+    prepareOffline: processingWorkerAssets,
+  },
+  {
+    metadata: audioFinisherMetadata,
+    load: () => import('../tools/audio-finisher'),
+    prepareOffline: processingWorkerAssets,
+  },
+  {
+    metadata: audioSpeedPitchMetadata,
+    load: () => import('../tools/audio-speed-pitch'),
     prepareOffline: processingWorkerAssets,
   },
 ] satisfies readonly ToolRegistryEntry[];

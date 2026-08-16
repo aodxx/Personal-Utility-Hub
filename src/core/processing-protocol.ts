@@ -1,7 +1,7 @@
-import type { AudioPcmData, AudioTrimOptions, AudioTrimResult } from './audio-processing';
+import type { AudioOperation, AudioPcmData, AudioProcessResult, AudioTrimOptions, AudioTrimResult } from './audio-processing';
 import type { SupportedImageType } from './image-processing';
 
-export type ProcessingJobKind = 'images-to-pdf' | 'pdf-inspect' | 'pdf-merge' | 'pdf-split' | 'sha256' | 'image-process' | 'audio-trim';
+export type ProcessingJobKind = 'images-to-pdf' | 'pdf-inspect' | 'pdf-merge' | 'pdf-split' | 'sha256' | 'image-process' | 'audio-trim' | 'audio-process';
 
 export interface ImageProcessOptions {
   width?: number;
@@ -29,6 +29,7 @@ export interface ProcessingPayloadMap {
   sha256: { file: File };
   'image-process': { file: File; options: ImageProcessOptions };
   'audio-trim': { pcm: AudioPcmData; options: AudioTrimOptions };
+  'audio-process': { pcm: AudioPcmData; operation: AudioOperation };
 }
 
 export interface ProcessingResultMap {
@@ -39,6 +40,7 @@ export interface ProcessingResultMap {
   sha256: { value: string };
   'image-process': { blob: Blob; width: number; height: number };
   'audio-trim': AudioTrimResult;
+  'audio-process': AudioProcessResult;
 }
 
 export interface ProcessingRequest<K extends ProcessingJobKind = ProcessingJobKind> {

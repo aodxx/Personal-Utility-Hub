@@ -38,6 +38,27 @@ test('trims an audio clip locally with preview and WAV output', async ({ page })
   await expect(page.locator('#trim-status')).toContainText('สำเร็จ');
 });
 
+test('runs all five new audio workbenches with real output', async ({ page }) => {
+  test.setTimeout(120_000);
+  const cases = [
+    { route: 'audio-compressor', input: [{ name: 'compress.wav', mimeType: 'audio/wav', buffer: wavBuffer() }], setup: async () => { await page.locator('#audio-target').fill('0.05'); } },
+    { route: 'audio-merger', input: [{ name: 'one.wav', mimeType: 'audio/wav', buffer: wavBuffer() }, { name: 'two.wav', mimeType: 'audio/wav', buffer: wavBuffer() }], setup: async () => { await expect(page.locator('#audio-file-list li')).toHaveCount(2); await page.locator('[data-audio-move="up"]').last().click(); await page.locator('#audio-gap').fill('0.1'); await page.locator('#audio-crossfade').fill('0.05'); } },
+    { route: 'silence-remover', input: [{ name: 'silence.wav', mimeType: 'audio/wav', buffer: wavBuffer() }], setup: async () => { await page.locator('#audio-threshold').fill('-35'); await page.locator('#audio-padding').fill('0.05'); } },
+    { route: 'audio-finisher', input: [{ name: 'finish.wav', mimeType: 'audio/wav', buffer: wavBuffer() }], setup: async () => { await page.locator('#audio-gain').fill('2'); await page.locator('#audio-fade-out').fill('0.1'); } },
+    { route: 'audio-speed-pitch', input: [{ name: 'speed.wav', mimeType: 'audio/wav', buffer: wavBuffer() }], setup: async () => { await page.locator('#audio-speed').fill('1.25'); await page.locator('#audio-semitones').fill('2'); } },
+  ];
+  for (const item of cases) {
+    await page.goto(`./#/tools/${item.route}`);
+    await page.locator('#audio-file').setInputFiles(item.input);
+    await expect(page.locator('#audio-editor')).toBeVisible();
+    await item.setup();
+    await page.locator('#audio-form').dispatchEvent('submit');
+    await expect(page.locator('#audio-status')).toContainText('Processing complete', { timeout: 15_000 });
+    await expect(page.locator('#audio-result')).toBeVisible({ timeout: 15_000 });
+    await expect(page.locator('#audio-result-meta')).toContainText('Peak');
+  }
+});
+
 test('compresses an image and combines images into PDF locally', async ({ page }) => {
   await page.goto('./#/tools/image-compressor');
   await page.locator('#compress-file').setInputFiles({ name: 'pixel.png', mimeType: 'image/png', buffer: onePixelPng });

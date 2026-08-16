@@ -55,6 +55,11 @@ const categoryEnglish: Record<string, string> = {
 };
 
   const toolEnglish: Record<string, Pick<ToolMetadata, 'title' | 'description'>> = {
+  'audio-compressor': { title: 'Audio Compressor Pro', description: 'Compress audio with target size, presets and honest before/after metrics.' },
+  'audio-merger': { title: 'Audio Merger Studio', description: 'Reorder audio files, add gap or crossfade, and choose the output format.' },
+  'silence-remover': { title: 'Silence Remover', description: 'Remove long pauses with threshold, minimum silence and padding controls.' },
+  'audio-finisher': { title: 'Audio Finisher', description: 'Polish gain, normalization and fades with peak and clipping protection.' },
+  'audio-speed-pitch': { title: 'Audio Speed & Pitch', description: 'Preview and export predictable offline speed and pitch changes.' },
   'audio-trimmer': { title: 'Audio Trimmer', description: 'Trim, preview and fade audio locally without uploading the file.' },
   'foundation-demo': { title: 'Foundation Demo', description: 'Verify the registry, routing, lazy loading and module lifecycle.' },
   'json-formatter': { title: 'JSON Formatter / Validator', description: 'Format, minify and validate JSON directly in your browser.' },

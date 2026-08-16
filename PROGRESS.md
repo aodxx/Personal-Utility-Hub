@@ -418,3 +418,37 @@ PR #10 Merge แล้ว และ Production GitHub Pages ตอบ HTTP 200 �
 - [docs/VISUAL_SYSTEM.md](docs/VISUAL_SYSTEM.md) — Art direction, Asset IDs และกฎการใช้งาน 3D Visual System
 
 ลำดับความสำคัญของข้อมูลคือ: `PRD.md` กำหนดว่า **ต้องสร้างอะไร**, `PROGRESS.md` ระบุว่า **ทำถึงไหนแล้ว**, และ `TEST_REPORT.md` แสดงว่า **ตรวจสอบอย่างไรและผ่านหรือไม่**
+
+
+---
+
+## 8. Audio Expansion — เครื่องมือเสียงใหม่ 5 รายการ
+
+**สถานะ:** ✅ พัฒนาและตรวจสอบ Local validation ผ่าน; พร้อมส่งขึ้น `main`
+
+### สิ่งที่ส่งมอบ
+
+- **Audio Compressor Pro** — Target-size mode, preset สำหรับ Speech/Podcast/Music, metrics ก่อน/หลัง และ clipping warning
+- **Audio Merger Studio** — เลือกหลายไฟล์, reorder, duration รวม, gap, crossfade และ output WAV PCM16/WAV Compact
+- **Silence Remover** — threshold dB, minimum silence, padding และ preview ก่อน export
+- **Audio Finisher** — normalize, gain, fade in/out, peak meter และ clipping protection
+- **Audio Speed & Pitch** — ปรับ speed และ semitones, preview และ export WAV แบบ client-side
+- ใช้ shared Audio Workbench เพื่อลด duplication แต่แยก metadata, route, copy และ controls ของแต่ละเครื่องมืออย่างชัดเจน
+- เพิ่ม `audio-process` Worker protocol พร้อม main-thread fallback และ transferable PCM buffers; กรณี Merger ใช้ structured clone โดยไม่โอน buffer ซ้ำเพื่อรองรับ segments หลายชุด
+- เพิ่ม TH/EN localization, lazy loading, Offline preparation, validation, progress, cancel, success/error states, responsive layout และ accessible labels
+- ไม่เพิ่ม dependency ใหม่ และไม่โฆษณาความสามารถ AI; การปรับเสียงใช้ browser AudioContext, PCM processing และ WAV encoder ที่อยู่ในโปรเจกต์
+
+### ผลตรวจล่าสุด
+
+- TypeScript strict typecheck — ผ่าน
+- Unit/Integration — ผ่าน 52/52
+- Production build — ผ่าน
+- Bundle check — ผ่าน: Entry gzip 17.1 KB; All JavaScript gzip 949.2 KB / 31 chunks
+- `git diff --check` — ผ่าน
+- Playwright E2E — ผ่าน 55 cases, 2 intentional skips จาก 57 cases; รวม workflow จริงของ Audio Trimmer และเครื่องมือใหม่ทั้ง 5 บน Desktop/Android profiles
+
+### ข้อจำกัดที่เปิดเผยต่อผู้ใช้
+
+- Compressor ใช้การลด sample rate และ soft saturation เพื่อเข้าใกล้ target size; ไม่ใช่ lossless compression และอาจได้ขนาดสูงกว่าเป้าหมายตามโครงสร้าง WAV
+- Speed & Pitch เป็น resampling ที่คาดเดาได้และทำงาน offline; ไม่อ้างว่าเป็น studio-grade time-stretch ที่รักษาความยาวและ pitch แยกจากกันแบบ DSP ขั้นสูง
+- Output ของเครื่องมือใหม่เป็น WAV ที่ประมวลผลบนอุปกรณ์ทั้งหมด เพื่อคง privacy และไม่เพิ่ม dependency ขนาดใหญ่

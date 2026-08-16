@@ -1,5 +1,10 @@
 import type { ToolMetadata } from '../core/tool-contract';
+import { metadata as audioCompressor } from '../tools/audio-compressor/metadata';
+import { metadata as audioFinisher } from '../tools/audio-finisher/metadata';
+import { metadata as audioMerger } from '../tools/audio-merger/metadata';
+import { metadata as audioSpeedPitch } from '../tools/audio-speed-pitch/metadata';
 import { metadata as audioTrimmer } from '../tools/audio-trimmer/metadata';
+import { metadata as silenceRemover } from '../tools/silence-remover/metadata';
 import { metadata as fileMetadata } from '../tools/file-metadata/metadata';
 import { metadata as imageCompressor } from '../tools/image-compressor/metadata';
 import { metadata as imagesToPdf } from '../tools/images-to-pdf/metadata';
@@ -9,6 +14,11 @@ import { metadata as pdfToImage } from '../tools/pdf-to-image/metadata';
 
 export const fileTools = [
   audioTrimmer,
+  audioCompressor,
+  audioMerger,
+  silenceRemover,
+  audioFinisher,
+  audioSpeedPitch,
   imageCompressor,
   imagesToPdf,
   pdfMerge,

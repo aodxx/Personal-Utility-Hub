@@ -1,0 +1,2 @@
+import type { ToolMetadata } from '../../core/tool-contract';
+export const metadata = { id: 'silence-remover', title: 'Silence Remover', description: 'ลบช่วงเงียบด้วย Threshold, Minimum Silence และ Padding พร้อม Preview ก่อน export', category: 'เสียงและวิดีโอ', route: '/tools/silence-remover', icon: 'category-media', tags: ['audio', 'silence', 'threshold', 'speech', 'ตัดช่วงเงียบ'], processing: 'client-side', supportsOffline: true, requiresFile: true, status: 'active', version: '1.0.0' } as const satisfies ToolMetadata;

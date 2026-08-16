@@ -1,5 +1,5 @@
 import { PDFDocument, type PDFImage } from 'pdf-lib';
-import { trimPcm } from '../core/audio-processing';
+import { processAudio, trimPcm } from '../core/audio-processing';
 import { MAX_IMAGE_BYTES, MAX_IMAGE_DIMENSION, MAX_IMAGE_PIXELS, SUPPORTED_IMAGE_TYPES } from '../core/image-processing';
 import { MAX_PDF_PAGES, parsePageSelection } from '../core/file-processing';
 import type {
@@ -178,6 +178,10 @@ async function execute<K extends ProcessingJobKind>(request: ProcessingRequest<K
   if (kind === 'audio-trim') {
     const value = payload as ProcessingPayloadMap['audio-trim'];
     return trimAudio(value.pcm, value.options, jobId) as Promise<ProcessingResultMap[K]>;
+  }
+  if (kind === 'audio-process') {
+    const value = payload as ProcessingPayloadMap['audio-process'];
+    return Promise.resolve(processAudio(value.pcm, value.operation, (progress, message) => report(jobId, progress, message))) as Promise<ProcessingResultMap[K]>;
   }
   const value = payload as ProcessingPayloadMap['image-process'];
   return processImage(value.file, value.options, jobId) as Promise<ProcessingResultMap[K]>;

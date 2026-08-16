@@ -1,0 +1,2 @@
+import type { ToolMetadata } from '../../core/tool-contract';
+export const metadata = { id: 'audio-compressor', title: 'Audio Compressor Pro', description: 'บีบอัดเสียงด้วย Target Size, preset และ metrics ก่อน/หลังโดยไม่อัปโหลดไฟล์', category: 'เสียงและวิดีโอ', route: '/tools/audio-compressor', icon: 'category-media', tags: ['audio', 'compress', 'target size', 'preset', 'บีบอัดเสียง'], processing: 'client-side', supportsOffline: true, requiresFile: true, status: 'active', version: '1.0.0' } as const satisfies ToolMetadata;

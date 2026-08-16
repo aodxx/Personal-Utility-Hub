@@ -1,0 +1,2 @@
+import type { ToolMetadata } from '../../core/tool-contract';
+export const metadata = { id: 'audio-finisher', title: 'Audio Finisher', description: 'ปรับเสียงขั้นสุดท้ายด้วย Normalize, Gain, Fade, Peak Meter และ clipping protection', category: 'เสียงและวิดีโอ', route: '/tools/audio-finisher', icon: 'category-media', tags: ['audio', 'normalize', 'gain', 'fade', 'peak meter', 'ปรับเสียง'], processing: 'client-side', supportsOffline: true, requiresFile: true, status: 'active', version: '1.0.0' } as const satisfies ToolMetadata;
