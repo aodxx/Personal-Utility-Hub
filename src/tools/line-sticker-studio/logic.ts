@@ -69,6 +69,29 @@ export function gridCells(grid: GridConfig): GridCell[] {
   return cells;
 }
 
+export interface GridValidation { valid: boolean; errors: string[]; }
+
+export function validateGrid(grid: GridConfig, sourceWidth: number, sourceHeight: number): GridValidation {
+  const errors: string[] = [];
+  if (!Number.isInteger(grid.rows) || grid.rows < 1 || !Number.isInteger(grid.columns) || grid.columns < 1) errors.push('Rows and columns must be positive integers');
+  if (grid.rows * grid.columns > 24) errors.push('Grid must contain between 1 and 24 cells');
+  if (!Number.isInteger(sourceWidth) || sourceWidth < 1 || !Number.isInteger(sourceHeight) || sourceHeight < 1) errors.push('Source dimensions are invalid');
+  if (grid.xBoundaries.length !== grid.columns + 1 || grid.yBoundaries.length !== grid.rows + 1) errors.push('Grid boundary count is invalid');
+  const checkAxis = (boundaries: number[], dimension: number, label: string): void => { if (boundaries[0] !== 0) errors.push(`${label} must start at 0`); if (boundaries[boundaries.length - 1] !== dimension) errors.push(`${label} must end at source dimension`); boundaries.forEach((value, index) => { if (!Number.isInteger(value)) errors.push(`${label} boundary ${index} must be an integer`); if (index > 0 && value <= (boundaries[index - 1] ?? -1)) errors.push(`${label} boundaries must be strictly increasing`); }); };
+  checkAxis(grid.xBoundaries, sourceWidth, 'X'); checkAxis(grid.yBoundaries, sourceHeight, 'Y');
+  if (errors.length === 0 && gridCells(grid).some((cell) => cell.width < 1 || cell.height < 1)) errors.push('Every cell must have positive dimensions');
+  return { valid: errors.length === 0, errors };
+}
+
+export function getGridCells(grid: GridConfig, sourceWidth: number, sourceHeight: number): GridCell[] {
+  const validation = validateGrid(grid, sourceWidth, sourceHeight);
+  if (!validation.valid) throw new Error(`Grid ไม่ถูกต้อง กรุณาปรับเส้นตัดก่อน: ${validation.errors.join('; ')}`);
+  return gridCells(grid);
+}
+
+export function normalizedToSource(value: number, dimension: number): number { if (!Number.isFinite(value) || !Number.isFinite(dimension) || dimension < 1) throw new Error('Invalid normalized coordinate'); return Math.round(Math.max(0, Math.min(1, value)) * dimension); }
+export function sourceToNormalized(value: number, dimension: number): number { if (!Number.isFinite(value) || !Number.isFinite(dimension) || dimension < 1) throw new Error('Invalid source coordinate'); return Math.max(0, Math.min(1, value / dimension)); }
+
 export function moveBoundary(boundaries: number[], index: number, value: number, minGap = 2): number[] {
   if (index <= 0 || index >= boundaries.length - 1) return boundaries.slice();
   const next = boundaries.slice();

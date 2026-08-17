@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { ANIMATED_STICKER_PRESET, STATIC_STICKER_PRESET } from '../src/data/line-sticker-presets';
-import { buildPrompt, createGrid, createZip, gridCells, gridCountMessage, moveBoundary, validateAnimatedFrames } from '../src/tools/line-sticker-studio/logic';
+import { buildPrompt, createGrid, createZip, getGridCells, gridCells, gridCountMessage, moveBoundary, normalizedToSource, sourceToNormalized, validateAnimatedFrames, validateGrid } from '../src/tools/line-sticker-studio/logic';
 
 describe('LINE Sticker Studio logic', () => {
   it('creates deterministic grid cells and movable boundaries', () => {
@@ -13,6 +13,39 @@ describe('LINE Sticker Studio logic', () => {
     ]);
     expect(moveBoundary(grid.xBoundaries, 1, 20)[1]).toBe(20);
     expect(moveBoundary(grid.xBoundaries, 1, 250)[1]).toBe(250);
+  });
+
+  it('keeps non-divisible source dimensions gap-free and integer-safe', () => {
+    const grid = createGrid(1537, 1539, 4, 4);
+    const validation = validateGrid(grid, 1537, 1539);
+    expect(validation.valid).toBe(true);
+    const cells = getGridCells(grid, 1537, 1539);
+    expect(cells).toHaveLength(16);
+    expect(grid.xBoundaries[0]).toBe(0);
+    expect(grid.xBoundaries.at(-1)).toBe(1537);
+    expect(grid.yBoundaries[0]).toBe(0);
+    expect(grid.yBoundaries.at(-1)).toBe(1539);
+    expect(cells.reduce((sum, cell) => sum + cell.width, 0)).toBe(1537 * 4);
+    expect(cells.slice(0, 4).map((cell) => cell.x)).toEqual([0, grid.xBoundaries[1], grid.xBoundaries[2], grid.xBoundaries[3]]);
+  });
+
+  it('rejects invalid boundaries before crop and preserves normalized/source parity', () => {
+    const grid = createGrid(1536, 1536, 4, 4);
+    grid.xBoundaries[2] = grid.xBoundaries[1] ?? 0;
+    expect(validateGrid(grid, 1536, 1536).valid).toBe(false);
+    expect(() => getGridCells(grid, 1536, 1536)).toThrow(/Grid ไม่ถูกต้อง/);
+    expect(normalizedToSource(0.5, 1536)).toBe(768);
+    expect(sourceToNormalized(768, 1536)).toBe(0.5);
+  });
+
+  it('maps a valid 4×4 grid in row-major order', () => {
+    const cells = getGridCells(createGrid(1536, 1536, 4, 4), 1536, 1536);
+    expect(cells.map((cell) => [cell.x, cell.y])).toEqual([
+      [0, 0], [384, 0], [768, 0], [1152, 0],
+      [0, 384], [384, 384], [768, 384], [1152, 384],
+      [0, 768], [384, 768], [768, 768], [1152, 768],
+      [0, 1152], [384, 1152], [768, 1152], [1152, 1152],
+    ]);
   });
 
   it('warns when phrase count does not match grid capacity', () => {
