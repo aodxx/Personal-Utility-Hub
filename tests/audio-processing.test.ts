@@ -34,10 +34,10 @@ describe('Audio processing', () => {
 
   it('runs the five production audio operations with real output metrics', () => {
     const source = { sampleRate: 100, channels: [new Float32Array(Array.from({ length: 100 }, (_, index) => index % 20 < 10 ? 0.7 : 0))] };
-    const compressor = processAudio(source, { kind: 'compress', targetBytes: 500, preset: 'speech' });
+    const compressor = processAudio(source, { kind: 'compress', targetBytes: 500, preset: 'speech', quality: 'small' });
     const merger = processAudio(source, { kind: 'merge', segments: [source, source], gap: 0.1, crossfade: 0, format: 'wav-compact' });
     const silence = processAudio(source, { kind: 'silence', thresholdDb: -30, minimum: 0.05, padding: 0.01 });
-    const finisher = processAudio(source, { kind: 'finish', normalize: true, gainDb: 3, fadeIn: 0.05, fadeOut: 0.05 });
+    const finisher = processAudio(source, { kind: 'finish', normalize: true, gainDb: 3, fadeIn: 0.05, fadeOut: 0.05, loudness: 'voice' });
     const speedPitch = processAudio(source, { kind: 'speed-pitch', speed: 1.5, semitones: 2 });
     expect(compressor.bytes.length).toBeGreaterThan(44);
     expect(merger.outputFormat).toBe('wav-compact');
@@ -45,5 +45,7 @@ describe('Audio processing', () => {
     expect(silence.duration).toBeLessThan(1);
     expect(finisher.peak).toBeLessThanOrEqual(1);
     expect(speedPitch.sampleRate).toBeGreaterThan(source.sampleRate);
+    const highQuality = processAudio(source, { kind: 'compress', targetBytes: 500, preset: 'speech', quality: 'high' });
+    expect(highQuality.sampleRate).toBeGreaterThanOrEqual(compressor.sampleRate);
   });
 });

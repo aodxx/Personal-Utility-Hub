@@ -452,3 +452,18 @@ PR #10 Merge แล้ว และ Production GitHub Pages ตอบ HTTP 200 �
 - Compressor ใช้การลด sample rate และ soft saturation เพื่อเข้าใกล้ target size; ไม่ใช่ lossless compression และอาจได้ขนาดสูงกว่าเป้าหมายตามโครงสร้าง WAV
 - Speed & Pitch เป็น resampling ที่คาดเดาได้และทำงาน offline; ไม่อ้างว่าเป็น studio-grade time-stretch ที่รักษาความยาวและ pitch แยกจากกันแบบ DSP ขั้นสูง
 - Output ของเครื่องมือใหม่เป็น WAV ที่ประมวลผลบนอุปกรณ์ทั้งหมด เพื่อคง privacy และไม่เพิ่ม dependency ขนาดใหญ่
+
+
+## 9. Audio UX and Quality Refinement
+
+**สถานะ:** ✅ ผ่าน Local validation และ E2E ครบชุด
+
+รอบนี้เพิ่ม shared waveform visualization ให้ Audio Workbench ทั้ง 5 รายการ โดย Silence Remover จะแสดงช่วงเสียงเบาที่อาจถูกตัดเป็น marker สีแดง เพิ่ม Preview ผลลัพธ์ที่ประมวลผลจริงก่อน Export และแยกปุ่ม Export/Download เพื่อให้ผู้ใช้ตรวจเสียงก่อนนำไฟล์ออกจากอุปกรณ์
+
+Audio Compressor เพิ่ม Quality profile แบบ Small, Balanced และ High พร้อม metrics ที่แสดงขนาดต้นฉบับ → ขนาดผลลัพธ์ และ target size ส่วน Audio Finisher เพิ่ม loudness mode แบบ Peak safe และ Voice safe พร้อมสื่อสารชัดเจนว่าเป็น peak-based normalization ไม่ใช่ LUFS mastering ส่วน Speed & Pitch ปรับข้อความให้ระบุว่าเป็น resampling mode และไม่โฆษณา time-stretch เกินความสามารถจริง
+
+แก้ปัญหา Worker detached `ArrayBuffer` ที่เกิดเมื่อผู้ใช้ Preview แล้ว Export ซ้ำ โดย clone PCM ก่อน transfer ทุกครั้ง เพิ่ม unit coverage สำหรับ quality/loudness และ E2E coverage ที่ทดสอบ preview → export ของเครื่องมือเสียงทั้ง 5 บน Desktop และ Android profiles
+
+ผลตรวจล่าสุด: TypeScript typecheck ผ่าน, Unit/Integration 52/52, production build ผ่าน, bundle check ผ่านที่ Entry gzip 17.1 KB และ JavaScript รวม 950.4 KB จาก 31 chunks, `git diff --check` ผ่าน และ Playwright 55 passed, 2 intentional skips จาก 57 cases
+
+งานที่ยังเป็น roadmap ได้แก่ MP3 export, LUFS/true-peak metering, segment-level silence editor และ time-stretch ที่แยก pitch กับ duration ได้ เนื่องจากต้อง benchmark คุณภาพและพิจารณา dependency/bundle budget เพิ่มเติม

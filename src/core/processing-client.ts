@@ -112,12 +112,22 @@ export async function runProcessingJob<K extends ProcessingJobKind>(
     worker.onerror = (event): void => finish(() => reject(new Error(event.message || 'Web Worker ทำงานไม่สำเร็จ')));
     options.signal?.addEventListener('abort', handleAbort, { once: true });
 
-    const request: ProcessingRequest<K> = { type: 'run', jobId, kind, payload };
-    const transfer: Transferable[] = kind === 'audio-trim'
-      ? (payload as ProcessingPayloadMap['audio-trim']).pcm.channels.map((channel) => channel.buffer)
-      : kind === 'audio-process' && (payload as ProcessingPayloadMap['audio-process']).operation.kind !== 'merge'
-        ? (payload as ProcessingPayloadMap['audio-process']).pcm.channels.flatMap((channel) => channel.buffer instanceof ArrayBuffer ? [channel.buffer] : [])
-        : [];
+    let requestPayload = payload;
+    let transfer: Transferable[] = [];
+    if (kind === 'audio-trim') {
+      const source = (payload as ProcessingPayloadMap['audio-trim']).pcm;
+      const pcm = { sampleRate: source.sampleRate, channels: source.channels.map((channel) => new Float32Array(channel)) };
+      requestPayload = { ...(payload as ProcessingPayloadMap['audio-trim']), pcm } as ProcessingPayloadMap[K];
+      transfer = pcm.channels.map((channel) => channel.buffer);
+    } else if (kind === 'audio-process') {
+      const audioPayload = payload as ProcessingPayloadMap['audio-process'];
+      if (audioPayload.operation.kind !== 'merge') {
+        const pcm = { sampleRate: audioPayload.pcm.sampleRate, channels: audioPayload.pcm.channels.map((channel) => new Float32Array(channel)) };
+        requestPayload = { ...(audioPayload as ProcessingPayloadMap['audio-process']), pcm } as ProcessingPayloadMap[K];
+        transfer = pcm.channels.map((channel) => channel.buffer);
+      }
+    }
+    const request: ProcessingRequest<K> = { type: 'run', jobId, kind, payload: requestPayload };
     worker.postMessage(request, transfer);
   });
 }

@@ -86,10 +86,10 @@ export function trimPcm(pcm: AudioPcmData, options: AudioTrimOptions, onProgress
 }
 
 export type AudioOperation =
-  | { kind: 'compress'; targetBytes: number; preset: 'speech' | 'music' | 'podcast' }
+  | { kind: 'compress'; targetBytes: number; preset: 'speech' | 'music' | 'podcast'; quality?: 'small' | 'balanced' | 'high' }
   | { kind: 'merge'; segments: AudioPcmData[]; gap: number; crossfade: number; format: 'wav' | 'wav-compact' }
   | { kind: 'silence'; thresholdDb: number; minimum: number; padding: number }
-  | { kind: 'finish'; normalize: boolean; gainDb: number; fadeIn: number; fadeOut: number }
+  | { kind: 'finish'; normalize: boolean; gainDb: number; fadeIn: number; fadeOut: number; loudness?: 'peak' | 'voice' }
   | { kind: 'speed-pitch'; speed: number; semitones: number };
 
 export interface AudioProcessResult extends AudioTrimResult {
@@ -160,10 +160,10 @@ function removeSilence(pcm: AudioPcmData, thresholdDb: number, minimum: number, 
 
 export function processAudio(pcm: AudioPcmData, operation: AudioOperation, onProgress?: (progress: number, message: string) => void): AudioProcessResult {
   let output: AudioPcmData; let outputFormat: 'wav' | 'wav-compact' = 'wav';
-  if (operation.kind === 'compress') { const duration = durationOf(pcm); const presetGain = operation.preset === 'speech' ? 2.4 : operation.preset === 'podcast' ? 1.8 : 1.35; const targetRate = Math.max(8_000, Math.min(pcm.sampleRate, Math.floor(operation.targetBytes * 8 / Math.max(1, duration * pcm.channels.length * 16)))); output = resamplePcm(clonePcm(pcm), targetRate, onProgress); applyGain(output.channels, presetGain); }
+  if (operation.kind === 'compress') { const duration = durationOf(pcm); const presetGain = operation.preset === 'speech' ? 2.4 : operation.preset === 'podcast' ? 1.8 : 1.35; const qualityFactor = operation.quality === 'small' ? 0.72 : operation.quality === 'high' ? 1.2 : 1; const targetRate = Math.max(8_000, Math.min(pcm.sampleRate, Math.floor(operation.targetBytes * 8 * qualityFactor / Math.max(1, duration * pcm.channels.length * 16)))); output = resamplePcm(clonePcm(pcm), targetRate, onProgress); applyGain(output.channels, presetGain); }
   else if (operation.kind === 'merge') { output = joinPcm(operation.segments, operation.gap, operation.crossfade, onProgress); outputFormat = operation.format; }
   else if (operation.kind === 'silence') output = removeSilence(pcm, operation.thresholdDb, operation.minimum, operation.padding, onProgress);
-  else if (operation.kind === 'finish') { output = clonePcm(pcm); applyGain(output.channels, 10 ** (operation.gainDb / 20)); if (operation.normalize) { const peak = audioPeak(output.channels); if (peak > 0) applyGain(output.channels, Math.min(1 / peak, 4)); } fadeChannels(output.channels, output.sampleRate, operation.fadeIn, operation.fadeOut); }
+  else if (operation.kind === 'finish') { output = clonePcm(pcm); applyGain(output.channels, 10 ** (operation.gainDb / 20)); if (operation.normalize) { const peak = audioPeak(output.channels); if (peak > 0) applyGain(output.channels, Math.min(1 / peak, operation.loudness === 'voice' ? 0.9 / peak : 1 / peak)); } fadeChannels(output.channels, output.sampleRate, operation.fadeIn, operation.fadeOut); }
   else { const ratio = Math.max(.25, Math.min(4, operation.speed * 2 ** (operation.semitones / 12))); output = resamplePcm(pcm, Math.max(8_000, Math.round(pcm.sampleRate * ratio)), onProgress); }
   onProgress?.(75, 'กำลังสร้างไฟล์ผลลัพธ์'); const bytes = encodeWav(output.channels, output.sampleRate, onProgress, outputFormat === 'wav-compact' ? 8 : 16); const peak = audioPeak(output.channels);
   return { bytes, duration: durationOf(output), sampleRate: output.sampleRate, channels: output.channels.length, peak, clipped: peak > 0.99, outputFormat };
