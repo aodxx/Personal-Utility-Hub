@@ -3,7 +3,7 @@ export const categories = [
   'PDF และเอกสาร',
   'ข้อความและข้อมูล',
   'QR Code และบาร์โค้ด',
-  'เสียงและวิดีโอ',
+  'เสียง',
   'Developer Tools',
   'อื่น ๆ',
 ] as const;

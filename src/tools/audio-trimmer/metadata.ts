@@ -4,7 +4,7 @@ export const metadata = {
   id: 'audio-trimmer',
   title: 'Audio Trimmer',
   description: 'ตัดช่วงเสียง Preview และใส่ Fade โดยไม่อัปโหลดไฟล์ออกจากอุปกรณ์',
-  category: 'เสียงและวิดีโอ',
+  category: 'เสียง',
   route: '/tools/audio-trimmer',
   icon: 'category-media',
   tags: ['audio', 'trim', 'cut', 'fade', 'waveform', 'mp3', 'wav', 'ตัดเสียง', 'เสียงเรียกเข้า'],

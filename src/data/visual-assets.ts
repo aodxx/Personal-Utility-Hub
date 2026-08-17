@@ -6,7 +6,7 @@ export const categoryVisuals = {
   'PDF และเอกสาร': 'category-documents',
   'ข้อความและข้อมูล': 'category-text-data',
   'QR Code และบาร์โค้ด': 'category-qr-barcode',
-  'เสียงและวิดีโอ': 'category-media',
+  'เสียง': 'category-media',
   'Developer Tools': 'category-developer',
   'อื่น ๆ': 'category-other',
 } as const satisfies Record<string, VisualAssetId>;

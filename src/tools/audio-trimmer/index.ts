@@ -1,4 +1,5 @@
-import { validateAudioFile, validateTrimOptions, type AudioPcmData } from '../../core/audio-processing';
+import { validateTrimOptions } from '../../core/audio-processing';
+import { audioCapabilityHint, decodeAudioFile } from '../../core/audio-decoder';
 import { trimAudioAsync } from '../../core/processing-client';
 import type { ToolModule } from '../../core/tool-contract';
 import { downloadUrl, formatBytes, getErrorMessage, isAbortError, requiredElement, setProgressStatus, setToolStatus } from '../../core/tool-ui';
@@ -8,8 +9,7 @@ let panel: HTMLElement | undefined;
 let sourceFile: File | undefined;
 let sourceUrl = '';
 let outputUrl = '';
-let audioContext: AudioContext | undefined;
-let audioBuffer: AudioBuffer | undefined;
+let decodedPcm: import('../../core/audio-processing').AudioPcmData | undefined;
 let operationId = 0;
 let activeJob: AbortController | undefined;
 
@@ -35,7 +35,7 @@ function clearOutput(): void {
 }
 
 function drawWaveform(): void {
-  if (!panel || !audioBuffer) return;
+  if (!panel || !decodedPcm) return;
   const canvas = requiredElement<HTMLCanvasElement>(panel, '#trim-waveform');
   const context = canvas.getContext('2d');
   if (!context) return;
@@ -46,7 +46,8 @@ function drawWaveform(): void {
   context.clearRect(0, 0, width, height);
   context.fillStyle = '#eef0ff';
   context.fillRect(0, 0, width, height);
-  const channel = audioBuffer.getChannelData(0);
+  const channel = decodedPcm.channels[0];
+  if (!channel) return;
   const step = Math.max(1, Math.floor(channel.length / width));
   const middle = height / 2;
   context.strokeStyle = '#5364c7';
@@ -69,13 +70,13 @@ function drawWaveform(): void {
 }
 
 function updateSelectionOverlay(): void {
-  if (!panel || !audioBuffer) return;
+  if (!panel || !decodedPcm) return;
   const canvas = requiredElement<HTMLCanvasElement>(panel, '#trim-waveform');
   const context = canvas.getContext('2d');
   if (!context) return;
   const start = Number(requiredElement<HTMLInputElement>(panel, '#trim-start').value);
   const end = Number(requiredElement<HTMLInputElement>(panel, '#trim-end').value);
-  const duration = audioBuffer.duration || 1;
+  const duration = decodedPcm.channels[0] ? decodedPcm.channels[0].length / decodedPcm.sampleRate : 1;
   const startX = Math.round((start / duration) * canvas.width);
   const endX = Math.round((end / duration) * canvas.width);
   context.fillStyle = 'rgb(104 83 198 / 16%)';
@@ -90,7 +91,7 @@ function updateSelectionOverlay(): void {
 }
 
 function updateRange(source: 'start' | 'end'): void {
-  if (!panel || !audioBuffer) return;
+  if (!panel || !decodedPcm) return;
   const start = requiredElement<HTMLInputElement>(panel, '#trim-start');
   const end = requiredElement<HTMLInputElement>(panel, '#trim-end');
   if (source === 'start') start.value = String(Math.min(Number(start.value), Number(end.value) - 0.01));
@@ -98,16 +99,6 @@ function updateRange(source: 'start' | 'end'): void {
   requiredElement<HTMLElement>(panel, '#trim-start-value').textContent = formatTime(Number(start.value));
   requiredElement<HTMLElement>(panel, '#trim-end-value').textContent = formatTime(Number(end.value));
   updateSelectionOverlay();
-}
-
-function pcmFromAudioBuffer(buffer: AudioBuffer): AudioPcmData {
-  return { sampleRate: buffer.sampleRate, channels: Array.from({ length: buffer.numberOfChannels }, (_, index) => new Float32Array(buffer.getChannelData(index))) };
-}
-
-async function decodeAudio(file: File): Promise<AudioBuffer> {
-  audioContext ??= new AudioContext();
-  const bytes = await file.arrayBuffer();
-  return audioContext.decodeAudioData(bytes.slice(0));
 }
 
 const handleFileChange = async (event: Event): Promise<void> => {
@@ -118,22 +109,21 @@ const handleFileChange = async (event: Event): Promise<void> => {
   const controller = new AbortController();
   activeJob = controller;
   sourceFile = undefined;
-  audioBuffer = undefined;
+  decodedPcm = undefined;
   clearOutput();
   if (sourceUrl) URL.revokeObjectURL(sourceUrl);
   sourceUrl = '';
   try {
     const file = (event.currentTarget as HTMLInputElement).files?.[0];
     if (!file) throw new Error('กรุณาเลือกไฟล์เสียง');
-    validateAudioFile(file);
     setRunning(true);
-    setProgressStatus(status, 10, 'กำลังอ่านไฟล์เสียง');
-    const decoded = await decodeAudio(file);
+    setProgressStatus(status, 10, 'กำลังตรวจสอบ codec และอ่านไฟล์เสียง');
+    const decoded = await decodeAudioFile(file, { signal: controller.signal, onProgress: (progress, message) => setProgressStatus(status, progress, message) });
     if (controller.signal.aborted) throw new DOMException('ยกเลิกการอ่านไฟล์เสียงแล้ว', 'AbortError');
     if (decoded.duration > 30 * 60) throw new Error('รองรับไฟล์เสียงความยาวไม่เกิน 30 นาที');
     if (!panel || request !== operationId) return;
     sourceFile = file;
-    audioBuffer = decoded;
+    decodedPcm = decoded.pcm;
     sourceUrl = URL.createObjectURL(file);
     const start = requiredElement<HTMLInputElement>(panel, '#trim-start');
     const end = requiredElement<HTMLInputElement>(panel, '#trim-end');
@@ -143,7 +133,7 @@ const handleFileChange = async (event: Event): Promise<void> => {
     end.value = String(decoded.duration.toFixed(2));
     requiredElement<HTMLElement>(panel, '#trim-start-value').textContent = formatTime(0);
     requiredElement<HTMLElement>(panel, '#trim-end-value').textContent = formatTime(decoded.duration);
-    requiredElement<HTMLElement>(panel, '#trim-file-meta').textContent = `${file.name} · ${formatTime(decoded.duration)} · ${decoded.numberOfChannels} ch · ${decoded.sampleRate.toLocaleString()} Hz · ${formatBytes(file.size)}`;
+    requiredElement<HTMLElement>(panel, '#trim-file-meta').textContent = `${file.name} · ${formatTime(decoded.duration)} · ${decoded.pcm.channels.length} ch · ${decoded.pcm.sampleRate.toLocaleString()} Hz · ${formatBytes(file.size)}`;
     requiredElement<HTMLAudioElement>(panel, '#trim-preview').src = sourceUrl;
     requiredElement<HTMLElement>(panel, '#trim-editor').hidden = false;
     drawWaveform();
@@ -185,15 +175,15 @@ const handleSubmit = async (event: SubmitEvent): Promise<void> => {
   const controller = new AbortController();
   activeJob = controller;
   try {
-    if (!sourceFile || !audioBuffer) throw new Error('กรุณาเลือกไฟล์เสียงก่อนตัด');
+    if (!sourceFile || !decodedPcm) throw new Error('กรุณาเลือกไฟล์เสียงก่อนตัด');
     const start = Number(requiredElement<HTMLInputElement>(panel, '#trim-start').value);
     const end = Number(requiredElement<HTMLInputElement>(panel, '#trim-end').value);
     const fadeIn = Number(requiredElement<HTMLInputElement>(panel, '#trim-fade-in').value);
     const fadeOut = Number(requiredElement<HTMLInputElement>(panel, '#trim-fade-out').value);
-    const options = validateTrimOptions(audioBuffer.duration, { start, end, fadeIn, fadeOut });
+    const options = validateTrimOptions(decodedPcm.channels[0] ? decodedPcm.channels[0].length / decodedPcm.sampleRate : 0, { start, end, fadeIn, fadeOut });
     setRunning(true);
     setProgressStatus(status, 5, 'กำลังเตรียมเสียงสำหรับตัด');
-    const result = await trimAudioAsync(pcmFromAudioBuffer(audioBuffer), options, { signal: controller.signal, onProgress: (progress, message) => setProgressStatus(status, progress, message) });
+    const result = await trimAudioAsync(decodedPcm, options, { signal: controller.signal, onProgress: (progress, message) => setProgressStatus(status, progress, message) });
     if (controller.signal.aborted) throw new DOMException('ยกเลิกการตัดเสียงแล้ว', 'AbortError');
     if (!panel || request !== operationId) return;
     clearOutput();
@@ -237,7 +227,7 @@ const tool: ToolModule = {
     panel.innerHTML = `
       <div class="utility-panel__header"><div><p class="eyebrow">Precise local editing</p><h2>ตัดไฟล์เสียง</h2></div></div>
       <form id="trim-form" class="tool-form">
-        <label class="file-drop" for="trim-file"><strong>เลือกไฟล์เสียง</strong><span id="trim-file-meta">MP3, WAV, M4A, OGG หรือ WebM · ไม่เกิน 80 MB / 30 นาที</span><input id="trim-file" type="file" accept="audio/mpeg,audio/wav,audio/x-wav,audio/mp4,audio/x-m4a,audio/ogg,audio/webm,.mp3,.wav,.m4a,.ogg,.webm" required /></label>
+        <label class="file-drop" for="trim-file"><strong>เลือกไฟล์เสียง</strong><span id="trim-file-meta">MP3, WAV, M4A, OGG หรือ WebM · ไม่เกิน 80 MB / 30 นาที</span><input id="trim-file" type="file" accept="audio/mpeg,audio/wav,audio/x-wav,audio/mp4,audio/x-m4a,audio/ogg,audio/webm,.mp3,.wav,.m4a,.ogg,.webm" required /></label><p class="helper-text">Supported on this browser (playback hint) / คำใบ้การเล่นบน Browser นี้: ${audioCapabilityHint()}</p>
         <section id="trim-editor" class="audio-editor" hidden>
           <canvas id="trim-waveform" class="audio-waveform" aria-label="Waveform ของไฟล์เสียง"></canvas>
           <div class="audio-preview-row"><audio id="trim-preview" controls preload="metadata"></audio><button class="button" type="button" data-trim-action="preview">Preview ช่วงที่เลือก</button></div>
@@ -275,9 +265,7 @@ const tool: ToolModule = {
     if (sourceUrl) URL.revokeObjectURL(sourceUrl);
     sourceUrl = '';
     sourceFile = undefined;
-    audioBuffer = undefined;
-    audioContext?.close();
-    audioContext = undefined;
+    decodedPcm = undefined;
     panel = undefined;
   },
 };

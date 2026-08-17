@@ -51,11 +51,11 @@ export function t(locale: AppLocale, key: MessageKey): string {
 
 const categoryEnglish: Record<string, string> = {
   'ทั้งหมด': 'All', 'รูปภาพ': 'Images', 'PDF และเอกสาร': 'PDF & Documents', 'ข้อความและข้อมูล': 'Text & Data',
-  'QR Code และบาร์โค้ด': 'QR & Barcodes', 'เสียงและวิดีโอ': 'Audio & Video', 'Developer Tools': 'Developer Tools', 'อื่น ๆ': 'Other',
+  'QR Code และบาร์โค้ด': 'QR & Barcodes', 'เสียง': 'Audio', 'Developer Tools': 'Developer Tools', 'อื่น ๆ': 'Other',
 };
 
   const toolEnglish: Record<string, Pick<ToolMetadata, 'title' | 'description'>> = {
-  'audio-compressor': { title: 'Audio Compressor Pro', description: 'Compress audio with target size, presets and honest before/after metrics.' },
+  'audio-compressor': { title: 'Audio Resampler (WAV)', description: 'Resample audio to a lower sample rate and export honest WAV size metrics.' },
   'audio-merger': { title: 'Audio Merger Studio', description: 'Reorder audio files, add gap or crossfade, and choose the output format.' },
   'silence-remover': { title: 'Silence Remover', description: 'Remove long pauses with threshold, minimum silence and padding controls.' },
   'audio-finisher': { title: 'Audio Finisher', description: 'Polish gain, normalization and fades with peak and clipping protection.' },

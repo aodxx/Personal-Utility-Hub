@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test';
+import { readFileSync } from 'node:fs';
 
 function createWavFixture(durationSeconds = 1, sampleRate = 44_100): Buffer {
   const frameCount = Math.floor(durationSeconds * sampleRate);
@@ -50,7 +51,7 @@ test.describe('Audio processing production contract', () => {
   });
 
   for (const tool of [
-    ['audio-compressor', 'Audio Compressor Pro'],
+    ['audio-compressor', 'Audio Resampler (WAV)'],
     ['audio-merger', 'Audio Merger Studio'],
     ['silence-remover', 'Silence Remover'],
     ['audio-finisher', 'Audio Finisher'],
@@ -85,4 +86,63 @@ test.describe('Audio processing production contract', () => {
     const download = await downloadPromise;
     expect(download.suggestedFilename()).toBe('audio-chapters.txt');
   });
+});
+
+
+test.describe('Phase 8 real media corpus', () => {
+  const fixture = (name: string) => `tests/fixtures/audio/${name}`;
+
+  for (const input of [
+    ['mono-44k.wav', 'audio/wav'],
+    ['speech.mp3', 'audio/mpeg'],
+    ['voice.m4a', 'audio/mp4'],
+    ['speech.ogg', 'audio/ogg'],
+    ['voice.webm', 'audio/webm'],
+  ] as const) {
+    test(`Audio Trimmer real ${input[0]} decode and process`, async ({ page }) => {
+      await page.goto('./#/tools/audio-trimmer');
+      await expect(page.locator('#trim-file')).toBeVisible();
+      await page.locator('#trim-file').setInputFiles({ name: input[0], mimeType: input[1], buffer: readFileSync(fixture(input[0])) });
+      await expect(page.locator('#trim-editor')).toBeVisible({ timeout: 15_000 });
+      await expect(page.locator('#trim-file-meta')).toContainText(input[0]);
+      await page.getByRole('button', { name: 'ตัดเสียงและสร้าง WAV' }).click();
+      await expect(page.locator('#trim-result')).toBeVisible({ timeout: 15_000 });
+      await expect(page.locator('#trim-result-meta')).toContainText('WAV PCM 16-bit');
+      const output = page.locator('#trim-output-preview');
+      await expect(output).toHaveAttribute('src', /^blob:/);
+      const canPlayWav = await page.evaluate(() => new Audio().canPlayType('audio/wav'));
+      expect(canPlayWav).not.toBe('');
+      const downloadPromise = page.waitForEvent('download');
+      await page.getByRole('button', { name: 'ดาวน์โหลด WAV' }).click();
+      const download = await downloadPromise;
+      const downloadedPath = await download.path();
+      expect(downloadedPath).not.toBeNull();
+      const bytes = readFileSync(downloadedPath!);
+      expect(bytes.subarray(0, 4).toString()).toBe('RIFF');
+      expect(bytes.subarray(8, 12).toString()).toBe('WAVE');
+      expect(bytes.length).toBeGreaterThan(44);
+    });
+  }
+
+  test('Audio Merger real stereo/sample-rate files crossfade and outputs playable WAV', async ({ page }) => {
+    await page.goto('./#/tools/audio-merger');
+    await page.locator('#audio-file').setInputFiles([
+      { name: 'mono-44k.wav', mimeType: 'audio/wav', buffer: readFileSync(fixture('mono-44k.wav')) },
+      { name: 'stereo-48k.wav', mimeType: 'audio/wav', buffer: readFileSync(fixture('stereo-48k.wav')) },
+    ]);
+    await expect(page.locator('#audio-editor')).toBeVisible({ timeout: 15_000 });
+    await page.locator('#audio-crossfade').fill('0.2');
+    await page.getByRole('button', { name: 'Export / ประมวลผล' }).click();
+    await expect(page.locator('#audio-result')).toBeVisible({ timeout: 15_000 });
+    await expect(page.locator('#audio-result-meta')).toContainText('WAV PCM 16-bit');
+    await expect(page.locator('#audio-output-preview')).toHaveAttribute('src', /^blob:/);
+  });
+});
+
+
+test('Audio Trimmer reports a useful codec/decode error for malformed media', async ({ page }) => {
+  await page.goto('./#/tools/audio-trimmer');
+  await expect(page.getByText(/Supported on this browser/)).toBeVisible();
+  await page.locator('#trim-file').setInputFiles({ name: 'broken.m4a', mimeType: 'audio/mp4', buffer: Buffer.from('not-audio') });
+  await expect(page.locator('#trim-status')).toContainText(/WAV|MP3|เปิดไฟล์|decode/i, { timeout: 15_000 });
 });

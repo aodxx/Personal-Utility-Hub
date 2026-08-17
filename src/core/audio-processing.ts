@@ -86,7 +86,7 @@ export function trimPcm(pcm: AudioPcmData, options: AudioTrimOptions, onProgress
 }
 
 export type AudioOperation =
-  | { kind: 'compress'; targetBytes: number; preset: 'speech' | 'music' | 'podcast'; quality?: 'small' | 'balanced' | 'high' }
+  | { kind: 'compress'; targetBytes: number; quality?: 'small' | 'balanced' | 'high' }
   | { kind: 'merge'; segments: AudioPcmData[]; gap: number; crossfade: number; format: 'wav' | 'wav-compact' }
   | { kind: 'silence'; thresholdDb: number; minimum: number; padding: number }
   | { kind: 'finish'; normalize: boolean; gainDb: number; fadeIn: number; fadeOut: number; loudness?: 'peak' | 'voice' }
@@ -94,7 +94,9 @@ export type AudioOperation =
 
 export interface AudioProcessResult extends AudioTrimResult {
   inputBytes?: number;
+  inputPeak: number;
   peak: number;
+  gainApplied: number;
   clipped: boolean;
   outputFormat: 'wav' | 'wav-compact';
 }
@@ -122,7 +124,16 @@ function resamplePcm(pcm: AudioPcmData, targetRate: number, onProgress?: (progre
   onProgress?.(42, 'กำลังปรับอัตราสุ่มตัวอย่าง');
   return { channels, sampleRate: targetRate };
 }
-function applyGain(channels: Float32Array[], gain: number): void { for (const channel of channels) for (let index = 0; index < channel.length; index += 1) channel[index] = Math.tanh((channel[index] ?? 0) * gain); }
+export function applyLinearGain(channels: Float32Array[], gain: number): void {
+  for (const channel of channels) for (let index = 0; index < channel.length; index += 1) channel[index] = (channel[index] ?? 0) * gain;
+}
+
+export function softClip(channels: Float32Array[], drive = 1): void {
+  const safeDrive = Math.max(0, drive);
+  if (safeDrive === 0) return;
+  const normalizer = Math.tanh(safeDrive);
+  for (const channel of channels) for (let index = 0; index < channel.length; index += 1) channel[index] = Math.tanh((channel[index] ?? 0) * safeDrive) / normalizer;
+}
 function fadeChannels(channels: Float32Array[], sampleRate: number, fadeIn: number, fadeOut: number): void {
   const length = channels[0]?.length ?? 0; const inFrames = Math.min(length / 2, Math.floor(Math.max(0, fadeIn) * sampleRate)); const outFrames = Math.min(length / 2, Math.floor(Math.max(0, fadeOut) * sampleRate));
   for (let index = 0; index < length; index += 1) { let gain = 1; if (inFrames && index < inFrames) gain *= index / inFrames; if (outFrames && index >= length - outFrames) gain *= (length - 1 - index) / outFrames; for (const channel of channels) channel[index] = (channel[index] ?? 0) * gain; }
@@ -133,40 +144,136 @@ function joinPcm(segments: AudioPcmData[], gap: number, crossfade: number, onPro
   const normalized = segments.map((segment) => segment.sampleRate === sampleRate ? segment : resamplePcm(segment, sampleRate));
   const channels = Math.max(...normalized.map(({ channels: values }) => values.length));
   const gapFrames = Math.floor(Math.max(0, gap) * sampleRate);
-  const crossfadeFrames = Math.floor(Math.max(0, crossfade) * sampleRate);
-  const totalFrames = normalized.reduce((sum, segment) => sum + (segment.channels[0]?.length ?? 0), 0) + gapFrames * Math.max(0, normalized.length - 1) - Math.min(crossfadeFrames, gapFrames) * Math.max(0, normalized.length - 1);
+  const requestedCrossfade = Math.floor(Math.max(0, crossfade) * sampleRate);
+  const overlaps = normalized.slice(1).map((segment, index) => Math.min(requestedCrossfade, normalized[index]!.channels[0]?.length ?? 0, segment.channels[0]?.length ?? 0));
+  const totalFrames = normalized.reduce((sum, segment) => sum + (segment.channels[0]?.length ?? 0), 0) - overlaps.reduce((sum, value) => sum + value, 0) + gapFrames * Math.max(0, normalized.length - 1);
   const output = Array.from({ length: channels }, () => new Float32Array(Math.max(1, totalFrames)));
   let cursor = 0;
   normalized.forEach((segment, segmentIndex) => {
     const frames = segment.channels[0]?.length ?? 0;
-    for (let frame = 0; frame < frames; frame += 1) {
-      const overlap = segmentIndex > 0 && frame < crossfadeFrames ? frame / Math.max(1, crossfadeFrames) : 1;
-      for (let channel = 0; channel < channels; channel += 1) output[channel]![cursor + frame] = (segment.channels[channel]?.[frame] ?? segment.channels[0]?.[frame] ?? 0) * overlap;
+    if (segmentIndex === 0) {
+      for (let frame = 0; frame < frames; frame += 1) for (let channel = 0; channel < channels; channel += 1) output[channel]![cursor + frame] = segment.channels[channel]?.[frame] ?? segment.channels[0]?.[frame] ?? 0;
+      cursor += frames;
+    } else {
+      const overlap = overlaps[segmentIndex - 1] ?? 0;
+      const overlapStart = Math.max(0, cursor - overlap);
+      for (let frame = 0; frame < overlap; frame += 1) {
+        const fade = (frame + 1) / Math.max(1, overlap);
+        for (let channel = 0; channel < channels; channel += 1) {
+          const incoming = segment.channels[channel]?.[frame] ?? segment.channels[0]?.[frame] ?? 0;
+          output[channel]![overlapStart + frame] = output[channel]![overlapStart + frame]! * (1 - fade) + incoming * fade;
+        }
+      }
+      for (let frame = overlap; frame < frames; frame += 1) for (let channel = 0; channel < channels; channel += 1) output[channel]![cursor + frame - overlap] = segment.channels[channel]?.[frame] ?? segment.channels[0]?.[frame] ?? 0;
+      cursor += frames - overlap;
     }
-    cursor += frames;
     if (segmentIndex < normalized.length - 1) cursor += gapFrames;
     onProgress?.(20 + Math.round(((segmentIndex + 1) / normalized.length) * 40), 'กำลังเรียงและผสานไฟล์เสียง');
   });
   return { channels: output, sampleRate };
 }
 function removeSilence(pcm: AudioPcmData, thresholdDb: number, minimum: number, padding: number, onProgress?: (progress: number, message: string) => void): AudioPcmData {
-  const threshold = 10 ** (thresholdDb / 20); const frames = pcm.channels[0]?.length ?? 0; const minFrames = Math.floor(minimum * pcm.sampleRate); const padFrames = Math.floor(padding * pcm.sampleRate); const keep = new Uint8Array(frames);
-  let run = 0;
-  for (let index = 0; index < frames; index += 1) { let peak = 0; for (const channel of pcm.channels) peak = Math.max(peak, Math.abs(channel[index] ?? 0)); if (peak >= threshold) { for (let pad = Math.max(0, index - padFrames); pad <= index; pad += 1) keep[pad] = 1; run = 0; } else { run += 1; if (run < minFrames) for (let pad = Math.max(0, index - run); pad <= index; pad += 1) keep[pad] = 1; } }
-  const count = keep.reduce((sum, value) => sum + value, 0); const output = pcm.channels.map(() => new Float32Array(Math.max(1, count))); let cursor = 0;
-  for (let index = 0; index < frames; index += 1) if (keep[index]) { for (let channel = 0; channel < pcm.channels.length; channel += 1) output[channel]![cursor] = pcm.channels[channel]![index] ?? 0; cursor += 1; }
-  onProgress?.(60, 'กำลังลบช่วงเงียบและคง Padding'); return { channels: output, sampleRate: pcm.sampleRate };
+  const threshold = 10 ** (thresholdDb / 20);
+  const frames = pcm.channels[0]?.length ?? 0;
+  if (!frames) throw new Error('ไม่พบข้อมูลเสียงสำหรับตรวจช่วงเงียบ');
+  const windowFrames = Math.max(1, Math.floor(pcm.sampleRate * 0.02));
+  const blockCount = Math.ceil(frames / windowFrames);
+  const minimumBlocks = Math.max(1, Math.ceil(Math.max(0, minimum) * pcm.sampleRate / windowFrames));
+  const paddingBlocks = Math.ceil(Math.max(0, padding) * pcm.sampleRate / windowFrames);
+  const active = new Uint8Array(blockCount);
+  for (let block = 0; block < blockCount; block += 1) {
+    const start = block * windowFrames;
+    const end = Math.min(frames, start + windowFrames);
+    let energy = 0;
+    let count = 0;
+    for (let index = start; index < end; index += 1) for (const channel of pcm.channels) { const sample = channel[index] ?? 0; energy += sample * sample; count += 1; }
+    const rms = count ? Math.sqrt(energy / count) : 0;
+    if (rms >= threshold) active[block] = 1;
+  }
+  const firstActive = active.findIndex(Boolean);
+  if (firstActive < 0) {
+    onProgress?.(60, 'ไม่พบเสียงที่ผ่าน threshold จึงคงไฟล์เดิมไว้');
+    return { channels: pcm.channels.map((channel) => new Float32Array(channel)), sampleRate: pcm.sampleRate };
+  }
+  for (let block = firstActive; block < blockCount; block += 1) {
+    if (!active[block]) continue;
+    let next = block + 1;
+    while (next < blockCount && !active[next]) next += 1;
+    if (next < blockCount && next - block - 1 <= minimumBlocks) for (let bridge = block; bridge <= next; bridge += 1) active[bridge] = 1;
+  }
+  for (let block = 0; block < blockCount; block += 1) if (active[block]) for (let pad = Math.max(0, block - paddingBlocks); pad <= Math.min(blockCount - 1, block + paddingBlocks); pad += 1) active[pad] = 1;
+  const chunks: Array<[number, number]> = [];
+  let chunkStart = -1;
+  for (let block = 0; block <= blockCount; block += 1) {
+    const isActive = block < blockCount && active[block] === 1;
+    if (isActive && chunkStart < 0) chunkStart = block * windowFrames;
+    if (!isActive && chunkStart >= 0) {
+      chunks.push([chunkStart, Math.min(frames, block * windowFrames)]);
+      chunkStart = -1;
+    }
+  }
+  const transitionFrames = Math.max(1, Math.min(Math.floor(pcm.sampleRate * 0.005), Math.floor(Math.max(1, minimum * pcm.sampleRate) / 4)));
+  const totalFrames = chunks.reduce((sum, [start, end]) => sum + end - start, 0) - transitionFrames * Math.max(0, chunks.length - 1);
+  const output = pcm.channels.map(() => new Float32Array(Math.max(1, totalFrames)));
+  let cursor = 0;
+  chunks.forEach(([start, end], chunkIndex) => {
+    const length = end - start;
+    if (chunkIndex === 0) {
+      for (let frame = 0; frame < length; frame += 1) for (let channel = 0; channel < pcm.channels.length; channel += 1) output[channel]![frame] = pcm.channels[channel]![start + frame] ?? 0;
+      cursor = length;
+      return;
+    }
+    const overlap = Math.min(transitionFrames, cursor, length);
+    for (let frame = 0; frame < overlap; frame += 1) {
+      const fade = (frame + 1) / Math.max(1, overlap);
+      for (let channel = 0; channel < pcm.channels.length; channel += 1) {
+        const incoming = pcm.channels[channel]![start + frame] ?? 0;
+        output[channel]![cursor - overlap + frame] = output[channel]![cursor - overlap + frame]! * (1 - fade) + incoming * fade;
+      }
+    }
+    for (let frame = overlap; frame < length; frame += 1) for (let channel = 0; channel < pcm.channels.length; channel += 1) output[channel]![cursor + frame - overlap] = pcm.channels[channel]![start + frame] ?? 0;
+    cursor += length - overlap;
+  });
+  onProgress?.(60, 'กำลังลบช่วงเงียบแบบ window และคง Padding');
+  return { channels: output, sampleRate: pcm.sampleRate };
 }
 
 export function processAudio(pcm: AudioPcmData, operation: AudioOperation, onProgress?: (progress: number, message: string) => void): AudioProcessResult {
-  let output: AudioPcmData; let outputFormat: 'wav' | 'wav-compact' = 'wav';
-  if (operation.kind === 'compress') { const duration = durationOf(pcm); const presetGain = operation.preset === 'speech' ? 2.4 : operation.preset === 'podcast' ? 1.8 : 1.35; const qualityFactor = operation.quality === 'small' ? 0.72 : operation.quality === 'high' ? 1.2 : 1; const targetRate = Math.max(8_000, Math.min(pcm.sampleRate, Math.floor(operation.targetBytes * 8 * qualityFactor / Math.max(1, duration * pcm.channels.length * 16)))); output = resamplePcm(clonePcm(pcm), targetRate, onProgress); applyGain(output.channels, presetGain); }
-  else if (operation.kind === 'merge') { output = joinPcm(operation.segments, operation.gap, operation.crossfade, onProgress); outputFormat = operation.format; }
-  else if (operation.kind === 'silence') output = removeSilence(pcm, operation.thresholdDb, operation.minimum, operation.padding, onProgress);
-  else if (operation.kind === 'finish') { output = clonePcm(pcm); applyGain(output.channels, 10 ** (operation.gainDb / 20)); if (operation.normalize) { const peak = audioPeak(output.channels); if (peak > 0) applyGain(output.channels, Math.min(1 / peak, operation.loudness === 'voice' ? 0.9 / peak : 1 / peak)); } fadeChannels(output.channels, output.sampleRate, operation.fadeIn, operation.fadeOut); }
-  else { const ratio = Math.max(.25, Math.min(4, operation.speed * 2 ** (operation.semitones / 12))); output = resamplePcm(pcm, Math.max(8_000, Math.round(pcm.sampleRate * ratio)), onProgress); }
-  onProgress?.(75, 'กำลังสร้างไฟล์ผลลัพธ์'); const bytes = encodeWav(output.channels, output.sampleRate, onProgress, outputFormat === 'wav-compact' ? 8 : 16); const peak = audioPeak(output.channels);
-  return { bytes, duration: durationOf(output), sampleRate: output.sampleRate, channels: output.channels.length, peak, clipped: peak > 0.99, outputFormat };
+  const inputPeak = audioPeak(pcm.channels);
+  let output: AudioPcmData;
+  let outputFormat: 'wav' | 'wav-compact' = 'wav';
+  let gainApplied = 1;
+  if (operation.kind === 'compress') {
+    const duration = durationOf(pcm);
+    const qualityFactor = operation.quality === 'small' ? 0.72 : operation.quality === 'high' ? 1.2 : 1;
+    const targetRate = Math.max(8_000, Math.min(pcm.sampleRate, Math.floor(operation.targetBytes * 8 * qualityFactor / Math.max(1, duration * pcm.channels.length * 16))));
+    output = resamplePcm(clonePcm(pcm), targetRate, onProgress);
+  } else if (operation.kind === 'merge') {
+    output = joinPcm(operation.segments, operation.gap, operation.crossfade, onProgress);
+    outputFormat = operation.format;
+  } else if (operation.kind === 'silence') {
+    output = removeSilence(pcm, operation.thresholdDb, operation.minimum, operation.padding, onProgress);
+  } else if (operation.kind === 'finish') {
+    output = clonePcm(pcm);
+    const requestedGain = 10 ** (operation.gainDb / 20);
+    applyLinearGain(output.channels, requestedGain);
+    gainApplied = requestedGain;
+    if (operation.normalize) {
+      const currentPeak = audioPeak(output.channels);
+      const targetPeak = operation.loudness === 'voice' ? 0.9 : 0.98;
+      const normalizeGain = currentPeak > 0 ? targetPeak / currentPeak : 1;
+      applyLinearGain(output.channels, normalizeGain);
+      gainApplied *= normalizeGain;
+    }
+    fadeChannels(output.channels, output.sampleRate, operation.fadeIn, operation.fadeOut);
+  } else {
+    const ratio = Math.max(0.25, Math.min(4, operation.speed * 2 ** (operation.semitones / 12)));
+    output = resamplePcm(clonePcm(pcm), Math.max(8_000, Math.round(pcm.sampleRate * ratio)), onProgress);
+  }
+  onProgress?.(75, 'กำลังสร้างไฟล์ผลลัพธ์');
+  const bytes = encodeWav(output.channels, output.sampleRate, onProgress, outputFormat === 'wav-compact' ? 8 : 16);
+  const peak = audioPeak(output.channels);
+  return { bytes, duration: durationOf(output), sampleRate: output.sampleRate, channels: output.channels.length, inputPeak, peak, gainApplied, clipped: peak > 1, outputFormat };
 }
 
 export function encodeWav(channels: Float32Array[], sampleRate: number, onProgress?: (progress: number, message: string) => void, bitDepth: 8 | 16 = 16): Uint8Array {

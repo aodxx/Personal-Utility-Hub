@@ -1,0 +1,302 @@
+[
+  {
+    "profile": "Desktop Chromium",
+    "file": "mono-44k.wav",
+    "mime": "audio/wav",
+    "label": "WAV PCM mono 44.1 kHz",
+    "playback": {
+      "status": "loaded",
+      "duration": 1,
+      "canPlay": "maybe"
+    },
+    "decode": {
+      "status": "decoded",
+      "duration": 1,
+      "channels": 1,
+      "sampleRate": 44100
+    },
+    "play": {
+      "status": "started"
+    }
+  },
+  {
+    "profile": "Desktop Chromium",
+    "file": "speech.mp3",
+    "mime": "audio/mpeg",
+    "label": "MP3 mono 44.1 kHz",
+    "playback": {
+      "status": "loaded",
+      "duration": 1,
+      "canPlay": "probably"
+    },
+    "decode": {
+      "status": "decoded",
+      "duration": 1,
+      "channels": 1,
+      "sampleRate": 44100
+    },
+    "play": {
+      "status": "started"
+    }
+  },
+  {
+    "profile": "Desktop Chromium",
+    "file": "voice.m4a",
+    "mime": "audio/mp4",
+    "label": "M4A AAC stereo 48 kHz",
+    "playback": {
+      "status": "loaded",
+      "duration": 1,
+      "canPlay": "maybe"
+    },
+    "decode": {
+      "status": "decoded",
+      "duration": 0.9999773242630385,
+      "channels": 2,
+      "sampleRate": 44100
+    },
+    "play": {
+      "status": "started"
+    }
+  },
+  {
+    "profile": "Desktop Chromium",
+    "file": "speech.ogg",
+    "mime": "audio/ogg",
+    "label": "OGG Vorbis mono 44.1 kHz",
+    "playback": {
+      "status": "loaded",
+      "duration": 1,
+      "canPlay": "maybe"
+    },
+    "decode": {
+      "status": "decoded",
+      "duration": 0.9970975056689343,
+      "channels": 1,
+      "sampleRate": 44100
+    },
+    "play": {
+      "status": "started"
+    }
+  },
+  {
+    "profile": "Desktop Chromium",
+    "file": "voice.webm",
+    "mime": "audio/webm",
+    "label": "WebM Opus stereo 48 kHz",
+    "playback": {
+      "status": "loaded",
+      "duration": 1.008,
+      "canPlay": "maybe"
+    },
+    "decode": {
+      "status": "decoded",
+      "duration": 0.9999773242630385,
+      "channels": 2,
+      "sampleRate": 44100
+    },
+    "play": {
+      "status": "started"
+    }
+  },
+  {
+    "profile": "Android Chromium",
+    "file": "mono-44k.wav",
+    "mime": "audio/wav",
+    "label": "WAV PCM mono 44.1 kHz",
+    "playback": {
+      "status": "loaded",
+      "duration": 1,
+      "canPlay": "maybe"
+    },
+    "decode": {
+      "status": "decoded",
+      "duration": 1,
+      "channels": 1,
+      "sampleRate": 44100
+    },
+    "play": {
+      "status": "started"
+    }
+  },
+  {
+    "profile": "Android Chromium",
+    "file": "speech.mp3",
+    "mime": "audio/mpeg",
+    "label": "MP3 mono 44.1 kHz",
+    "playback": {
+      "status": "loaded",
+      "duration": 1,
+      "canPlay": "probably"
+    },
+    "decode": {
+      "status": "decoded",
+      "duration": 1,
+      "channels": 1,
+      "sampleRate": 44100
+    },
+    "play": {
+      "status": "started"
+    }
+  },
+  {
+    "profile": "Android Chromium",
+    "file": "voice.m4a",
+    "mime": "audio/mp4",
+    "label": "M4A AAC stereo 48 kHz",
+    "playback": {
+      "status": "loaded",
+      "duration": 1,
+      "canPlay": "maybe"
+    },
+    "decode": {
+      "status": "decoded",
+      "duration": 0.9999773242630385,
+      "channels": 2,
+      "sampleRate": 44100
+    },
+    "play": {
+      "status": "started"
+    }
+  },
+  {
+    "profile": "Android Chromium",
+    "file": "speech.ogg",
+    "mime": "audio/ogg",
+    "label": "OGG Vorbis mono 44.1 kHz",
+    "playback": {
+      "status": "loaded",
+      "duration": 1,
+      "canPlay": "maybe"
+    },
+    "decode": {
+      "status": "decoded",
+      "duration": 0.9970975056689343,
+      "channels": 1,
+      "sampleRate": 44100
+    },
+    "play": {
+      "status": "started"
+    }
+  },
+  {
+    "profile": "Android Chromium",
+    "file": "voice.webm",
+    "mime": "audio/webm",
+    "label": "WebM Opus stereo 48 kHz",
+    "playback": {
+      "status": "loaded",
+      "duration": 1.008,
+      "canPlay": "maybe"
+    },
+    "decode": {
+      "status": "decoded",
+      "duration": 0.9999773242630385,
+      "channels": 2,
+      "sampleRate": 44100
+    },
+    "play": {
+      "status": "started"
+    }
+  },
+  {
+    "profile": "Pixel 7 class",
+    "file": "mono-44k.wav",
+    "mime": "audio/wav",
+    "label": "WAV PCM mono 44.1 kHz",
+    "playback": {
+      "status": "loaded",
+      "duration": 1,
+      "canPlay": "maybe"
+    },
+    "decode": {
+      "status": "decoded",
+      "duration": 1,
+      "channels": 1,
+      "sampleRate": 44100
+    },
+    "play": {
+      "status": "started"
+    }
+  },
+  {
+    "profile": "Pixel 7 class",
+    "file": "speech.mp3",
+    "mime": "audio/mpeg",
+    "label": "MP3 mono 44.1 kHz",
+    "playback": {
+      "status": "loaded",
+      "duration": 1,
+      "canPlay": "probably"
+    },
+    "decode": {
+      "status": "decoded",
+      "duration": 1,
+      "channels": 1,
+      "sampleRate": 44100
+    },
+    "play": {
+      "status": "started"
+    }
+  },
+  {
+    "profile": "Pixel 7 class",
+    "file": "voice.m4a",
+    "mime": "audio/mp4",
+    "label": "M4A AAC stereo 48 kHz",
+    "playback": {
+      "status": "loaded",
+      "duration": 1,
+      "canPlay": "maybe"
+    },
+    "decode": {
+      "status": "decoded",
+      "duration": 0.9999773242630385,
+      "channels": 2,
+      "sampleRate": 44100
+    },
+    "play": {
+      "status": "started"
+    }
+  },
+  {
+    "profile": "Pixel 7 class",
+    "file": "speech.ogg",
+    "mime": "audio/ogg",
+    "label": "OGG Vorbis mono 44.1 kHz",
+    "playback": {
+      "status": "loaded",
+      "duration": 1,
+      "canPlay": "maybe"
+    },
+    "decode": {
+      "status": "decoded",
+      "duration": 0.9970975056689343,
+      "channels": 1,
+      "sampleRate": 44100
+    },
+    "play": {
+      "status": "started"
+    }
+  },
+  {
+    "profile": "Pixel 7 class",
+    "file": "voice.webm",
+    "mime": "audio/webm",
+    "label": "WebM Opus stereo 48 kHz",
+    "playback": {
+      "status": "loaded",
+      "duration": 1.008,
+      "canPlay": "maybe"
+    },
+    "decode": {
+      "status": "decoded",
+      "duration": 0.9999773242630385,
+      "channels": 2,
+      "sampleRate": 44100
+    },
+    "play": {
+      "status": "started"
+    }
+  }
+]
