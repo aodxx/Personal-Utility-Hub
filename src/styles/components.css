@@ -419,7 +419,9 @@
 }
 
 /* LINE Sticker Studio */
-.line-sticker-studio { --line-ink: #172033; --line-accent: #7c3aed; --line-soft: #f5f3ff; }
+.line-sticker-studio { --line-ink: #172033; --line-accent: #7c3aed; --line-soft: #f5f3ff; min-width: 0; max-width: 100%; overflow: hidden; }
+.line-sticker-studio *, .line-sticker-studio *::before, .line-sticker-studio *::after { box-sizing: border-box; min-width: 0; }
+.line-studio-header > div, .line-mode-row > * { min-width: 0; max-width: 100%; overflow-wrap: anywhere; }
 .line-studio-header, .line-mode-row, .line-toolbar, .line-export-grid { display: flex; gap: 1rem; align-items: center; justify-content: space-between; flex-wrap: wrap; }
 .line-mode-row { padding: 0.75rem 0; border-bottom: 1px solid var(--color-border); }
 .privacy-badge, .line-badge { border-radius: 999px; padding: 0.25rem 0.55rem; font-size: 0.75rem; font-weight: 700; }
@@ -432,8 +434,8 @@
 .line-control-grid .button { min-height: 2.7rem; }
 .line-grid-overlay { position: relative; min-height: 180px; margin-top: 1rem; border: 1px dashed var(--line-accent); background: repeating-conic-gradient(#f3f4f6 0 25%, #fff 0 50%) 50% / 20px 20px; pointer-events: none; }
 .line-grid-handle { position: absolute; z-index: 1; accent-color: var(--line-accent); pointer-events: auto; }
-.line-grid-handle--x { width: 100%; transform: translateY(-50%); }
-.line-grid-handle--y { height: 100%; writing-mode: vertical-lr; transform: translateX(-50%); }
+.line-grid-handle--x { width: 1.25rem; height: 100%; transform: translateX(-50%); }
+.line-grid-handle--y { width: 100%; height: 1.25rem; transform: translateY(-50%); }
 .line-thumbnail-rail { display: flex; gap: 0.6rem; overflow-x: auto; padding: 0.5rem 0; }
 .line-thumbnail { min-width: 108px; display: grid; gap: 0.25rem; justify-items: center; padding: 0.35rem; border: 2px solid transparent; border-radius: 0.75rem; background: var(--line-soft); cursor: pointer; }
 .line-thumbnail.is-selected { border-color: var(--line-accent); box-shadow: 0 0 0 3px color-mix(in srgb, var(--line-accent) 20%, transparent); }
