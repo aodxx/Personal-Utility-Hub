@@ -11,6 +11,7 @@ import { metadata as lineStickerStudioMetadata } from '../tools/line-sticker-stu
 import { metadata as svgAssetStudioMetadata } from '../tools/svg-asset-studio/metadata';
 import { metadata as csvProfilerMetadata } from '../tools/csv-profiler/metadata';
 import { metadata as audioChapterMarkerMetadata } from '../tools/audio-chapter-marker/metadata';
+import { svgAssetManifest } from './svg-assets/manifest';
 import { metadata as silenceRemoverMetadata } from '../tools/silence-remover/metadata';
 import { metadata as base64Metadata } from '../tools/base64/metadata';
 import { foundationDemoMetadata } from '../tools/foundation-demo/metadata';
@@ -26,6 +27,8 @@ import { metadata as imagesToPdfMetadata } from '../tools/images-to-pdf/metadata
 import { metadata as pdfMergeMetadata } from '../tools/pdf-merge/metadata';
 import { metadata as pdfSplitMetadata } from '../tools/pdf-split/metadata';
 import { metadata as pdfToImageMetadata } from '../tools/pdf-to-image/metadata';
+
+const svgLibraryAssets = async (): Promise<readonly string[]> => svgAssetManifest.map(({ assetUrl }) => assetUrl);
 
 const processingWorkerAssets = async (): Promise<readonly string[]> => {
   const { PROCESSING_WORKER_URL } = await import('../core/processing-client');
@@ -139,7 +142,7 @@ export const toolRegistry = [
     load: () => import('../tools/line-sticker-studio'),
     prepareOffline: processingWorkerAssets,
   },
-  { metadata: svgAssetStudioMetadata, load: () => import('../tools/svg-asset-studio') },
+  { metadata: svgAssetStudioMetadata, load: () => import('../tools/svg-asset-studio'), prepareOffline: svgLibraryAssets },
   { metadata: audioChapterMarkerMetadata, load: () => import('../tools/audio-chapter-marker') },
 ] satisfies readonly ToolRegistryEntry[];
 

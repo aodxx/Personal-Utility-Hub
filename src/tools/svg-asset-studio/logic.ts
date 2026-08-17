@@ -154,7 +154,7 @@ export function optimizeSvgMarkup(markup: string, preset: OptimizePreset = 'safe
   const beforeBytes = new TextEncoder().encode(safe).byteLength;
   const root = parseSvg(safe);
   const changes: string[] = [];
-  root.querySelectorAll('comment, metadata, title[id], desc[id]').forEach((node) => { node.remove(); changes.push('Removed redundant metadata/comment nodes'); });
+  root.querySelectorAll('comment, metadata, desc[id]').forEach((node) => { node.remove(); changes.push('Removed redundant metadata/comment nodes'); });
   if (preset !== 'safe') root.querySelectorAll('[id]').forEach((node) => { node.removeAttribute('id'); changes.push('Removed unnecessary IDs'); });
   if (preset === 'aggressive') { root.removeAttribute('width'); root.removeAttribute('height'); changes.push('Removed fixed dimensions'); }
   const svg = serialize(root).replace(/>\s+</g, '><').replace(/\s{2,}/g, ' ').trim();
