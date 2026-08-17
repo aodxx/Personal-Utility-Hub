@@ -17,7 +17,7 @@
 | Phase 4 — Performance and Offline | เสร็จสิ้นและเผยแพร่แล้ว | Dedicated Worker, fallback, cancel/progress, IndexedDB offline readiness และ bundle budget |
 | UX/UI Refinement | เสร็จสิ้นและเผยแพร่แล้ว | Full-card navigation, compact mobile cards, touch feedback และ accessibility assertions |
 | Phase 5 — Product Expansion | merge เข้า `main` แล้ว | TH/EN, Settings Center, portable settings, usage sorting, compatibility check, Audio Tool Suite และ new utility suite |
-| v0.8.0 — Audio Tool Suite Baseline | CI/Deploy ผ่าน; production smoke บางส่วนผ่าน | Versioned cache contract, source-aligned docs, CI run `31987799709`, Pages deploy run `31987799615` และ smoke notes |
+| v0.8.0 — Audio Tool Suite Baseline | CI/Deploy ผ่าน; production smoke บางส่วนผ่าน | Versioned cache contract, source-aligned docs, CI run `31988106872`, Pages deploy run `31988106901` และ smoke notes |
 
 ## ความสามารถปัจจุบัน
 
@@ -58,7 +58,7 @@ Audio pipeline แชร์ `src/core/audio-processing.ts`, `src/tools/audio-wor
 
 ผลล่าสุดจาก local quality gate ก่อน baseline patch คือ TypeScript ผ่าน, Vitest 52/52, production build ผ่าน, bundle budget ผ่าน และ Playwright 55 passed พร้อม 2 intentional skips จาก 57 cases บน Desktop Chromium, Android entry `360 × 740` และ Android current profile
 
-GitHub Actions บน HEAD ผ่านแล้ว: [CI run 31987799709](https://github.com/aodxx/Personal-Utility-Hub/actions/runs/31987799709) และ [Pages deploy run 31987799615](https://github.com/aodxx/Personal-Utility-Hub/actions/runs/31987799615) ผล production smoke ยืนยัน Hub, search/category, Settings, English localization, Audio route และ v0.8 Service Worker/cache แล้ว แต่ Audio process/export ด้วยไฟล์จริงยังไม่แสดง completion state ใน browser observation จึงยังไม่ mark baseline ว่า fully verified; รายละเอียดอยู่ใน `docs/v0.8-production-smoke-notes.md`
+GitHub Actions บน HEAD ผ่านแล้ว: [CI run 31988106872](https://github.com/aodxx/Personal-Utility-Hub/actions/runs/31988106872) และ [Pages deploy run 31988106901](https://github.com/aodxx/Personal-Utility-Hub/actions/runs/31988106901) ผล production smoke ยืนยัน Hub, search/category, Settings, English localization, Audio route และ v0.8 Service Worker/cache แล้ว แต่ Audio process/export ด้วยไฟล์จริงยังไม่แสดง completion state ใน browser observation จึงยังไม่ mark baseline ว่า fully verified; รายละเอียดอยู่ใน `docs/v0.8-production-smoke-notes.md`
 
 ## Known limitations และ roadmap
 

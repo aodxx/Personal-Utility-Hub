@@ -90,7 +90,7 @@ npm audit --audit-level=high
 node --check public/sw.js
 ```
 
-หลักฐาน release ล่าสุดบน commit `eda07316c84eb192c07571a037f18d0ee12191f9` ผ่านแล้ว: [CI run 31987799709](https://github.com/aodxx/Personal-Utility-Hub/actions/runs/31987799709) และ [GitHub Pages deploy run 31987799615](https://github.com/aodxx/Personal-Utility-Hub/actions/runs/31987799615) ทั้งสอง run จบด้วย success
+หลักฐาน release ล่าสุดบน commit `c7e30b63df43b98a82375e2d1a27fc39f538ea87` ผ่านแล้ว: [CI run 31988106872](https://github.com/aodxx/Personal-Utility-Hub/actions/runs/31988106872) และ [GitHub Pages deploy run 31988106901](https://github.com/aodxx/Personal-Utility-Hub/actions/runs/31988106901) ทั้งสอง run จบด้วย success
 
 ## 8. Production GitHub Pages smoke test
 
@@ -133,7 +133,7 @@ Production URL ที่ต้องตรวจคือ [https://aodxx.github.
 
 Audio Compressor ใช้ target size แบบประมาณการสำหรับ WAV; Audio Finisher เป็น peak normalization และ clipping protection ไม่ใช่ LUFS mastering; Audio Speed & Pitch เป็น resampling ที่ทำให้ speed และ pitch สัมพันธ์กัน ไม่ใช่ independent time-stretch; และยังไม่มี MP3 export ใน implementation ปัจจุบัน
 
-GitHub Actions และ dependency audit หลัง `npm ci` ผ่านแล้วบน commit HEAD; Production smoke บันทึกผล Hub, search/category, Settings, English localization, Audio route และ v0.8 Service Worker/cache ไว้ใน [`docs/v0.8-production-smoke-notes.md`](docs/v0.8-production-smoke-notes.md) แต่ Audio process/export ด้วยไฟล์จริงยังไม่แสดง completion state ใน browser observation จึงยังไม่ทำเครื่องหมาย v0.8 ว่า fully verified
+GitHub Actions และ dependency audit หลัง `npm ci` ผ่านแล้วบน final HEAD `c7e30b63df43b98a82375e2d1a27fc39f538ea87`; Production smoke บันทึกผล Hub, search/category, Settings, English localization, Audio route และ v0.8 Service Worker/cache ไว้ใน [`docs/v0.8-production-smoke-notes.md`](docs/v0.8-production-smoke-notes.md) แต่ Audio process/export ด้วยไฟล์จริงยังไม่แสดง completion state ใน browser observation จึงยังไม่ทำเครื่องหมาย v0.8 ว่า fully verified
 
 ## 10. Release decision
 
