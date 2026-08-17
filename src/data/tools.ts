@@ -4,6 +4,11 @@ import { metadata as audioFinisherMetadata } from '../tools/audio-finisher/metad
 import { metadata as audioMergerMetadata } from '../tools/audio-merger/metadata';
 import { metadata as audioSpeedPitchMetadata } from '../tools/audio-speed-pitch/metadata';
 import { metadata as audioTrimmerMetadata } from '../tools/audio-trimmer/metadata';
+import { metadata as privacyRedactorMetadata } from '../tools/privacy-redactor/metadata';
+import { metadata as fileDiffMetadata } from '../tools/file-diff/metadata';
+import { metadata as imageContactSheetMetadata } from '../tools/image-contact-sheet/metadata';
+import { metadata as csvProfilerMetadata } from '../tools/csv-profiler/metadata';
+import { metadata as audioChapterMarkerMetadata } from '../tools/audio-chapter-marker/metadata';
 import { metadata as silenceRemoverMetadata } from '../tools/silence-remover/metadata';
 import { metadata as base64Metadata } from '../tools/base64/metadata';
 import { foundationDemoMetadata } from '../tools/foundation-demo/metadata';
@@ -123,6 +128,11 @@ export const toolRegistry = [
     load: () => import('../tools/audio-speed-pitch'),
     prepareOffline: processingWorkerAssets,
   },
+  { metadata: privacyRedactorMetadata, load: () => import('../tools/privacy-redactor') },
+  { metadata: fileDiffMetadata, load: () => import('../tools/file-diff') },
+  { metadata: imageContactSheetMetadata, load: () => import('../tools/image-contact-sheet') },
+  { metadata: csvProfilerMetadata, load: () => import('../tools/csv-profiler') },
+  { metadata: audioChapterMarkerMetadata, load: () => import('../tools/audio-chapter-marker') },
 ] satisfies readonly ToolRegistryEntry[];
 
 assertValidRegistry(toolRegistry);

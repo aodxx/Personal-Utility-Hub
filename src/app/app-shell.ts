@@ -307,6 +307,12 @@ export class AppShell {
         <div><span aria-hidden="true">03</span><strong>${t(locale, 'trust3')}</strong><small>${t(locale, 'trust3Detail')}</small></div>
       </section>
 
+      <section class="section-block quick-start" aria-labelledby="quick-start-title">
+        <div class="section-heading"><div><div class="eyebrow">New in Utility Hub</div><h2 id="quick-start-title">${locale === 'th' ? 'เครื่องมือใหม่ที่น่าลอง' : 'New tools to try'}</h2></div><span class="result-count">5</span></div>
+        <p class="section-intro">${locale === 'th' ? 'ออกแบบมาเพื่อความเป็นส่วนตัว พร้อม preview และผลลัพธ์ที่ตรวจสอบได้' : 'Privacy-first workflows with previews and inspectable outputs.'}</p>
+        <div id="quick-start-grid" class="quick-start-grid"></div>
+      </section>
+
       <section class="section-block section-block--catalog" aria-labelledby="catalog-title">
         <div class="section-heading">
           <div><div class="eyebrow">${t(locale, 'catalogLabel')}</div><h2 id="catalog-title">${t(locale, 'catalog')}</h2></div>
@@ -348,6 +354,7 @@ export class AppShell {
           ? filtered.map((tool) => this.toolCard(tool, favorites, animatedFavoriteId)).join('')
           : this.emptyState(t(locale, 'noResults'), t(locale, 'noResultsDetail'));
       }
+      this.renderQuickStart(main, favorites, animatedFavoriteId);
       this.renderFavorites(main, favorites, animatedFavoriteId);
       this.renderRecent(main, favorites, animatedFavoriteId);
       main.querySelectorAll<HTMLElement>('.favorite-button.is-bouncing').forEach((button) => {
@@ -419,6 +426,14 @@ export class AppShell {
     refresh();
   }
 
+  private renderQuickStart(main: HTMLElement, favorites: ReadonlySet<string>, animatedFavoriteId?: string): void {
+    const section = main.querySelector<HTMLElement>('#quick-start-grid');
+    if (!section) return;
+    const ids = ['privacy-redactor', 'file-diff', 'image-contact-sheet', 'csv-profiler', 'audio-chapter-marker'];
+    const tools = ids.map((id) => toolCatalog.find((tool) => tool.id === id)).filter((tool): tool is ToolMetadata => Boolean(tool));
+    section.innerHTML = tools.map((tool) => this.toolCard(tool, favorites, animatedFavoriteId, 'quick-tool')).join('');
+  }
+
   private renderFavorites(main: HTMLElement, favorites: ReadonlySet<string>, animatedFavoriteId?: string): void {
     const locale = this.preferences.getLocale();
     const section = main.querySelector<HTMLElement>('#favorites-section');
@@ -445,13 +460,13 @@ export class AppShell {
     `;
   }
 
-  private toolCard(tool: ToolMetadata, favorites: ReadonlySet<string>, animatedFavoriteId?: string): string {
+  private toolCard(tool: ToolMetadata, favorites: ReadonlySet<string>, animatedFavoriteId?: string, extraClass = ''): string {
     const locale = this.preferences.getLocale();
     const displayed = localizeTool(tool, locale);
     const isFavorite = favorites.has(tool.id);
     const animationClass = animatedFavoriteId === tool.id ? ' is-bouncing' : '';
     return `
-      <article class="tool-card" data-tool-id="${tool.id}">
+      <article class="tool-card ${extraClass}" data-tool-id="${tool.id}">
         <a class="tool-card__tap-target" href="#${tool.route}" aria-label="${this.escapeHtml(displayed.title)}"></a>
         <div class="tool-card__top">
           <span class="tool-card__visual">${toolAssetIcon(tool.icon)}</span>

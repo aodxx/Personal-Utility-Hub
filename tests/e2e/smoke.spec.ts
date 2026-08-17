@@ -7,10 +7,10 @@ test('searches, filters and saves a favorite', async ({ page }) => {
   expect(iconResponse.ok()).toBeTruthy();
   await expect(page.locator('.hero .asset-icon--hero')).toBeVisible();
   await expect(page.locator('.category-tab .asset-icon')).toHaveCount(8);
-  await expect(page.locator('#tool-grid .tool-card .asset-icon')).toHaveCount(20);
-  await expect(page.locator('#tool-grid .tool-card')).toHaveCount(20);
+  await expect(page.locator('#tool-grid .tool-card .asset-icon')).toHaveCount(25);
+  await expect(page.locator('#tool-grid .tool-card')).toHaveCount(25);
   await page.getByRole('searchbox').fill('รูปภาพ');
-  await expect(page.locator('#tool-grid .tool-card')).toHaveCount(6);
+  await expect(page.locator('#tool-grid .tool-card')).toHaveCount(7);
   await page.getByRole('searchbox').fill('JSON');
   await page.getByRole('button', { name: /เพิ่มในรายการโปรด: JSON Formatter/ }).click();
   await expect(page.locator('#favorites-section')).toContainText('JSON Formatter');
@@ -21,7 +21,7 @@ test('keeps mobile tool cards compact with clear touch feedback', async ({ page 
   await page.goto('./');
 
   const cards = page.locator('#tool-grid .tool-card');
-  await expect(cards).toHaveCount(20);
+  await expect(cards).toHaveCount(25);
   const firstCard = cards.first();
   const firstBox = await firstCard.boundingBox();
   expect(firstBox).not.toBeNull();

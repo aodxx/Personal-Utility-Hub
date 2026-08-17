@@ -467,3 +467,34 @@ Audio Compressor เพิ่ม Quality profile แบบ Small, Balanced แ�
 ผลตรวจล่าสุด: TypeScript typecheck ผ่าน, Unit/Integration 52/52, production build ผ่าน, bundle check ผ่านที่ Entry gzip 17.1 KB และ JavaScript รวม 950.4 KB จาก 31 chunks, `git diff --check` ผ่าน และ Playwright 55 passed, 2 intentional skips จาก 57 cases
 
 งานที่ยังเป็น roadmap ได้แก่ MP3 export, LUFS/true-peak metering, segment-level silence editor และ time-stretch ที่แยก pitch กับ duration ได้ เนื่องจากต้อง benchmark คุณภาพและพิจารณา dependency/bundle budget เพิ่มเติม
+
+
+## 10. Phase 5 — Five-Tool Product Expansion
+
+**สถานะ:** ✅ พัฒนาและตรวจสอบในเครื่องเสร็จสิ้น; รอ commit/push ขึ้น `main`
+
+### เครื่องมือใหม่ที่ส่งมอบ
+
+| เครื่องมือ | ความสามารถหลัก | Privacy / UX differentiator |
+|---|---|---|
+| Privacy Redactor Studio | ตรวจจับและปิดบังอีเมล, เบอร์โทร, URL และข้อมูลอ่อนไหวจากข้อความ | ประมวลผลในเบราว์เซอร์ พร้อม preview ก่อน export และรองรับ TH/EN |
+| File Diff & Change Map | เปรียบเทียบข้อความหรือ JSON แบบ line-level พร้อมสรุป added/removed/changed | แสดง change map อ่านง่ายและ export รายงานได้โดยไม่อัปโหลดไฟล์ |
+| Image Contact Sheet Studio | สร้าง contact sheet จากหลายภาพ พร้อมป้ายชื่อ, grid และ export PNG | รวมภาพเป็น catalog ในเครื่อง เหมาะกับการคัดภาพบนมือถือ |
+| CSV Data Cleaner & Profiler | วิเคราะห์คอลัมน์, ค่าว่าง, duplicates และทำความสะอาด CSV ก่อน export | รองรับข้อมูลภาษาไทยและทำงาน local-first |
+| Audio Chapter Marker & Cue Sheet | วาง chapter markers บน waveform และ export cue sheet สำหรับ podcast/lecture | ใช้ timing จริงจากไฟล์เสียงและไม่ส่งไฟล์ขึ้น server |
+
+### ผลการตรวจสอบล่าสุด
+
+- `npm run typecheck` — ผ่าน
+- `npm test` — ผ่าน 52/52 tests จาก 13 test files
+- `npm run build` — ผ่าน
+- `npm run check:bundle` — ผ่าน: Entry gzip 18.1 KB, largest lazy chunk 366.1 KB, JavaScript รวม gzip 961.4 KB
+- `git diff --check` — ผ่าน
+- `npm run test:e2e` — ผ่าน 55 tests, ข้าม 2 tests ตาม project profile
+- Asset validation — ผ่าน หลังเพิ่ม icon mapping ให้เครื่องมือใหม่ทั้ง 5 รายการ
+
+### หมายเหตุ
+
+Catalog ปัจจุบันมี 25 เครื่องมือ โดยเป็น file tools 17 รายการ เครื่องมือทั้งหมดใช้ client-side processing และมี metadata ภาษาไทย/อังกฤษตาม contract เดิม การ build พบเพียงคำเตือน `INEFFECTIVE_DYNAMIC_IMPORT` ที่มีอยู่จากการ import audio-processing ทั้งแบบ static และ dynamic; ไม่ทำให้ quality gate ล้มเหลว และควรพิจารณาแยก dependency ในงาน optimization รอบถัดไป.
+
+---

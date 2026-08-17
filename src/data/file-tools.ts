@@ -5,6 +5,11 @@ import { metadata as audioMerger } from '../tools/audio-merger/metadata';
 import { metadata as audioSpeedPitch } from '../tools/audio-speed-pitch/metadata';
 import { metadata as audioTrimmer } from '../tools/audio-trimmer/metadata';
 import { metadata as silenceRemover } from '../tools/silence-remover/metadata';
+import { metadata as privacyRedactor } from '../tools/privacy-redactor/metadata';
+import { metadata as fileDiff } from '../tools/file-diff/metadata';
+import { metadata as imageContactSheet } from '../tools/image-contact-sheet/metadata';
+import { metadata as csvProfiler } from '../tools/csv-profiler/metadata';
+import { metadata as audioChapterMarker } from '../tools/audio-chapter-marker/metadata';
 import { metadata as fileMetadata } from '../tools/file-metadata/metadata';
 import { metadata as imageCompressor } from '../tools/image-compressor/metadata';
 import { metadata as imagesToPdf } from '../tools/images-to-pdf/metadata';
@@ -19,6 +24,11 @@ export const fileTools = [
   silenceRemover,
   audioFinisher,
   audioSpeedPitch,
+  privacyRedactor,
+  fileDiff,
+  imageContactSheet,
+  csvProfiler,
+  audioChapterMarker,
   imageCompressor,
   imagesToPdf,
   pdfMerge,
