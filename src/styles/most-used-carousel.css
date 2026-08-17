@@ -1,0 +1,54 @@
+/* Most Used carousel reliability: full visual containment + autoplay affordance */
+.most-used-carousel {
+  scroll-snap-type: x mandatory;
+  scroll-behavior: smooth;
+}
+
+.quick-tool-card__visual {
+  width: 5.5rem;
+  height: 5.5rem;
+  padding: .25rem;
+  box-sizing: border-box;
+  overflow: visible;
+}
+
+.quick-tool-card__visual .asset-icon,
+.quick-tool-card__visual .asset-icon--quick,
+.quick-tool-card__visual svg {
+  width: 100%;
+  height: 100%;
+  max-width: 100%;
+  max-height: 100%;
+  overflow: visible;
+  transform-origin: center;
+}
+
+.quick-tool-card__visual .asset-icon--quick {
+  transform: scale(.9);
+}
+
+.most-used-carousel[data-autoplay="enabled"] {
+  cursor: grab;
+}
+
+.most-used-carousel[data-autoplay="enabled"]:active {
+  cursor: grabbing;
+}
+
+@media (max-width: 640px) {
+  .quick-tool-card__visual {
+    width: 6rem;
+    height: 6rem;
+    margin-inline: auto;
+  }
+
+  .quick-tool-card__header {
+    min-height: 6.2rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .most-used-carousel {
+    scroll-behavior: auto;
+  }
+}
