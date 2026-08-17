@@ -83,3 +83,14 @@ Phase 6A–6D implementation ชุดแรกเพิ่ม Privacy route ท
 Local validation ล่าสุด: Phase 6 trust tests 12/12 ผ่าน และ Playwright หลังเพิ่ม Privacy/Guide/first-use/sample contracts 83 passed พร้อม 4 intentional skips จาก 87 cases บน Desktop Chromium, Android entry และ Android current profiles Build และ bundle ผ่าน โดย Entry gzip เพิ่มเป็นประมาณ 22.4 KB และ JavaScript รวม gzip ประมาณ 966.0 KB; ยังต้องตรวจ GitHub Actions และ Production GitHub Pages หลัง commit ก่อนปิด Phase 6
 
 ข้อจำกัดที่ยังเหลือก่อน Definition of Done: ต้องตรวจ Privacy/Guide/first-use/sample flows บน Production จริง, ตรวจ keyboard/focus และ no-overflow รอบสุดท้ายบน device profiles, ทำ trust-content audit แบบ repository-wide และตรวจว่าทุก file/text tool ที่เหมาะสมมี sample action ตาม product contract
+
+
+## Phase 6 validation update — 17 สิงหาคม 2026
+
+Catalog guide ถูกเปลี่ยนเป็นเนื้อหาเฉพาะเครื่องมือครบ **25/25 active tools** ในภาษาไทยและอังกฤษ โดยทุก guide มี overview, use cases, inputs, outputs, steps, limitations, privacy, FAQ และ tips ที่ผูกกับ implementation จริง ไม่มี generic fallback เหลือใน `src/data/guides.ts`.
+
+Sample contract ตรวจแล้ว: JSON Formatter, Base64 และ Text Formatter มี `sampleAvailable: true` พร้อมปุ่ม Try Sample และ handler จริง; Privacy Redactor, File Diff และ CSV Profiler ไม่มี sample control จึงคง metadata เป็น `false`.
+
+ผล local quality gate ล่าสุด: `npm test` ผ่าน 52/52, `npm run build` ผ่าน, bundle ผ่านด้วย entry gzip 32.7 KB, largest lazy chunk 366.1 KB และ JavaScript รวม gzip 976.4 KB, Playwright ผ่าน 86 tests และ 4 intentional skips, `npm audit --audit-level=high` พบ 0 vulnerabilities, Service Worker syntax และ `git diff --check` ผ่าน.
+
+Guide-specific E2E assertions ถูกแก้ให้ตรวจเนื้อหา localized จริงในค่าเริ่มต้นภาษาไทย และผ่านทั้ง Desktop Chromium, Android entry `360 × 740` และ Android current profile. Phase 6 ยังอยู่ระหว่างรอ commit/CI/Pages deploy และ Production verification รอบสุดท้าย จึงยังไม่ประกาศว่า complete.

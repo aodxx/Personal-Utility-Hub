@@ -37,7 +37,7 @@ git diff --check
 | Vitest unit/integration | 52/52 tests ผ่าน จาก 13 test files |
 | Production build | ผ่าน |
 | Bundle budget | ผ่าน |
-| Playwright | 76 passed, 2 intentional skips จาก 78 cases |
+| Playwright | 86 passed, 4 intentional skips จาก 90 cases |
 | Visual asset validation | ผ่าน |
 | `git diff --check` | ผ่าน |
 
@@ -70,7 +70,7 @@ Playwright ใช้ 3 profiles ได้แก่ Desktop Chromium, Android ent
 
 ## 6. Bundle budget
 
-เกณฑ์ repository ปัจจุบันคือ Entry gzip ไม่เกิน 45 KB, lazy chunk ไม่เกิน 900 KB และ JavaScript รวม gzip ไม่เกิน 1,600 KB ผลล่าสุดที่บันทึกไว้ก่อน v0.8 documentation/version patch คือ Entry gzip 18.1 KB, lazy chunk ใหญ่สุด 366.1 KB และ JavaScript รวม gzip 961.4 KB จาก 36 chunks — ผ่านทั้งหมด
+เกณฑ์ repository ปัจจุบันคือ Entry gzip ไม่เกิน 45 KB, lazy chunk ไม่เกิน 900 KB และ JavaScript รวม gzip ไม่เกิน 1,600 KB ผลล่าสุดหลัง guide catalog patch คือ Entry gzip 32.7 KB, lazy chunk ใหญ่สุด 366.1 KB และ JavaScript รวม gzip 976.4 KB จาก 36 chunks — ผ่านทั้งหมด
 
 หาก build หลัง patch ให้ตัวเลขต่างจาก record นี้ ต้องแทนค่าด้วย output จาก `npm run check:bundle` ก่อนประกาศ release
 
@@ -90,7 +90,7 @@ npm audit --audit-level=high
 node --check public/sw.js
 ```
 
-Local regression suite ล่าสุดผ่าน 76 cases และหลักฐาน release ล่าสุดก่อน Audio regression บน commit `c7e30b63df43b98a82375e2d1a27fc39f538ea87` ผ่านแล้ว: [CI run 31988106872](https://github.com/aodxx/Personal-Utility-Hub/actions/runs/31988106872) และ [GitHub Pages deploy run 31988106901](https://github.com/aodxx/Personal-Utility-Hub/actions/runs/31988106901) ทั้งสอง run จบด้วย success
+Local regression suite ล่าสุดผ่าน 86 cases และมี 4 intentional skips จาก 90 cases; CI/Pages evidence ของ final guide commit จะเติมหลัง push และ workflow จบ success โดยห้ามใช้ run ของ commit เก่าแทน HEAD
 
 ## 8. Production GitHub Pages smoke test
 
@@ -142,7 +142,7 @@ v0.8.0 จะถือว่า **Production Baseline Ready** เมื่อเ
 
 ## 11. Phase 6 Trust & Usability validation
 
-Phase 6 ชุดแรกเพิ่ม `src/core/tool-guide.ts` และ `src/data/guides.ts` เป็น typed bilingual Guide contract/catalog สำหรับ Active Tools 25 รายการ พร้อม shared AppShell Guide dialog, Privacy route `#/privacy`, accessible privacy links, first-use guidance ที่เก็บ `guideSeen` แบบ local-only และ sample workflows ใน JSON Formatter, Base64 และ Text Formatter
+Phase 6 เพิ่ม `src/core/tool-guide.ts` และ `src/data/guides.ts` เป็น typed bilingual Guide contract/catalog แบบ tool-specific สำหรับ Active Tools 25 รายการ พร้อม shared AppShell Guide dialog, Privacy route `#/privacy`, accessible privacy links, first-use guidance ที่เก็บ `guideSeen` แบบ local-only และ sample workflows ใน JSON Formatter, Base64 และ Text Formatter
 
 | Phase 6 check | Local status |
 |---|---:|
@@ -155,6 +155,6 @@ Phase 6 ชุดแรกเพิ่ม `src/core/tool-guide.ts` และ `sr
 | Sample data workflow | ผ่านใน Playwright |
 | Mobile guide sheet contract | ผ่านใน Android entry profile |
 | Phase 6 trust/unit integration tests | 12/12 ผ่าน |
-| Playwright รวม | 83 passed, 4 intentional skips จาก 87 cases |
+| Playwright รวม | 86 passed, 4 intentional skips จาก 90 cases |
 
-Production verification สำหรับ Phase 6 ยังไม่ถูกนับเป็น completed จนกว่าจะ deploy commit นี้ขึ้น GitHub Pages และตรวจ Privacy page, Guide จากแต่ละ category, first-use persistence, sample workflow, mobile dialog, back/forward/refresh, Offline preparation และ Audio regression บน Production URL จริง
+Production verification สำหรับ Phase 6 ยังไม่ถูกนับเป็น completed จนกว่าจะ deploy final guide commit ขึ้น GitHub Pages และตรวจ Privacy page, Guide จากอย่างน้อย 5 categories, first-use persistence, sample workflow, mobile dialog, back/forward/refresh, Offline preparation, keyboard/focus/Escape และ Audio regression บน Production URL จริง

@@ -124,3 +124,23 @@ test('keeps the guide usable on 360px mobile', async ({ page }, testInfo) => {
   expect(box!.width).toBeLessThanOrEqual(360);
   await page.keyboard.press('Escape');
 });
+
+
+test('shows tool-specific guide content across representative categories', async ({ page }) => {
+  const cases = [
+    { route: 'json-formatter', marker: 'JSON text' },
+    { route: 'qr-reader', marker: 'เบลอ' },
+    { route: 'image-compressor', marker: 'lossless' },
+    { route: 'pdf-merge', marker: 'encrypted' },
+    { route: 'audio-trimmer', marker: 'WAV' },
+    { route: 'audio-finisher', marker: 'LUFS' },
+    { route: 'audio-speed-pitch', marker: 'resampling' },
+  ];
+  for (const item of cases) {
+    await page.goto(`./#/tools/${item.route}`);
+    await page.getByRole('button', { name: /วิธีใช้งาน|อ่านวิธีใช้/ }).first().click();
+    const dialog = page.getByRole('dialog');
+    await expect(dialog).toContainText(item.marker, { ignoreCase: true });
+    await page.keyboard.press('Escape');
+  }
+});
