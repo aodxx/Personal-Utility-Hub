@@ -35,8 +35,8 @@ export function assetIcon(id: VisualAssetId, className = ''): string {
   return `<svg class="${classes}" aria-hidden="true" focusable="false"><use href="${spriteUrl}"></use></svg>`;
 }
 
-export function toolAssetIcon(icon: string | undefined, fallback = '◇'): string {
+export function toolAssetIcon(icon: string | undefined, className = '', fallback = '◇'): string {
   return isVisualAssetId(icon)
-    ? assetIcon(icon, 'asset-icon--tool')
-    : `<span class="asset-icon-fallback" aria-hidden="true">${fallback}</span>`;
+    ? assetIcon(icon, ['asset-icon--tool', className].filter(Boolean).join(' '))
+    : `<span class="asset-icon-fallback${className ? ` ${className}` : ''}" aria-hidden="true">${fallback}</span>`;
 }

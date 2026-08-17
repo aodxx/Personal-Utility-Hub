@@ -1,5 +1,5 @@
-const SHELL_CACHE = 'utility-hub-shell-v0.8.0-audio-suite';
-const TOOL_CACHE = 'utility-hub-tools-v0.8.0-audio-suite';
+const SHELL_CACHE = 'utility-hub-shell-v0.8.1-home-personalization';
+const TOOL_CACHE = 'utility-hub-tools-v0.8.1-home-personalization';
 const CACHE_NAMES = [SHELL_CACHE, TOOL_CACHE];
 const APP_SCOPE = self.registration.scope;
 const APP_SHELL_URL = new URL('index.html', APP_SCOPE).href;

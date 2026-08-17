@@ -17,6 +17,18 @@ const tool = (id: string, status: ToolMetadata['status'] = 'active'): ToolMetada
   version: '1.0.0',
 });
 
+function createFakeStorage(): Storage {
+  const storage = new Map<string, string>();
+  return {
+    get length() { return storage.size; },
+    clear: () => storage.clear(),
+    getItem: (key) => storage.get(key) ?? null,
+    key: (index) => [...storage.keys()][index] ?? null,
+    removeItem: (key) => storage.delete(key),
+    setItem: (key, value) => storage.set(key, value),
+  };
+}
+
 describe('Phase 7 home personalization', () => {
   const tools = [tool('image-compressor'), tool('pdf-merge'), tool('qr-generator'), tool('json-formatter'), tool('audio-trimmer'), tool('line-sticker-studio', 'beta'), tool('planned', 'planned')];
   const order = tools.map(({ id }) => id);
@@ -34,6 +46,18 @@ describe('Phase 7 home personalization', () => {
     expect(result.some(({ id }) => id === 'planned')).toBe(false);
   });
 
+  it('uses a rolling window so recent usage can replace stale lifetime leaders', () => {
+    const storage = createFakeStorage();
+    storage.setItem('utility-hub:usage', JSON.stringify({ 'pdf-merge': 500, 'image-compressor': 400 }));
+    const preferences = new LocalPreferences(storage);
+    preferences.recordUse('line-sticker-studio');
+    preferences.recordUse('line-sticker-studio');
+    preferences.recordUse('qr-generator');
+    expect(preferences.getUsage()).toEqual({ 'line-sticker-studio': 2, 'qr-generator': 1 });
+    const result = mostUsedTools(tools, preferences.getUsage(), [], order);
+    expect(result[0]?.id).toBe('line-sticker-studio');
+  });
+
   it('uses deterministic catalog order for ties and missing counts', () => {
     const result = mostUsedTools(tools, { 'pdf-merge': 3, 'image-compressor': 3 }, [], order);
     expect(result.map(({ id }) => id).slice(0, 2)).toEqual(['image-compressor', 'pdf-merge']);
@@ -45,16 +69,7 @@ describe('Phase 7 home personalization', () => {
   });
 
   it('clears usage without changing favorites, locale, or theme', () => {
-    const storage = new Map<string, string>();
-    const fakeStorage: Storage = {
-      get length() { return storage.size; },
-      clear: () => storage.clear(),
-      getItem: (key) => storage.get(key) ?? null,
-      key: (index) => [...storage.keys()][index] ?? null,
-      removeItem: (key) => storage.delete(key),
-      setItem: (key, value) => storage.set(key, value),
-    };
-    const preferences = new LocalPreferences(fakeStorage);
+    const preferences = new LocalPreferences(createFakeStorage());
     preferences.recordUse('pdf-merge');
     preferences.toggleFavorite('json-formatter');
     preferences.setLocale('en');
