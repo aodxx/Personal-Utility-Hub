@@ -2,7 +2,7 @@
 
 ## สถานะก่อนเผยแพร่
 
-Implementation อยู่บน branch `phase-9-2-sticker-reliability` ที่แยกจาก `main` หลัง Phase 9.1. รายงานนี้จะถือว่า Phase 9.2 ผ่านได้ต่อเมื่อ CI, GitHub Pages และ production smoke ใช้ implementation HEAD เดียวกัน
+Implementation ถูก merge เข้า `main` ที่ final HEAD `396c8a11b78d77bbe0bbffbe1a70f69844966bc6` หลังผ่าน CI และ GitHub Pages deployment. Branch `phase-9-2-sticker-reliability` ถูกใช้สำหรับ PR #16 และ source ทั้งหมดอยู่บน production branch แล้ว
 
 ## Root cause ที่แก้
 
@@ -46,7 +46,10 @@ Background Removal, Auto Fit, Border, Review และ Export ถูก gate ใ
 | Full repository Playwright | 156 passed / 12 skipped |
 | npm audit --audit-level=high | PASS — 0 vulnerabilities |
 | SVG library check / service-worker syntax | PASS |
+| Main CI | PASS — run [32040766941](https://github.com/aodxx/Personal-Utility-Hub/actions/runs/32040766941) |
+| GitHub Pages deployment | PASS — rerun [32040909767](https://github.com/aodxx/Personal-Utility-Hub/actions/runs/32040909767) |
+| Production reliability smoke | 36/36 PASS on [GitHub Pages](https://aodxx.github.io/Personal-Utility-Hub/) across 360×740, 412×915 and 1280×900 |
 
 ## Scope and limitations
 
-Phase 9.2 does not add tools, animated/APNG capability or a large UI redesign. Animated mode remains the existing partial frame-preparation contract. Pixel fixtures prove deterministic geometry and mapping, but they do not replace visual review of every possible AI-generated sheet. Background removal remains a local color-key algorithm and may need tolerance tuning for complex anti-aliased edges. CI, Pages and production smoke are marked **NOT VERIFIED** in this local report until final deployment of this branch completes
+Phase 9.2 does not add tools, animated/APNG capability or a large UI redesign. Animated mode remains the existing partial frame-preparation contract. Pixel fixtures prove deterministic geometry and mapping, but they do not replace visual review of every possible AI-generated sheet. Background removal remains a local color-key algorithm and may need tolerance tuning for complex anti-aliased edges. The first Pages run for the merge SHA failed after artifact upload; the manual rerun succeeded and the production smoke passed 36/36.
