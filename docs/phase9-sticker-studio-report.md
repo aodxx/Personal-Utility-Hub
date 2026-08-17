@@ -44,6 +44,8 @@ Static grid splitting now uses a retained source canvas, so changing rows and co
 | Build | Passed |
 | Bundle check | Passed; entry gzip 36.4 KB, all JavaScript 993.9 KB across 39 chunks |
 | Dependency audit | **0 high-or-worse vulnerabilities** |
+| Production smoke, GitHub Pages | **14/14 passed** on 360×740 and 1280×900; static PNG/ZIP/TXT, animated partial workflow, and no horizontal overflow |
+| Final deployment | CI and Pages deployment **success** for follow-up commit `ae3144d` |
 
 The full E2E suite continues to cover existing audio workflows, including the Phase 8 real-media decoder corpus. The new fixture corpus under `tests/fixtures/line-sticker/` consists of generated geometric PNGs with no external copyrighted assets.
 
@@ -57,11 +59,11 @@ The presets are technical checks derived from LINE’s official static and anima
 
 Animated mode is deliberately labelled as frame preparation and validation. The current release does not include a verified client-side APNG encoder, APNG round-trip decoder test, or APNG download contract; therefore the UI and guide do not advertise APNG export as ready. Static ZIP export verifies PNG encoding and writes the report, but the report is technical and does not guarantee acceptance by LINE.
 
-The current tool status remains **beta** until a later release adds verified APNG round-trip support, broader content-review guidance, and an additional production smoke run against the final published commit. This is an intentional conservative policy rather than a reliability failure in the static workflow.
+The current tool status remains **beta** until a later release adds verified APNG round-trip support and broader content-review guidance. The final published commit has already passed the production smoke; beta is an intentional conservative policy rather than a reliability failure in the static workflow.
 
 ## Release decision
 
-Phase 9 implementation is ready for commit and CI deployment as a **beta** feature. The static local workflow has passed unit, desktop, Android, output-integrity, registry, build, bundle, and dependency gates. Phase 7.1 and Phase 8 regression coverage remains green. APNG remains clearly labelled partial, and no AI, cloud, lossless, or LINE-approval claim is made.
+Phase 9 implementation is deployed and verified on GitHub Pages as a **beta** feature. The static local workflow has passed unit, desktop, Android, output-integrity, registry, build, bundle, and dependency gates. Phase 7.1 and Phase 8 regression coverage remains green. The final production smoke passed **14/14 checks** after the mobile overflow fix. APNG remains clearly labelled partial, and no AI, cloud, lossless, or LINE-approval claim is made.
 
 ## References
 

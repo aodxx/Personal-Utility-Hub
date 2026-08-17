@@ -19,7 +19,7 @@
 
 `Upload → Split → Clean → Edit → Style → Review → Export`
 
-The UI uses a step navigator. Desktop presents a thumbnail rail, canvas, and inspector; mobile uses a horizontal thumbnail rail and sticky bottom step navigation without hiding the canvas.
+The UI uses a step navigator. Desktop presents a thumbnail rail, canvas, and inspector; mobile uses a horizontal thumbnail rail and horizontal step navigation in the document flow without hiding the canvas.
 
 ## Controls
 
