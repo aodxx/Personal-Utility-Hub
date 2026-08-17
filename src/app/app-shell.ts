@@ -1,5 +1,5 @@
-import { getErrorMessage, ToolNotFoundError } from '../core/errors';
 import { detectCompatibility, requiredCompatibilityReady } from '../core/compatibility';
+import { getErrorMessage, ToolLoadError, ToolNotFoundError } from '../core/errors';
 import { localizeCategory, localizeTool, t, type AppLocale } from '../core/i18n';
 import { PwaController } from '../core/pwa';
 import { OfflineToolManager } from '../core/offline-tools';
@@ -257,6 +257,15 @@ export class AppShell {
     try {
       await this.toolLoader.load(route.toolId, container);
     } catch (error) {
+      if (error instanceof ToolLoadError && navigationId === this.navigationId) {
+        container.innerHTML = `<div class="loading-state"><span class="spinner" aria-hidden="true"></span>${t(locale, 'loading')}</div>`;
+        try {
+          await this.toolLoader.load(route.toolId, container);
+          return;
+        } catch (retryError) {
+          error = retryError;
+        }
+      }
       if (navigationId !== this.navigationId) return;
       if (error instanceof ToolNotFoundError) {
         this.renderNotFound(main, route.toolId);

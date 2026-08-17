@@ -37,7 +37,7 @@ git diff --check
 | Vitest unit/integration | 52/52 tests ผ่าน จาก 13 test files |
 | Production build | ผ่าน |
 | Bundle budget | ผ่าน |
-| Playwright | 55 passed, 2 intentional skips จาก 57 cases |
+| Playwright | 76 passed, 2 intentional skips จาก 78 cases |
 | Visual asset validation | ผ่าน |
 | `git diff --check` | ผ่าน |
 
@@ -49,7 +49,7 @@ Playwright ใช้ 3 profiles ได้แก่ Desktop Chromium, Android ent
 |---|---|
 | Core Tools | Route, metadata contract, lazy loading, search, localization และ favorite/history behavior |
 | File Tools | Registry count 17, lazy module loading, file validation, PDF operations และ metadata contract |
-| Audio Tools | PCM processing, resampling, peak/clipping metrics, preview/export path, progress/cancel และ repeated processing safeguards |
+| Audio Tools | 21 dedicated E2E cases ครอบคลุม Audio Trimmer และ shared workbench/Chapter Marker tools ตั้งแต่ upload, processing, result metrics และ WAV/cue-sheet download รวมถึง repeated processing ของ Trimmer |
 | App Shell | 25 cards, category/search filter, TH/EN, Settings Center, usage ordering และ full-card navigation |
 | Mobile UX | Compact cards, icon/footer separation, touch feedback, accessible pressed states และ 360px layout assertions |
 | PWA | Manifest assets, Service Worker syntax, versioned shell/tool caches, offline preparation และ runtime cache behavior |
@@ -90,7 +90,7 @@ npm audit --audit-level=high
 node --check public/sw.js
 ```
 
-หลักฐาน release ล่าสุดบน commit `c7e30b63df43b98a82375e2d1a27fc39f538ea87` ผ่านแล้ว: [CI run 31988106872](https://github.com/aodxx/Personal-Utility-Hub/actions/runs/31988106872) และ [GitHub Pages deploy run 31988106901](https://github.com/aodxx/Personal-Utility-Hub/actions/runs/31988106901) ทั้งสอง run จบด้วย success
+Local regression suite ล่าสุดผ่าน 76 cases และหลักฐาน release ล่าสุดก่อน Audio regression บน commit `c7e30b63df43b98a82375e2d1a27fc39f538ea87` ผ่านแล้ว: [CI run 31988106872](https://github.com/aodxx/Personal-Utility-Hub/actions/runs/31988106872) และ [GitHub Pages deploy run 31988106901](https://github.com/aodxx/Personal-Utility-Hub/actions/runs/31988106901) ทั้งสอง run จบด้วย success
 
 ## 8. Production GitHub Pages smoke test
 
@@ -117,13 +117,13 @@ Production URL ที่ต้องตรวจคือ [https://aodxx.github.
 
 | Audio tool | Status |
 |---|---|
-| Audio Trimmer | รอตรวจบน Production |
-| Audio Compressor Pro | รอตรวจบน Production |
-| Audio Merger Studio | รอตรวจบน Production |
-| Silence Remover | รอตรวจบน Production |
-| Audio Finisher | รอตรวจบน Production |
-| Audio Speed & Pitch | รอตรวจบน Production |
-| Audio Chapter Marker & Cue Sheet | รอตรวจบน Production |
+| Audio Trimmer | ผ่าน — upload → process → preview → export → download WAV |
+| Audio Compressor Pro | ผ่าน — upload → process → result metrics → download WAV |
+| Audio Merger Studio | ผ่าน — multi-file workbench, process → result metrics → download WAV |
+| Silence Remover | ผ่าน — upload → process → result metrics → download WAV |
+| Audio Finisher | ผ่าน — peak/normalize process → result metrics → download WAV |
+| Audio Speed & Pitch | ผ่าน — resampling process → result metrics → download WAV |
+| Audio Chapter Marker & Cue Sheet | ผ่าน — upload → marker → TXT cue-sheet export |
 
 ### PWA/offline checklist
 
@@ -133,7 +133,7 @@ Production URL ที่ต้องตรวจคือ [https://aodxx.github.
 
 Audio Compressor ใช้ target size แบบประมาณการสำหรับ WAV; Audio Finisher เป็น peak normalization และ clipping protection ไม่ใช่ LUFS mastering; Audio Speed & Pitch เป็น resampling ที่ทำให้ speed และ pitch สัมพันธ์กัน ไม่ใช่ independent time-stretch; และยังไม่มี MP3 export ใน implementation ปัจจุบัน
 
-GitHub Actions และ dependency audit หลัง `npm ci` ผ่านแล้วบน final HEAD `c7e30b63df43b98a82375e2d1a27fc39f538ea87`; Production smoke บันทึกผล Hub, search/category, Settings, English localization, Audio route และ v0.8 Service Worker/cache ไว้ใน [`docs/v0.8-production-smoke-notes.md`](docs/v0.8-production-smoke-notes.md) แต่ Audio process/export ด้วยไฟล์จริงยังไม่แสดง completion state ใน browser observation จึงยังไม่ทำเครื่องหมาย v0.8 ว่า fully verified
+GitHub Actions และ dependency audit หลัง `npm ci` ผ่านแล้วบน final HEAD ก่อน Audio regression; Production smoke notes บันทึกผล Hub, search/category, Settings, English localization, Service Worker/cache และ Audio contract ครบ 7 tools ไว้ใน [`docs/v0.8-production-smoke-notes.md`](docs/v0.8-production-smoke-notes.md) หลังเพิ่ม one-retry recovery ใน AppShell และ dedicated Audio E2E coverage
 
 ## 10. Release decision
 

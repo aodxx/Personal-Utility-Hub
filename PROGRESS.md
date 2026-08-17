@@ -56,15 +56,15 @@ Audio pipeline แชร์ `src/core/audio-processing.ts`, `src/tools/audio-wor
 
 ## Validation status
 
-ผลล่าสุดจาก local quality gate ก่อน baseline patch คือ TypeScript ผ่าน, Vitest 52/52, production build ผ่าน, bundle budget ผ่าน และ Playwright 55 passed พร้อม 2 intentional skips จาก 57 cases บน Desktop Chromium, Android entry `360 × 740` และ Android current profile
+ผล local quality gate ล่าสุดหลังเพิ่ม Audio production contract regression คือ TypeScript ผ่าน, Vitest 52/52, production build ผ่าน, bundle budget ผ่าน และ Playwright 76 passed พร้อม 2 intentional skips จาก 78 cases บน Desktop Chromium, Android entry `360 × 740` และ Android current profile โดย dedicated Audio spec ครอบคลุม 21 cases
 
-GitHub Actions บน HEAD ผ่านแล้ว: [CI run 31988106872](https://github.com/aodxx/Personal-Utility-Hub/actions/runs/31988106872) และ [Pages deploy run 31988106901](https://github.com/aodxx/Personal-Utility-Hub/actions/runs/31988106901) ผล production smoke ยืนยัน Hub, search/category, Settings, English localization, Audio route และ v0.8 Service Worker/cache แล้ว แต่ Audio process/export ด้วยไฟล์จริงยังไม่แสดง completion state ใน browser observation จึงยังไม่ mark baseline ว่า fully verified; รายละเอียดอยู่ใน `docs/v0.8-production-smoke-notes.md`
+Production smoke รอบล่าสุดยืนยัน Hub, search/category, Settings, English localization, v0.8 Service Worker/cache และ Audio contract ครบ 7 tools: Audio Trimmer, Audio Compressor Pro, Audio Merger Studio, Silence Remover, Audio Finisher, Audio Speed & Pitch และ Audio Chapter Marker & Cue Sheet โดยรายละเอียดอยู่ใน `docs/v0.8-production-smoke-notes.md` การเพิ่ม one-retry recovery ใน AppShell ช่วยรับมือ transient lazy-module load state ก่อนแสดง error UI
 
 ## Known limitations และ roadmap
 
 Audio output ยังอยู่ใน WAV family; target-size เป็นค่าประมาณ, Audio Finisher เป็น peak-based normalization และ Speed & Pitch เป็น resampling ไม่ใช่ advanced time-stretch งานถัดไปที่ควรพิจารณาหลัง baseline green ได้แก่ MP3 export แบบ optional, LUFS/true-peak metering, segment-level silence editor และ independent time-stretch โดยต้องผ่าน quality benchmark และ bundle review ก่อน
 
-ยังไม่มี Backend, telemetry หรือ cloud storage และไม่มีแผนเพิ่มเครื่องมือใหม่จนกว่า v0.8 Production Baseline จะผ่านเอกสาร, CI, production smoke และ offline verification ครบ
+ยังไม่มี Backend, telemetry หรือ cloud storage และยังไม่เริ่ม Wave 1/Wave 3 ของ v0.9 จนกว่าจะรักษา Audio contract, regression coverage และ production evidence นี้ให้ผ่านต่อเนื่องใน CI/Pages release ถัดไป
 
 ## เอกสารอ้างอิงใน repository
 
