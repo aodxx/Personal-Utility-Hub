@@ -25,6 +25,22 @@ describe('LINE Sticker Studio logic', () => {
     expect(prompt.th).toContain('cat');
     expect(prompt.en).toContain('2×4');
     expect(prompt.en).toContain('same character');
+    expect(prompt.en).toContain('exact 2×4 grid');
+    expect(prompt.en).toContain('no poster');
+    expect(prompt.en).toContain('one character per cell');
+  });
+
+  it('preserves supplied Thai phrases and emits anti-layout guards', () => {
+    const prompt = buildPrompt({ character: 'แมว', style: 'การ์ตูน', outfit: 'เสื้อฟ้า', expressions: 'ดีใจ, ขอโทษ', phrases: 'สวัสดี, ขอบคุณ', language: 'ไทย', count: 16, rows: 4, columns: 4, background: 'โปร่งใส', consistency: ['same face', 'same outfit'] });
+    expect(prompt.th).toContain('พร้อมวลี สวัสดี, ขอบคุณ');
+    expect(prompt.th).toContain('ห้ามสร้างคำใหม่');
+    expect(prompt.en).toContain('do not translate');
+    expect(prompt.en).toContain('no infographic');
+  });
+
+  it('uses the selected grid capacity as the workflow warning contract', () => {
+    expect(gridCountMessage(4, 4, 16)).toEqual({ level: 'PASS', message: 'Grid count matches: 16 cells and 16 phrases.' });
+    expect(gridCountMessage(4, 4, 2).level).toBe('WARNING');
   });
 
   it('creates an uncompressed ZIP with the expected local file signature', async () => {
