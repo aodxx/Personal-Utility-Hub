@@ -11,6 +11,7 @@ import { metadata as lineStickerStudioMetadata } from '../tools/line-sticker-stu
 import { metadata as svgAssetStudioMetadata } from '../tools/svg-asset-studio/metadata';
 import { metadata as csvProfilerMetadata } from '../tools/csv-profiler/metadata';
 import { metadata as audioChapterMarkerMetadata } from '../tools/audio-chapter-marker/metadata';
+import { metadata as communityMappingMetadata } from '../tools/community-mapping/metadata';
 import { svgAssetManifest } from './svg-assets/manifest';
 import { metadata as silenceRemoverMetadata } from '../tools/silence-remover/metadata';
 import { metadata as base64Metadata } from '../tools/base64/metadata';
@@ -144,6 +145,7 @@ export const toolRegistry = [
   },
   { metadata: svgAssetStudioMetadata, load: () => import('../tools/svg-asset-studio'), prepareOffline: svgLibraryAssets },
   { metadata: audioChapterMarkerMetadata, load: () => import('../tools/audio-chapter-marker') },
+  { metadata: communityMappingMetadata, load: () => import('../tools/community-mapping') },
 ] satisfies readonly ToolRegistryEntry[];
 
 assertValidRegistry(toolRegistry);
