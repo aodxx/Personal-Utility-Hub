@@ -7,6 +7,7 @@ import { metadata as audioTrimmerMetadata } from '../tools/audio-trimmer/metadat
 import { metadata as privacyRedactorMetadata } from '../tools/privacy-redactor/metadata';
 import { metadata as fileDiffMetadata } from '../tools/file-diff/metadata';
 import { metadata as imageContactSheetMetadata } from '../tools/image-contact-sheet/metadata';
+import { metadata as lineStickerStudioMetadata } from '../tools/line-sticker-studio/metadata';
 import { metadata as csvProfilerMetadata } from '../tools/csv-profiler/metadata';
 import { metadata as audioChapterMarkerMetadata } from '../tools/audio-chapter-marker/metadata';
 import { metadata as silenceRemoverMetadata } from '../tools/silence-remover/metadata';
@@ -132,6 +133,11 @@ export const toolRegistry = [
   { metadata: fileDiffMetadata, load: () => import('../tools/file-diff') },
   { metadata: imageContactSheetMetadata, load: () => import('../tools/image-contact-sheet') },
   { metadata: csvProfilerMetadata, load: () => import('../tools/csv-profiler') },
+  {
+    metadata: lineStickerStudioMetadata,
+    load: () => import('../tools/line-sticker-studio'),
+    prepareOffline: processingWorkerAssets,
+  },
   { metadata: audioChapterMarkerMetadata, load: () => import('../tools/audio-chapter-marker') },
 ] satisfies readonly ToolRegistryEntry[];
 

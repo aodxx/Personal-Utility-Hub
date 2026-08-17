@@ -27,15 +27,15 @@ describe('AppShell integration', () => {
   it('renders the Hub and filters tools by Thai search and category', async () => {
     const root = startApp();
     await vi.waitFor(() => expect(root.textContent).toContain('เครื่องมือที่ต้องใช้'));
-    expect(root.querySelectorAll('#tool-grid .tool-card')).toHaveLength(25);
+    expect(root.querySelectorAll('#tool-grid .tool-card')).toHaveLength(26);
     expect(root.querySelectorAll('.category-tab .asset-icon')).toHaveLength(8);
-    expect(root.querySelectorAll('#tool-grid .tool-card .asset-icon')).toHaveLength(25);
+    expect(root.querySelectorAll('#tool-grid .tool-card .asset-icon')).toHaveLength(26);
 
     const search = root.querySelector<HTMLInputElement>('#tool-search');
     if (!search) throw new Error('missing search input');
     search.value = 'รูปภาพ';
     search.dispatchEvent(new InputEvent('input', { bubbles: true }));
-    expect(root.querySelectorAll('#tool-grid .tool-card')).toHaveLength(7);
+    expect(root.querySelectorAll('#tool-grid .tool-card')).toHaveLength(8);
 
     search.value = '';
     search.dispatchEvent(new InputEvent('input', { bubbles: true }));
@@ -45,7 +45,7 @@ describe('AppShell integration', () => {
 
   it('persists favorites, records recent tools and clears history', async () => {
     const root = startApp();
-    await vi.waitFor(() => expect(root.querySelectorAll('#tool-grid .tool-card')).toHaveLength(25));
+    await vi.waitFor(() => expect(root.querySelectorAll('#tool-grid .tool-card')).toHaveLength(26));
     const jsonCard = root.querySelector<HTMLElement>('#tool-grid [data-tool-id="json-formatter"]');
     expect(jsonCard?.querySelector('.tool-card__tap-target')?.getAttribute('href')).toBe('#/tools/json-formatter');
     expect(jsonCard?.querySelector('.tool-card__link')).toBeNull();
@@ -108,7 +108,7 @@ describe('AppShell integration', () => {
     window.localStorage.setItem('utility-hub:tool-order', 'frequent');
     window.localStorage.setItem('utility-hub:usage', JSON.stringify({ 'pdf-merge': 8, base64: 2 }));
     const root = startApp();
-    await vi.waitFor(() => expect(root.querySelectorAll('#tool-grid .tool-card')).toHaveLength(25));
+    await vi.waitFor(() => expect(root.querySelectorAll('#tool-grid .tool-card')).toHaveLength(26));
     expect(root.querySelector<HTMLElement>('#tool-grid .tool-card')?.dataset.toolId).toBe('pdf-merge');
   });
 });
