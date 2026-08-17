@@ -5,8 +5,9 @@ test('opens Community Mapping Privacy Canvas without default tile requests', asy
   page.on('request', (request) => { if (request.url().includes('tile.openstreetmap.org')) tiles.push(request.url()); });
   await page.goto('./#/tools/community-mapping');
   await expect(page.getByRole('heading', { name: 'Community Mapping Studio' })).toBeVisible();
-  await expect(page.getByText('Privacy Canvas', { exact: true })).toBeVisible();
+  await expect(page.locator('.community-map-privacy strong')).toHaveText('Privacy Canvas');
   await expect(page.locator('[data-map-host]')).toBeVisible();
+  await expect(page.locator('.community-map-privacy-tile svg').first()).toBeVisible();
   expect(tiles).toHaveLength(0);
 });
 
