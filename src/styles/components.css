@@ -564,6 +564,8 @@
 .community-map-map-actions .button, .community-map-map-footer .button { min-height: 2.4rem; font-size: .75rem; }
 .community-map-canvas { height: auto; min-height: 440px; border: 0; border-radius: 0; background: repeating-linear-gradient(0deg, rgb(148 163 184 / 13%) 0 1px, transparent 1px 32px), repeating-linear-gradient(90deg, rgb(148 163 184 / 13%) 0 1px, transparent 1px 32px), #eef3f5; }
 .community-map-canvas .leaflet-container { width: 100%; height: 100%; min-height: 440px; font: inherit; background: transparent; }
+.community-map-privacy-tile { width: 256px; height: 256px; overflow: hidden; background: #edf3e8; }
+.community-map-privacy-tile svg { display: block; width: 256px; height: 256px; }
 .community-map-map-footer { color: var(--color-text-muted); font-size: .72rem; }
 .community-map-map-footer span { flex: 1 1 12rem; }
 .community-map-panel-stack { display: grid; gap: .8rem; }

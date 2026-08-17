@@ -125,7 +125,19 @@ class CommunityMappingController {
 
   private refreshRecordList(): void { const list = this.container.querySelector<HTMLOListElement>('[data-record-list]'); if (list) list.innerHTML = this.renderFeatureList(); const count = this.container.querySelector<HTMLElement>('[data-record-count]'); if (count) count.textContent = `${this.project.records.length} records จาก ${this.project.features.length} features`; }
 
-  private initMap(): void { const host = this.container.querySelector<HTMLElement>('[data-map-host]'); if (!host) return; this.map = L.map(host, { zoomControl: true }).setView([13.7563, 100.5018], 13); this.layerGroup = L.layerGroup().addTo(this.map); if (this.onlineBasemapEnabled) this.enableBasemap(); this.map.on('click', (event) => { if (!this.drawingMode) return; this.drawing.push(event.latlng); if (this.drawingMode === 'Point') this.finishDrawing(); else L.circleMarker(event.latlng, { radius: 5, color: '#2563eb' }).addTo(this.layerGroup!); }); this.renderMapFeatures(); }
+  private initMap(): void { const host = this.container.querySelector<HTMLElement>('[data-map-host]'); if (!host) return; this.map = L.map(host, { zoomControl: true }).setView([13.7563, 100.5018], 13); this.createPrivacyBasemap().addTo(this.map); this.layerGroup = L.layerGroup().addTo(this.map); if (this.onlineBasemapEnabled) this.enableBasemap(); this.map.on('click', (event) => { if (!this.drawingMode) return; this.drawing.push(event.latlng); if (this.drawingMode === 'Point') this.finishDrawing(); else L.circleMarker(event.latlng, { radius: 5, color: '#2563eb' }).addTo(this.layerGroup!); }); this.renderMapFeatures(); }
+
+  private createPrivacyBasemap(): L.GridLayer {
+    class PrivacyGridLayer extends L.GridLayer {
+      protected override createTile(): HTMLElement {
+        const tile = document.createElement('div');
+        tile.className = 'community-map-privacy-tile';
+        tile.innerHTML = `<svg viewBox="0 0 256 256" role="presentation" aria-hidden="true"><rect width="256" height="256" fill="#edf3e8"/><path d="M-20 46 C45 18 74 78 126 56 S208 22 280 52" fill="none" stroke="#d5e3cc" stroke-width="18"/><path d="M-20 46 C45 18 74 78 126 56 S208 22 280 52" fill="none" stroke="#fff" stroke-width="2"/><path d="M-28 208 C20 176 70 214 112 182 S204 176 278 208" fill="none" stroke="#d7e1ef" stroke-width="24"/><path d="M-28 208 C20 176 70 214 112 182 S204 176 278 208" fill="none" stroke="#9ec5e6" stroke-width="3"/><g fill="none" stroke="#d0d7c8" stroke-width="3"><path d="M12 0 L68 256"/><path d="M92 0 L142 256"/><path d="M198 0 L176 256"/><path d="M0 112 L256 84"/><path d="M0 154 L256 132"/></g><g fill="#87947f" font-family="sans-serif" font-size="10"><text x="18" y="28">ชุมชน</text><text x="164" y="116">พื้นที่สำรวจ</text><text x="42" y="226">Privacy Canvas</text></g></svg>`;
+        return tile;
+      }
+    }
+    return new PrivacyGridLayer({ tileSize: 256, updateWhenIdle: false, keepBuffer: 2 });
+  }
 
   private enableBasemap(): void { if (!this.map || this.basemap) return; this.basemap = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '&copy; OpenStreetMap contributors' }).addTo(this.map); }
 
