@@ -71,6 +71,17 @@ SVG Asset Studio remains local-first. Its registry entry now exposes `prepareOff
 
 The production smoke now checks route, library count, semantic search for camera/bell/archive, title and geometry distinction, light/dark 16/24px preview, inspector, optimizer, SVG download validity and title, PNG export, ZIP contents, upload sanitization and horizontal overflow at all three required viewports
 
-## Required final evidence
+## Final HEAD evidence
 
-The final release report must be updated with the implementation HEAD SHA, CI run ID and conclusion, Pages deployment run ID and conclusion, and the live `node scripts/phase10-production-smoke.mjs` result from that same final HEAD. Until those three final-HEAD items are recorded, Phase 10.1 remains **NOT VERIFIED** rather than being declared closed
+| Evidence | Final result |
+|---|---|
+| Implementation HEAD | `beab00996c0936ec8e5ebb885697fe02143814d2` |
+| CI run | `32008999768` — success; includes `npm run check:svg-library` |
+| CI HEAD | `beab00996c0936ec8e5ebb885697fe02143814d2` |
+| Pages deploy run | `32008999722` — success |
+| Pages HEAD | `beab00996c0936ec8e5ebb885697fe02143814d2` |
+| Live production smoke | `54/54 passed` using `https://aodxx.github.io/Personal-Utility-Hub/` |
+| Viewports | 360×740, 412×915 and 1280×900 |
+| Final status | **Phase 10.1 PASS**; SVG Asset Studio remains `beta` by soft-launch policy |
+
+The final live smoke checked route, 120-asset library, semantic camera/bell/archive search, distinct preview geometry, light/dark 16/24px preview, inspector, optimizer, valid titled SVG download, PNG export, ZIP contents, upload sanitization and no horizontal overflow at all three required viewports. No Phase 11 work was started
