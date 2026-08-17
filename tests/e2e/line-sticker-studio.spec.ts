@@ -17,6 +17,9 @@ test.describe('LINE Sticker Studio production contract', () => {
     await expect(page.locator('h1', { hasText: 'LINE Sticker Studio' })).toBeVisible();
     await expect(page.locator('#line-file')).toBeVisible();
     await page.locator('#line-file').setInputFiles({ name: 'geometric-sheet.png', mimeType: 'image/png', buffer: readFileSync(fixture('geometric-sheet.png')) });
+    await expect(page.locator('#line-source-meta')).toContainText(/Source:/);
+    await expect(page.locator('#line-thumbnails .line-thumbnail')).toHaveCount(0);
+    await page.getByRole('button', { name: 'ตัด 8 ภาพ', exact: true }).click({ force: true });
     await expect(page.locator('#line-thumbnails .line-thumbnail')).toHaveCount(8);
     await page.locator('#line-clean').click({ force: true });
     await page.locator('#line-autofit').click({ force: true });
@@ -73,6 +76,65 @@ test.describe('LINE Sticker Studio production contract', () => {
     await expect(page.locator('#line-quick-split')).toContainText('ตัด 16 ภาพ');
     await expect(page.locator('#line-grid-overlay .line-grid-cell-number')).toHaveCount(16);
     await expect(page.locator('#line-grid-overlay .line-grid-cell-number').first()).toHaveText('01');
+    await expect(page.locator('#line-thumbnails .line-thumbnail')).toHaveCount(0);
+    await page.getByRole('button', { name: 'ตัด 16 ภาพ', exact: true }).click({ force: true });
+    await expect(page.locator('#line-thumbnails .line-thumbnail')).toHaveCount(16);
+  });
+
+  test('proves 4×4 source-cell identity, preview parity and non-strip outputs with pixel signatures', async ({ page }) => {
+    const expected = [[230, 40, 40], [40, 100, 230], [20, 170, 100], [240, 150, 20], [150, 60, 210], [20, 160, 210], [220, 70, 140], [80, 170, 60], [230, 100, 30], [50, 130, 190], [170, 80, 190], [50, 170, 120], [210, 60, 60], [70, 100, 200], [230, 120, 40], [70, 160, 160]];
+    await page.goto('./#/tools/line-sticker-studio');
+    await page.locator('#line-preset-grid').selectOption('4x4');
+    await page.locator('#line-file').setInputFiles({ name: 'pixel-signature-4x4-sheet.png', mimeType: 'image/png', buffer: readFileSync(fixture('pixel-signature-4x4-sheet.png')) });
+    await expect(page.locator('#line-thumbnails .line-thumbnail')).toHaveCount(0);
+    await page.getByRole('button', { name: 'ตัด 16 ภาพ', exact: true }).click({ force: true });
+    await expect(page.locator('#line-thumbnails .line-thumbnail')).toHaveCount(16);
+    const actual = await page.locator('#line-thumbnails .line-thumbnail canvas').evaluateAll((canvases) => canvases.map((element) => { const canvas = element as HTMLCanvasElement; return Array.from(canvas.getContext('2d')!.getImageData(48, 48, 1, 1).data.slice(0, 3)); }));
+    expect(actual).toEqual(expected);
+    for (const index of [0, 6, 15]) {
+      await page.locator('#line-thumbnails .line-thumbnail').nth(index).click();
+      const preview = await page.locator('#line-canvas').evaluate((element) => { const canvas = element as HTMLCanvasElement; return Array.from(canvas.getContext('2d')!.getImageData(Math.floor(canvas.width / 2), Math.floor(canvas.height / 2), 1, 1).data.slice(0, 3)); });
+      expect(preview).toEqual(expected[index]);
+    }
+    const dimensions = await page.locator('#line-thumbnails .line-thumbnail canvas').evaluateAll((elements) => elements.map((element) => { const canvas = element as HTMLCanvasElement; return { width: canvas.width, height: canvas.height }; }));
+    expect(dimensions.every(({ width, height }) => width === 96 && height === 96)).toBe(true);
+  });
+
+  test('resets stale outputs when source or grid changes and re-splits deterministically', async ({ page }) => {
+    await page.goto('./#/tools/line-sticker-studio');
+    await page.locator('#line-preset-grid').selectOption('4x4');
+    await page.locator('#line-file').setInputFiles({ name: 'pixel-signature-4x4-sheet.png', mimeType: 'image/png', buffer: readFileSync(fixture('pixel-signature-4x4-sheet.png')) });
+    await page.getByRole('button', { name: 'ตัด 16 ภาพ', exact: true }).click({ force: true });
+    await expect(page.locator('#line-thumbnails .line-thumbnail')).toHaveCount(16);
+    await page.selectOption('#line-preset-grid', 'custom');
+    await page.selectOption('#line-rows', '3');
+    await page.selectOption('#line-columns', '3');
+    await expect(page.locator('#line-thumbnails .line-thumbnail')).toHaveCount(0);
+    await expect(page.locator('#line-source-meta')).toContainText(/state: grid-ready/);
+    await page.getByRole('button', { name: 'ตัด 9 ภาพ', exact: true }).click({ force: true });
+    await expect(page.locator('#line-thumbnails .line-thumbnail')).toHaveCount(9);
+    await page.locator('#line-file').setInputFiles({ name: 'realistic-4x4-sheet.png', mimeType: 'image/png', buffer: readFileSync(fixture('realistic-4x4-sheet.png')) });
+    await expect(page.locator('#line-thumbnails .line-thumbnail')).toHaveCount(0);
+    await expect(page.locator('#line-source-meta')).toContainText('1536×1536');
+  });
+
+  test('runs realistic 4×4 sheet through split, batch finish, review and export', async ({ page }) => {
+    const downloads: string[] = [];
+    page.on('download', async (download) => { const path = await download.path(); if (path) downloads.push(path); });
+    await page.goto('./#/tools/line-sticker-studio');
+    await page.locator('#line-preset-grid').selectOption('4x4');
+    await page.locator('#line-file').setInputFiles({ name: 'realistic-4x4-sheet.png', mimeType: 'image/png', buffer: readFileSync(fixture('realistic-4x4-sheet.png')) });
+    await expect(page.locator('#line-thumbnails .line-thumbnail')).toHaveCount(0);
+    await page.getByRole('button', { name: 'ตัด 16 ภาพ', exact: true }).click({ force: true });
+    await expect(page.locator('#line-thumbnails .line-thumbnail')).toHaveCount(16);
+    await page.getByRole('button', { name: 'ลบพื้นหลังทั้งชุด', exact: true }).click({ force: true });
+    await page.getByRole('button', { name: 'จัดภาพให้อยู่กลางทั้งหมด', exact: true }).click({ force: true });
+    await page.getByRole('button', { name: 'ใส่ขอบขาวทั้งชุด', exact: true }).click({ force: true });
+    await page.getByRole('button', { name: 'Refresh validation', exact: true }).click({ force: true });
+    await expect(page.locator('#line-review-report')).toContainText(/PASS|WARNING|FAIL/);
+    await page.getByRole('button', { name: 'ดาวน์โหลด ZIP', exact: true }).click({ force: true });
+    await expect(page.locator('#line-status')).toContainText('ZIP ถูกสร้างแล้ว', { timeout: 30_000 });
+    await expect.poll(() => downloads.length, { timeout: 10_000 }).toBeGreaterThanOrEqual(2);
   });
 
   test('keeps the recovery workflow within a 360px viewport', async ({ page }) => {
