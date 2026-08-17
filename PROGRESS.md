@@ -94,3 +94,29 @@ Sample contract ตรวจแล้ว: JSON Formatter, Base64 และ Text 
 ผล local quality gate ล่าสุด: `npm test` ผ่าน 52/52, `npm run build` ผ่าน, bundle ผ่านด้วย entry gzip 32.7 KB, largest lazy chunk 366.1 KB และ JavaScript รวม gzip 976.4 KB, Playwright ผ่าน 86 tests และ 4 intentional skips, `npm audit --audit-level=high` พบ 0 vulnerabilities, Service Worker syntax และ `git diff --check` ผ่าน.
 
 Guide-specific E2E assertions ถูกแก้ให้ตรวจเนื้อหา localized จริงในค่าเริ่มต้นภาษาไทย และผ่านทั้ง Desktop Chromium, Android entry `360 × 740` และ Android current profile. Phase 6 ยังอยู่ระหว่างรอ commit/CI/Pages deploy และ Production verification รอบสุดท้าย จึงยังไม่ประกาศว่า complete.
+
+
+## Phase 7 — Home Experience Optimization & Smart Personalization
+
+**สถานะ:** Implemented และ Production verified บน commit `af70a90804a9b70a0884022dd51b1fa69b6ec437`
+
+Phase 7 ปรับ Home โดยไม่เพิ่ม Active Tool ใหม่และไม่เพิ่ม backend, analytics, account, cloud usage sync หรือ remote tracking. Large Trust Strip ถูกแทนที่ด้วย Compact Trust Chips แบบ TH/EN ที่ focus/click เพื่ออ่านคำอธิบายสั้นได้ ส่วน New Tools grid ถูกแทนที่ด้วย `Your Most Used / ใช้บ่อยของคุณ` native horizontal carousel
+
+Most Used reuse usage counts จาก `utility-hub:usage` ใน LocalStorage เดิม จัดลำดับ usage DESC, ใช้ deterministic catalog-order tie-breaker, กรองเฉพาะ active tools และแสดงสูงสุด 5 cards. ผู้ใช้ใหม่ใช้ curated fallback: `image-compressor`, `pdf-merge`, `qr-generator`, `json-formatter`, `audio-trimmer`. Settings มี usage-only reset ที่กลับไป fallback โดยไม่ทำให้ Favorites, Recent, Locale, Theme หรือ GuideSeen หาย
+
+### Phase 7 validation
+
+| Check | Result |
+|---|---:|
+| Most Used unit tests: sort, top 5, tie-breaker, fallback, active filtering, reset | ผ่าน 4/4 tests |
+| Full unit/integration suite | ผ่าน |
+| Full Playwright suite | 92 passed, 4 intentional skips |
+| Production smoke | 38/38 passed |
+| Production viewport matrix | 360 × 740, Pixel 7-class 412 × 915, desktop 1280 × 900 |
+| No page horizontal overflow | ผ่านทุก viewport |
+| CI | [31996233447](https://github.com/aodxx/Personal-Utility-Hub/actions/runs/31996233447) ผ่าน |
+| Pages deploy | [31996233427](https://github.com/aodxx/Personal-Utility-Hub/actions/runs/31996233427) ผ่าน |
+| Bundle | Entry gzip 33.7 KB; largest lazy chunk 366.1 KB; JS gzip 977.3 KB |
+| npm audit | 0 vulnerabilities |
+
+Production details are recorded in [`docs/phase7-production-evidence.md`](docs/phase7-production-evidence.md) and are reproducible with `node scripts/phase7-production-smoke.mjs`.

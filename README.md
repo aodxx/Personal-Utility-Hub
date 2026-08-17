@@ -71,6 +71,14 @@ Production verification ของ final HEAD ผ่าน 10/10 checks ที่
 
 เครื่องมือ Text/Data ที่เหมาะสมมี sample workflow เช่น JSON Formatter, Base64 และ Text Formatter เพื่อให้ผู้ใช้เริ่มทดลองโดยไม่ต้องใช้ข้อมูลจริง
 
+## Phase 7 Home Experience Optimization — implemented
+
+หน้า Home ถูกปรับให้กระชับขึ้นโดยแทนที่ Trust Strip เดิมด้วย Compact Trust Chips และแทนที่ `เครื่องมือใหม่ที่น่าลอง / New tools to try` ด้วย horizontal `ใช้บ่อยของคุณ / Your Most Used` carousel ที่ใช้ usage counts จากอุปกรณ์นี้เท่านั้น
+
+Most Used ใช้ LocalStorage key เดิม `utility-hub:usage`, จัดลำดับ usage จากมากไปน้อย, ใช้ catalog order เป็น tie-breaker และจำกัด 5 รายการ เครื่องมือผู้ใช้ใหม่จะเห็น fallback แบบ curated ได้แก่ Image Compressor, PDF Merge, QR Code Generator, JSON Formatter / Validator และ Audio Trimmer เมื่อเริ่มใช้งานจริง ranking จะปรับอัตโนมัติเมื่อกลับหน้า Home การล้าง Most Used ล้างเฉพาะ usage counts และไม่ลบ Favorites, Recent, Locale, Theme หรือ GuideSeen
+
+Carousel ใช้ native CSS `overflow-x: auto`, `scroll-snap-type` และ smooth scrolling โดยไม่มี slider dependency เพิ่ม Compact cards กดได้ทั้ง card และรองรับ touch, mouse และ keyboard ส่วน Trust Chips มี TH/EN, focus state, `aria-expanded`, short explanation และ touch target ที่เหมาะสม รายละเอียด Production อยู่ใน [`docs/phase7-production-evidence.md`](docs/phase7-production-evidence.md)
+
 ## Processing และ privacy architecture
 
 ไฟล์ผู้ใช้ถูกอ่านใน browser memory เท่านั้น งาน CPU-heavy ใช้ Dedicated Worker พร้อม progress, cancel และการ terminate เมื่อ success, error, cancel หรือ unmount โดยมีการ clone typed-array ก่อน transfer เพื่อป้องกัน detached buffer เมื่อผู้ใช้ Preview แล้ว Export ซ้ำ เครื่องมือที่สร้าง object URL, AudioContext, ImageBitmap หรือ event listener ต้อง cleanup resource เมื่อ input, output, error หรือหน้า tool เปลี่ยน

@@ -158,3 +158,41 @@ Phase 6 เพิ่ม `src/core/tool-guide.ts` และ `src/data/guides.ts` 
 | Playwright รวม | 86 passed, 4 intentional skips จาก 90 cases |
 
 Production verification ของ Phase 6 ผ่าน smoke script `scripts/phase6-production-smoke.mjs` ครบ 10/10 checks บน URL จริงและ viewport 360 × 740: Privacy, guides จาก 5 categories, Audio Trimmer upload → process → WAV result → download, JSON sample, no horizontal overflow, Escape close และ back/forward/refresh. Final HEAD และ Pages deploy ผ่าน CI/Pages runs ที่ระบุในหัวข้อ 7. Audio regression contract เดิมยังผ่านใน local Playwright และ production smoke notes มีหลักฐาน shared audio tools/Chapter Marker; ข้อจำกัดที่เหลือเป็นเรื่อง output/codec ตาม implementation ไม่ใช่ trust/usability gate
+
+
+## 12. Phase 7 Home Experience Optimization validation
+
+Phase 7 ปรับเฉพาะ Home experience โดยไม่มี Active Tool ใหม่ ไม่มี Backend, Analytics, Login, Cloud usage sync, Remote usage tracking หรือ slider dependency เพิ่ม. Large Trust Strip เดิมถูกแทนที่ด้วย Compact Trust Chips แบบ TH/EN และส่วน New Tools grid ถูกแทนที่ด้วย `Your Most Used / ใช้บ่อยของคุณ` native horizontal carousel
+
+| Phase 7 check | Result |
+|---|---:|
+| Compact Trust Chips 3 รายการ | ผ่าน |
+| Trust Chip focus/click explanation และ keyboard semantics | ผ่าน |
+| Most Used ใช้ `utility-hub:usage` เดิม | ผ่าน |
+| Usage DESC, Top 5 และ deterministic catalog tie-breaker | ผ่าน unit tests |
+| Active-only filtering และ missing count handling | ผ่าน unit tests |
+| New-user fallback 5 tools | ผ่าน |
+| Fallback order | Image Compressor, PDF Merge, QR Code Generator, JSON Formatter / Validator, Audio Trimmer |
+| Compact cards full-card navigation | ผ่าน touch/mouse/keyboard contract |
+| Native horizontal scroll/snap | ผ่าน |
+| Ranking update หลังเปิด tool และกลับ Home | ผ่าน |
+| Reload persistence | ผ่าน |
+| Usage-only reset | ผ่าน; Favorites/Locale/Theme ไม่ถูกลบ |
+| TH/EN | ผ่าน |
+| 360 × 740 | ผ่าน Production |
+| Pixel 7-class 412 × 915 | ผ่าน Production |
+| Desktop 1280 × 900 | ผ่าน Production |
+| Page horizontal overflow | ไม่พบทุก viewport |
+| Phase 6 Privacy/Guide regression | ผ่าน Production |
+
+### Phase 7 automated and Production results
+
+`tests/phase7-home.test.ts` ผ่าน 4/4 tests. Full Playwright suite ผ่าน **92 tests** และมี 4 intentional skips. Local release gates ผ่าน typecheck, full Vitest, build, bundle check, `npm audit --audit-level=high`, Service Worker syntax และ `git diff --check`. Bundle metrics คือ **33.7 KB entry gzip**, **366.1 KB largest lazy chunk** และ **977.3 KB JavaScript gzip across 36 chunks**; npm audit รายงาน **0 vulnerabilities**
+
+Production smoke ใช้ `node scripts/phase7-production-smoke.mjs` ตรวจ real GitHub Pages URL [https://aodxx.github.io/Personal-Utility-Hub/](https://aodxx.github.io/Personal-Utility-Hub/) และผ่าน **38/38 checks** ครอบคลุม Home/catalog, old strip removal, chips, fallback, carousel, full-card navigation, reset, localization, ranking, reload, overflow, Privacy route และ Phase 6 Guide/Escape regression
+
+Final Phase 7 implementation commit คือ `af70a90804a9b70a0884022dd51b1fa69b6ec437`. GitHub Actions CI run [31996233447](https://github.com/aodxx/Personal-Utility-Hub/actions/runs/31996233447) และ Pages deploy run [31996233427](https://github.com/aodxx/Personal-Utility-Hub/actions/runs/31996233427) ผ่านบน HEAD เดียวกัน
+
+### Known limitations
+
+Carousel ใช้ native horizontal scrolling และไม่มี previous/next arrow controls เพื่อคง dependency และ event handling ให้เล็ก. Most Used เป็น local personalization ของอุปกรณ์ปัจจุบัน ไม่ใช่ global popularity, trending หรือ aggregate ranking. Usage reset ล้างเฉพาะ usage counts ตาม contract และไม่ล้าง Favorites, Recent, Locale, Theme หรือ GuideSeen
