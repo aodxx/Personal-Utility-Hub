@@ -79,6 +79,12 @@ Most Used ใช้ LocalStorage key เดิม `utility-hub:usage`, จัด
 
 Carousel ใช้ native CSS `overflow-x: auto`, `scroll-snap-type` และ smooth scrolling โดยไม่มี slider dependency เพิ่ม Compact cards กดได้ทั้ง card และรองรับ touch, mouse และ keyboard ส่วน Trust Chips มี TH/EN, focus state, `aria-expanded`, short explanation และ touch target ที่เหมาะสม รายละเอียด Production อยู่ใน [`docs/phase7-production-evidence.md`](docs/phase7-production-evidence.md)
 
+### Phase 7.1 Carousel Visual & Motion Polish — implemented
+
+Most Used cards ใช้ visual asset เดียวกับ Tool Catalog ผ่าน `ToolMetadata.icon` และ `toolAssetIcon()` มี visual area 5rem, card width mobile ประมาณ 78% ของ viewport, visible next-card peek, privacy badge, favorite control และ arrow cue. Carousel ใช้ native momentum scrolling, scroll padding, mandatory snap, active-card emphasis, 5-dot indicator, desktop previous/next controls และ reduced-motion override โดยไม่เปลี่ยน ranking logic
+
+Production visual evidence ผ่าน **13/13 checks** ที่ 360 × 740, 412 × 915 และ 1280 × 900 พร้อม screenshot review ของ initial, swipe, next และ previous states อยู่ใน [`docs/phase71-production-evidence.md`](docs/phase71-production-evidence.md) และ [`docs/phase71-visual-findings.md`](docs/phase71-visual-findings.md)
+
 ## Processing และ privacy architecture
 
 ไฟล์ผู้ใช้ถูกอ่านใน browser memory เท่านั้น งาน CPU-heavy ใช้ Dedicated Worker พร้อม progress, cancel และการ terminate เมื่อ success, error, cancel หรือ unmount โดยมีการ clone typed-array ก่อน transfer เพื่อป้องกัน detached buffer เมื่อผู้ใช้ Preview แล้ว Export ซ้ำ เครื่องมือที่สร้าง object URL, AudioContext, ImageBitmap หรือ event listener ต้อง cleanup resource เมื่อ input, output, error หรือหน้า tool เปลี่ยน

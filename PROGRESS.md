@@ -120,3 +120,29 @@ Most Used reuse usage counts จาก `utility-hub:usage` ใน LocalStorage �
 | npm audit | 0 vulnerabilities |
 
 Production details are recorded in [`docs/phase7-production-evidence.md`](docs/phase7-production-evidence.md) and are reproducible with `node scripts/phase7-production-smoke.mjs`.
+
+
+## Phase 7.1 — Most Used Carousel Visual & Motion Polish
+
+**สถานะ:** Implemented และ Production visual verified บน implementation commit `0475f82f9fba7dd05abb2297a561926bb6e63a7d`
+
+Phase 7.1 ปรับเฉพาะ UX/visual/motion ของ Most Used carousel โดยไม่เปลี่ยน Most Used ranking algorithm, Top 5 limit, fallback order, LocalStorage usage key, tool registry, backend policy หรือ analytics policy. Compact cards ใช้ ToolMetadata icon และ existing asset resolver เดียวกับ catalog มี visual area 5rem, privacy badge, favorite control, arrow cue, fixed content rhythm และ mobile card width ประมาณ 78% ของ carousel viewport
+
+Carousel ใช้ native `overflow-x: auto`, `scroll-snap-type: x mandatory`, `scroll-snap-align`, `scroll-behavior: smooth`, scroll padding, `overscroll-behavior-inline: contain` และ `-webkit-overflow-scrolling: touch`. Desktop มี previous/next buttons ที่ disabled ตาม edge state; mobile ใช้ swipe พร้อม 5-dot indicator; active card ใช้ subtle transform/opacity/shadow emphasis และ reduced-motion ปิด meaningful transitions/smooth scrolling แต่คง snap behavior
+
+### Phase 7.1 validation
+
+| Check | Result |
+|---|---:|
+| Phase 7.1 carousel E2E | 6 passed, 6 intentional skips |
+| Full Playwright suite | 98 passed, 10 intentional skips |
+| Local typecheck/unit/build/bundle/audit | ผ่าน |
+| Bundle | Entry gzip 34.5 KB; largest lazy chunk 366.1 KB; JS gzip 978.2 KB |
+| npm audit | 0 vulnerabilities |
+| Production visual script | 13/13 passed |
+| Production viewports | 360 × 740, 412 × 915, 1280 × 900 |
+| Visual screenshot review | ผ่าน initial, swipe, next และ previous states |
+| CI | [31998196555](https://github.com/aodxx/Personal-Utility-Hub/actions/runs/31998196555) ผ่าน |
+| Pages deploy | [31998196579](https://github.com/aodxx/Personal-Utility-Hub/actions/runs/31998196579) ผ่าน |
+
+Detailed evidence is in [`docs/phase71-production-evidence.md`](docs/phase71-production-evidence.md), screenshot review notes are in [`docs/phase71-visual-findings.md`](docs/phase71-visual-findings.md), and the reproducible capture command is `node scripts/phase71-production-visual.mjs`.

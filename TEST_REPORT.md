@@ -196,3 +196,35 @@ Final Phase 7 implementation commit คือ `af70a90804a9b70a0884022dd51b1fa69
 ### Known limitations
 
 Carousel ใช้ native horizontal scrolling และไม่มี previous/next arrow controls เพื่อคง dependency และ event handling ให้เล็ก. Most Used เป็น local personalization ของอุปกรณ์ปัจจุบัน ไม่ใช่ global popularity, trending หรือ aggregate ranking. Usage reset ล้างเฉพาะ usage counts ตาม contract และไม่ล้าง Favorites, Recent, Locale, Theme หรือ GuideSeen
+
+
+## 13. Phase 7.1 Most Used Carousel Visual & Motion Polish validation
+
+Phase 7.1 ปรับเฉพาะ visual/motion ของ Most Used carousel โดยคง ranking algorithm, Top 5, fallback, LocalStorage usage key, route และ privacy architecture เดิม ไม่มี backend, analytics หรือ heavy slider dependency ใหม่
+
+| Phase 7.1 check | Result |
+|---|---:|
+| Existing ToolMetadata visual asset reused | ผ่าน |
+| Every Most Used card has visible visual asset | ผ่าน |
+| Compact card visual area | 5rem / ผ่าน 72px minimum E2E |
+| Mobile card width and next-card peek | ผ่านที่ 360 × 740 และ 412 × 915 |
+| Full-card click and favorite isolation | ผ่าน |
+| Native scroll, snap, scroll padding, smooth behavior, momentum and overscroll | ผ่าน |
+| Five-dot indicator | ผ่าน |
+| Desktop previous/next controls | ผ่าน; edge disabled state ผ่าน |
+| Active-card emphasis | ผ่านโดยใช้ transform/opacity/shadow แบบ subtle |
+| Reduced motion | ผ่าน; smooth scroll เปลี่ยนเป็น auto และ transition เหลือไม่เกิน 0.001s |
+| Page horizontal overflow | ไม่พบ |
+| Phase 6 guide/privacy regressions | ผ่าน full suite และ Production smoke |
+
+### Automated and visual results
+
+Phase 7.1 E2E เพิ่ม 6 passed และ 6 intentional skips ตาม viewport-specific contract. Full Playwright suite หลัง change ผ่าน **98 tests** และมี **10 intentional skips**. Local typecheck, full Vitest, production build, bundle check, npm audit, Service Worker syntax และ `git diff --check` ผ่าน
+
+Bundle metrics หลัง Phase 7.1 คือ **34.5 KB entry gzip**, **366.1 KB largest lazy chunk** และ **978.2 KB JavaScript gzip across 36 chunks**; `npm audit --audit-level=high` รายงาน **0 vulnerabilities**
+
+Production visual capture ใช้ `node scripts/phase71-production-visual.mjs` บน real GitHub Pages URL และผ่าน **13/13 checks** ครอบคลุม initial state, visual asset, mobile scroll/peek, dots, desktop arrows, indicator change และ previous behavior ที่ 360 × 740, 412 × 915 และ 1280 × 900. Screenshot review แบบ section-focused ผ่านตาม notes ใน [`docs/phase71-visual-findings.md`](docs/phase71-visual-findings.md)
+
+Implementation HEAD คือ `0475f82f9fba7dd05abb2297a561926bb6e63a7d`. CI [31998196555](https://github.com/aodxx/Personal-Utility-Hub/actions/runs/31998196555) และ Pages deploy [31998196579](https://github.com/aodxx/Personal-Utility-Hub/actions/runs/31998196579) ผ่าน
+
+Visual evidence อยู่ใน [`docs/phase71-production-evidence.md`](docs/phase71-production-evidence.md) และ screenshots อยู่ใน [`docs/phase71-screenshots/`](docs/phase71-screenshots/)
