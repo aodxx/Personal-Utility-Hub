@@ -1,89 +1,132 @@
 # Personal Utility Hub
 
-ศูนย์รวม Utility Web Tools แบบ Static PWA ที่เน้น Privacy by Design, Client-side Processing และ Modular Tool Registry
+ศูนย์รวม **privacy-first utility tools** แบบ Static PWA ที่ประมวลผลไฟล์และข้อมูลภายในเบราว์เซอร์เป็นหลัก โดยใช้ Modular Tool Registry, Lazy Loading, Dedicated Web Worker และ Offline/PWA support เมื่อความสามารถของเบราว์เซอร์รองรับ
 
-โครงการอยู่ใน **Phase 5: Product Expansion** โดย Phase 0–4 และ UX/UI Refinement เผยแพร่บน `main` แล้ว ส่วนภาษาไทย/English, Settings Import/Export, การเรียงเครื่องมือที่ใช้บ่อย และ Compatibility Check พัฒนาอยู่บน Branch `agent/phase-5-product-expansion`
+**สถานะปัจจุบัน:** `v0.8.0` — Phase 5 Product Expansion ถูก merge เข้า `main` แล้ว และ Audio Tool Suite พร้อมใช้งานใน repository ปัจจุบัน
 
-## เครื่องมือ Core
+## เครื่องมือที่มีอยู่ใน main
 
-1. JSON Formatter / Validator
-2. Base64 Encoder / Decoder ที่รองรับ Unicode
-3. Text Formatter
-4. QR Code Generator
-5. QR Code Reader จากรูปภาพหรือกล้อง
-6. Image Resizer
-7. Image Converter ระหว่าง PNG, JPEG และ WebP
+### Text / Data
 
-ทุกเครื่องมือประมวลผลในเบราว์เซอร์ ไม่มี Backend และไม่อัปโหลดข้อความ รูปภาพ หรือข้อมูลจากกล้องไปยังเซิร์ฟเวอร์
+- JSON Formatter / Validator
+- Base64 Encoder / Decoder
+- Text Formatter
+- Privacy Redactor Studio
+- File Diff & Change Map
+- CSV Data Cleaner & Profiler
 
-## เครื่องมือไฟล์ Phase 3
+### QR
 
-1. Image Compressor เป็น WebP/JPEG
-2. Images to PDF สูงสุด 20 รูป
-3. PDF Merge
-4. PDF Split ด้วยช่วงหน้า
-5. PDF to Image เป็น PNG/JPEG
-6. File Metadata Viewer พร้อม SHA-256
+- QR Code Generator
+- QR Code Reader จากรูปภาพหรือกล้อง
 
-เครื่องมือ PDF ใช้ `pdf-lib` และ PDF.js แบบ Lazy-loaded เฉพาะเมื่อเปิดใช้งาน ไฟล์ยังคงอยู่ในอุปกรณ์ผู้ใช้ตลอดกระบวนการ
+### Image
 
-## Performance และ Offline Phase 4
+- Image Resizer
+- Image Converter
+- Image Compressor
+- Image Contact Sheet Studio
+- Images to PDF
 
-- งานรูปภาพ, Images to PDF, PDF Merge/Split/Inspect และ SHA-256 ย้ายไป Web Worker เมื่อ Browser รองรับ พร้อม Main-thread fallback
-- งานที่ใช้เวลานานแสดง Progress และกดยกเลิกได้; Worker ถูก terminate เมื่อจบงาน ยกเลิก หรือออกจาก Tool
-- Tool Card มีปุ่มเตรียม Offline เป็นรายเครื่องมือ และบันทึกสถานะเวอร์ชันใน IndexedDB
-- Service Worker แยก App Shell cache และ Tool asset cache พร้อมล้าง Cache เวอร์ชันเก่า
-- Bundle Budget บังคับใน CI: Entry ≤45 KB gzip, Lazy chunk ≤900 KB gzip และ JavaScript รวม ≤1,600 KB gzip
-- Playwright ตรวจ Desktop, Android ระดับเริ่มต้น 360 px และ Android รุ่นปัจจุบัน
+### PDF / File
 
-## Product Expansion Phase 5
+- PDF Merge
+- PDF Split
+- PDF to Image
+- File Metadata Viewer
 
-- App Shell, Tool Catalog, Category และ Tool header รองรับภาษาไทย/English
-- Settings Center เก็บภาษาและรูปแบบการเรียงเฉพาะในอุปกรณ์
-- ส่งออก/นำเข้า JSON แบบมี Schema version สำหรับ Theme, Favorites, Recent Tools, ภาษา, ลำดับ และสถิติการใช้งาน
-- เลือกเรียง Tool Catalog ตาม Registry เดิมหรือจำนวนครั้งที่เปิด โดยใช้ Registry order เป็นตัวตัดสินเมื่อคะแนนเท่ากัน
-- Compatibility Check แยกความสามารถจำเป็นและส่วนเสริมของ Browser
-- ยังไม่มี Backend เพราะความสามารถ Phase 5 ทั้งหมดทำงาน Client-side ได้
+### Audio
+
+- Audio Trimmer
+- Audio Compressor Pro
+- Audio Merger Studio
+- Silence Remover
+- Audio Finisher
+- Audio Speed & Pitch
+- Audio Chapter Marker & Cue Sheet
+
+ทุกเครื่องมือในรายการข้างต้นถูกลงทะเบียนเป็น active tool และโหลดแบบ lazy ตาม route เมื่อเปิดใช้งาน การทำงานหลักเกิดขึ้นบนอุปกรณ์ของผู้ใช้ ไม่มี login, analytics, backend, cloud storage หรือ runtime API request สำหรับส่งไฟล์ออกจากอุปกรณ์
+
+## Audio Tool Suite
+
+Audio tools ใช้ PCM pipeline ที่แชร์ร่วมกัน โดย `src/core/audio-processing.ts` รับผิดชอบการ decode/normalize/resample และ pure processing operations ส่วน `src/tools/audio-workbench.ts` จัดการ waveform, controls, preview, progress, result metrics, download และ lifecycle ของหน้าเครื่องมือ งานที่ใช้เวลานานถูกส่งผ่าน `src/core/processing-client.ts` ไปยัง `src/workers/processing.worker.ts` เมื่อ Worker พร้อม และมี main-thread fallback สำหรับ browser ที่ไม่รองรับ Worker หรือความสามารถที่จำเป็น
+
+Audio output ในชุดปัจจุบันเป็น **WAV/WAV Compact family** ตาม operation และ quality profile ที่เลือก ไม่ใช่ MP3 encoder และไม่ได้อัปโหลดไฟล์ขึ้น server เครื่องมือรองรับการแสดง duration, channels, sample rate, peak, clipping state, output format และ byte size เมื่อ metric นั้นเกี่ยวข้องกับ operation
+
+ข้อจำกัดที่ควรเข้าใจก่อนใช้งานมีดังนี้:
+
+- Audio Compressor ใช้ target size เป็นค่าประมาณสำหรับ WAV ไม่ใช่การรับประกันขนาดไฟล์สุดท้าย
+- Audio Finisher ใช้ peak normalization และ clipping protection ไม่ใช่ LUFS mastering
+- Audio Speed & Pitch ใช้ resampling ratio เดียว จึงเปลี่ยนความเร็วและ pitch ที่สัมพันธ์กัน ไม่ใช่ advanced time-stretch ที่ควบคุมสองค่าจากกันอย่างอิสระ
+- ไฟล์ต่าง sample rate จะถูก resample ให้เป็น rate ที่ pipeline ใช้ร่วมกัน และ output ยังอยู่ใน WAV family
+- Preview และ Export ใช้ processing path เดียวกัน โดยผลลัพธ์ preview ไม่ถูกดาวน์โหลดจนกว่าผู้ใช้จะสั่ง export
+
+## Processing และ privacy architecture
+
+ไฟล์ผู้ใช้ถูกอ่านใน browser memory เท่านั้น งาน CPU-heavy ใช้ Dedicated Worker พร้อม progress, cancel และการ terminate เมื่อ success, error, cancel หรือ unmount โดยมีการ clone typed-array ก่อน transfer เพื่อป้องกัน detached buffer เมื่อผู้ใช้ Preview แล้ว Export ซ้ำ เครื่องมือที่สร้าง object URL, AudioContext, ImageBitmap หรือ event listener ต้อง cleanup resource เมื่อ input, output, error หรือหน้า tool เปลี่ยน
+
+IndexedDB ใช้เก็บเฉพาะสถานะว่า tool version ใดเตรียม Offline แล้ว ส่วน Favorites, Recent Tools, Theme, Locale, Tool order และ usage counts อยู่ใน LocalStorage พร้อม memory fallback เมื่อ LocalStorage ใช้ไม่ได้ Portable Settings ยังคง `schemaVersion: 1` เพื่อรักษา backward compatibility กับข้อมูลเดิม
+
+## Version และ release contract
+
+Release baseline ปัจจุบันคือ `0.8.0` โดย identifiers ที่เกี่ยวกับ cache ใช้ `v0.8.0-audio-suite` ใน Service Worker และ Offline Tool Manager การเปลี่ยน release version จะ invalidate shell/tool cache รุ่นเก่า แต่ไม่เปลี่ยน schema ข้อมูลผู้ใช้โดยอัตโนมัติ
+
+PWA manifest ไม่มี version field แยกต่างหาก จึงใช้ package version และ versioned cache identifiers เป็น release source ที่ตรวจสอบได้ ดูรายละเอียด milestone และข้อจำกัดได้ใน [`PROGRESS.md`](PROGRESS.md) และผล validation ใน [`TEST_REPORT.md`](TEST_REPORT.md)
 
 ## เริ่มพัฒนา
 
-ต้องใช้ Node.js 22.12 ขึ้นไป
+ต้องใช้ Node.js `22.12` ขึ้นไป
 
 ```bash
-npm install
+npm ci
 npm run dev
 ```
 
-## ตรวจสอบคุณภาพ
+## Quality gate
 
 ```bash
+npm ci
 npm run typecheck
 npm test
 npm run build
 npm run check:bundle
-npx playwright install chromium
 npm run test:e2e
+npm audit --audit-level=high
+node --check public/sw.js
 ```
 
-## สถาปัตยกรรม
+Playwright ตั้งค่าไว้ 3 projects ได้แก่ Desktop Chromium, Android entry viewport `360 × 740` และ Android current profile ที่ใช้ Pixel 7 class viewport
+
+## โครงสร้าง repository
 
 - `src/app` — App Shell และ Hash Router
-- `src/core` — Tool Contract, Loader, Search, i18n, Portable Settings, Compatibility, PWA, Offline/IndexedDB และ Worker client
-- `src/workers` — งานประมวลผลหนักที่แยกออกจาก UI thread
-- `src/data` — Registry, Core Tool metadata และข้อมูลกลาง
-- `src/tools` — Tool Module ที่โหลดแบบ Lazy
-- `src/styles` — Design Tokens และ Custom CSS
-- `public` — Manifest, Service Worker, Offline fallback และ 3D assets
-- `tests` — Unit, Integration และ End-to-End tests
+- `src/core` — Tool Contract, Loader, Search, i18n, Storage, PWA, Offline และ Worker client
+- `src/workers` — Dedicated Worker สำหรับงานประมวลผลหนัก รวมถึง PDF, image, hash และ audio
+- `src/data` — Tool Registry, taxonomy และ shared metadata/configuration
+- `src/tools` — Tool modules ที่มี `metadata.ts` และ `index.ts` และโหลดแบบ lazy
+- `src/styles` — Design tokens และ responsive component styles
+- `public` — PWA manifest, Service Worker, offline fallback และ local SVG assets
+- `tests` — Unit, integration, contract, performance/offline และ Playwright E2E tests
+- `docs` — Developer guide, privacy policy, visual system และ verification reports
 
-อ่านขั้นตอนเพิ่มเครื่องมือที่ [docs/ADDING_A_TOOL.md](docs/ADDING_A_TOOL.md), แนวทางภาพที่ [docs/VISUAL_SYSTEM.md](docs/VISUAL_SYSTEM.md) และนโยบายความเป็นส่วนตัวที่ [docs/PRIVACY_AND_DEPENDENCIES.md](docs/PRIVACY_AND_DEPENDENCIES.md)
+เริ่มเพิ่มเครื่องมือจาก [docs/ADDING_A_TOOL.md](docs/ADDING_A_TOOL.md) โดยเลือก pattern ให้ตรงกับประเภทงาน อย่าใช้ main-thread-only pattern ของ text tool กับ PDF, image หรือ audio ที่มี processing หนัก อ่าน [docs/PRIVACY_AND_DEPENDENCIES.md](docs/PRIVACY_AND_DEPENDENCIES.md), [docs/VISUAL_SYSTEM.md](docs/VISUAL_SYSTEM.md) และ [docs/audio-tools-verification.md](docs/audio-tools-verification.md) ประกอบ
 
-## Privacy Baseline
+## เอกสารสำคัญ
+
+| เอกสาร | ขอบเขต |
+|---|---|
+| [`PROGRESS.md`](PROGRESS.md) | Milestones, release status และ known limitations |
+| [`TEST_REPORT.md`](TEST_REPORT.md) | Automated validation, browser matrix และ production evidence |
+| [`docs/ADDING_A_TOOL.md`](docs/ADDING_A_TOOL.md) | Tool contract, registry, taxonomy และ processing-heavy guidance |
+| [`docs/PRIVACY_AND_DEPENDENCIES.md`](docs/PRIVACY_AND_DEPENDENCIES.md) | Privacy baseline และ dependency policy |
+| [`docs/VISUAL_SYSTEM.md`](docs/VISUAL_SYSTEM.md) | Asset และ UI visual system |
+| [`docs/audio-tools-verification.md`](docs/audio-tools-verification.md) | Audio behavior, limitations และ verification notes |
+
+## Privacy baseline
 
 - ไม่มี Login, Analytics, Backend, Cloud Storage หรือ Server-side Processing
-- Favorites, Recent Tools, Theme, ภาษา, Tool order และสถิติการเปิดใช้เก็บเฉพาะใน LocalStorage; หาก LocalStorage ใช้ไม่ได้ Hub จะใช้ Memory fallback
-- IndexedDB เก็บเฉพาะสถานะว่า Tool version ใดเตรียม Offline แล้ว ไม่เก็บไฟล์หรือเนื้อหาของผู้ใช้
-- Image Tools รองรับ PNG/JPEG/WebP ไม่เกิน 15 MB, ด้านละไม่เกิน 12,000 px และผลลัพธ์ไม่เกิน 24 ล้านพิกเซล
-- File Tools จำกัดไฟล์รวม 40 MB, PDF ไม่เกิน 200 หน้า, รวมได้สูงสุด 10 PDF หรือ 20 รูปต่อครั้ง
-- QR Reader ขอสิทธิ์กล้องเมื่อผู้ใช้กดเปิดเท่านั้น และหยุด Media Track เมื่อปิดกล้อง อ่านสำเร็จ หรือออกจาก Tool
-- `qrcode`, `jsqr`, `pdf-lib` และ PDF.js ถูก Bundle แบบ Lazy ภายในเว็บ ไม่มี CDN, telemetry หรือ Runtime API request
+- LocalStorage/IndexedDB ไม่เก็บไฟล์หรือเนื้อหาไฟล์ผู้ใช้
+- Image Tools จำกัดตาม implementation ปัจจุบันด้านขนาดไฟล์, dimensions และ output pixels
+- File/PDF Tools มี limits ด้านจำนวนไฟล์, bytes และจำนวนหน้าเพื่อควบคุม memory pressure
+- QR Reader ขอสิทธิ์กล้องเมื่อผู้ใช้กดเปิด และหยุด Media Track เมื่อปิดหรือออกจาก tool
+- Dependencies สำหรับ QR/PDF ถูก bundle แบบ lazy และไม่มี CDN runtime dependency

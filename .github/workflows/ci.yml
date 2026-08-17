@@ -24,3 +24,5 @@ jobs:
       - run: npm run check:bundle
       - run: npx playwright install --with-deps chromium
       - run: npm run test:e2e
+      - run: npm audit --audit-level=high
+      - run: node --check public/sw.js

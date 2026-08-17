@@ -29,8 +29,8 @@ describe('PWA assets', () => {
 
   it('supports versioned shell and per-tool offline caches', () => {
     const serviceWorker = readFileSync(resolve(publicDir, 'sw.js'), 'utf8');
-    expect(serviceWorker).toContain('utility-hub-shell-v0.7.0-product-expansion');
-    expect(serviceWorker).toContain('utility-hub-tools-v0.7.0-product-expansion');
+    expect(serviceWorker).toContain('utility-hub-shell-v0.8.0-audio-suite');
+    expect(serviceWorker).toContain('utility-hub-tools-v0.8.0-audio-suite');
     expect(serviceWorker).toContain("event.data?.type !== 'CACHE_TOOL'");
     expect(serviceWorker).toContain('cache.addAll(urls)');
     expect(serviceWorker).toContain("const APP_SHELL_URL = new URL('index.html', APP_SCOPE).href");

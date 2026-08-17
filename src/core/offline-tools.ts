@@ -1,7 +1,7 @@
 import { assertToolModule, type ToolRegistryEntry } from './tool-contract';
 import { OfflineToolStore } from './offline-store';
 
-export const OFFLINE_CACHE_VERSION = '0.6.0-performance-offline';
+export const OFFLINE_CACHE_VERSION = '0.8.0-audio-suite';
 
 interface CacheWorkerResponse {
   ok: boolean;

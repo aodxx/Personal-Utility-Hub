@@ -1,114 +1,140 @@
-# Latest Validation Report — Phase 5 Product Expansion
+# Test and Release Validation Report — v0.8.0
 
-วันที่ตรวจ: 12 สิงหาคม 2026
+**อัปเดต:** 17 สิงหาคม 2026
+**Repository:** `aodxx/Personal-Utility-Hub`
+**Release baseline:** `0.8.0`
+**Release scope:** Phase 5 Product Expansion และ Audio Tool Suite บน `main`
 
-## ขอบเขตที่ตรวจ
+## 1. ขอบเขตของ baseline
 
-- สถานะ Production หลัง Merge Phase 3: PR #9 และ Merge commit `0b3cf36e0640f2f4fdcbc17c34a96a4dc980a3da`
-- Dedicated Worker สำหรับงานรูปภาพ, Images to PDF, PDF Merge/Split/Inspect และ SHA-256
-- Progress, Cancel, Worker termination และ Main-thread fallback
-- IndexedDB record สำหรับ Offline readiness โดยไม่เก็บไฟล์ผู้ใช้
-- App Shell cache และ Tool cache รายเวอร์ชันผ่าน Service Worker
-- Lazy Worker/PDF assets, Bundle Budget และ GitHub Pages subpath
-- Playwright บน Desktop, Android ระดับเริ่มต้น 360 px และ Android รุ่นปัจจุบัน
+v0.8.0 ไม่ใช่การเพิ่ม tool ใหม่ในรอบ validation นี้ แต่เป็น release baseline สำหรับ source code ที่มีอยู่จริง ได้แก่ 25 active tools, Audio processing pipeline, Worker/fallback architecture, bilingual App Shell, Settings Center, Portable Settings, Offline Tool Preparation และ mobile-first UI
 
-## Automated validation ในเครื่อง
+Audio scope ครอบคลุม Audio Trimmer, Audio Compressor Pro, Audio Merger Studio, Silence Remover, Audio Finisher, Audio Speed & Pitch และ Audio Chapter Marker & Cue Sheet เครื่องมือเหล่านี้ทำงานใน browser และ export อยู่ใน WAV/WAV Compact family ตาม operation ปัจจุบัน
 
-- TypeScript strict typecheck — **ผ่าน**
-- Vitest: Route, Tool contract/loader, Search, Storage fallback, PWA, App Shell, 3D Assets, Core/File Tools, Worker fallback และ Offline store — **ผ่าน 40/40 tests**
-- Vite production build — **ผ่าน**
-- Worker output — **ผ่าน**; `processing.worker-*.js` เป็น JavaScript ที่ Bundle แล้ว ไม่ใช่ TypeScript source
-- Service Worker syntax — **ผ่าน**
-- `git diff --check` — **ผ่าน**
-- Dependency audit — **0 vulnerabilities**
+## 2. Automated validation commands
 
-## Bundle Budget
+Quality gate ที่ใช้กับ v0.8 คือ:
 
-| Budget | ผลปัจจุบัน | เกณฑ์ | สถานะ |
-|---|---:|---:|---|
-| Hub entry gzip | 10.8 KB | ≤45 KB | ผ่าน |
-| Lazy chunk ใหญ่สุด | 366.1 KB | ≤900 KB | ผ่าน |
-| JavaScript รวม gzip | 929.6 KB / 24 chunks | ≤1,600 KB | ผ่าน |
+```bash
+npm ci
+npm run typecheck
+npm test
+npm run build
+npm run check:bundle
+npm run test:e2e
+npm audit --audit-level=high
+node --check public/sw.js
+git diff --check
+```
 
-`npm run check:bundle` ถูกเพิ่มเข้า GitHub Actions หลัง Production build เพื่อป้องกัน Bundle โตเกินงบโดยไม่ทราบตัว
+## 3. Local validation record
 
-## Browser validation
+ผล local record ล่าสุดก่อนเริ่ม baseline patch เป็นดังนี้:
 
-Playwright มี **12 test cases × 3 projects = 36 executions**:
+| Check | Result |
+|---|---:|
+| TypeScript strict typecheck | ผ่าน |
+| Vitest unit/integration | 52/52 tests ผ่าน จาก 13 test files |
+| Production build | ผ่าน |
+| Bundle budget | ผ่าน |
+| Playwright | 55 passed, 2 intentional skips จาก 57 cases |
+| Visual asset validation | ผ่าน |
+| `git diff --check` | ผ่าน |
 
-- Desktop Chromium
-- Android entry profile: viewport 360 × 740, device scale factor 2
-- Android current profile: Pixel 7
+Playwright ใช้ 3 profiles ได้แก่ Desktop Chromium, Android entry viewport `360 × 740` และ Android current profile ที่เป็น Pixel 7 class viewport โดยมี compact mobile test ที่ตั้งใจ skip ใน profiles ที่ไม่ใช่ Android entry
 
-ครอบคลุม 14 Tool Cards, Core/File Tools, Worker-backed processing, Offline preparation, reload แบบไม่มี Network, Lazy Worker loading, PWA, Theme, Favorites, History และ Not Found
+## 4. Coverage matrix
 
-Local workspace ยังไม่มี Chromium executable จึงใช้ GitHub Actions เป็น Browser runtime หลัก การทดสอบบน CI ยืนยันทั้ง Desktop และ Android สองระดับแล้ว
+| Area | Contract ที่ตรวจ |
+|---|---|
+| Core Tools | Route, metadata contract, lazy loading, search, localization และ favorite/history behavior |
+| File Tools | Registry count 17, lazy module loading, file validation, PDF operations และ metadata contract |
+| Audio Tools | PCM processing, resampling, peak/clipping metrics, preview/export path, progress/cancel และ repeated processing safeguards |
+| App Shell | 25 cards, category/search filter, TH/EN, Settings Center, usage ordering และ full-card navigation |
+| Mobile UX | Compact cards, icon/footer separation, touch feedback, accessible pressed states และ 360px layout assertions |
+| PWA | Manifest assets, Service Worker syntax, versioned shell/tool caches, offline preparation และ runtime cache behavior |
+| Privacy | No backend/runtime upload claims, local storage boundaries และ no user-data schema migration |
 
-**สถานะ Browser E2E:** GitHub Actions CI Run #37 ผ่าน **36/36 executions**
+## 5. v0.8 version and cache contract
 
-### Offline regression ที่ตรวจพบและแก้ไข
+| Contract | Expected value |
+|---|---|
+| `package.json` version | `0.8.0` |
+| Shell cache | `utility-hub-shell-v0.8.0-audio-suite` |
+| Tool cache | `utility-hub-tools-v0.8.0-audio-suite` |
+| Offline cache version | `0.8.0-audio-suite` |
+| Portable Settings schema | `1`, unchanged for backward compatibility |
+| IndexedDB store schema | `1`, unchanged |
 
-- CI Run #31 พบ E2E selector ใช้ชื่อ `JSON Formatter` แต่ Accessible Name จริงคือ `JSON Formatter / Validator`; แก้ให้ตรวจ Accessible Name เต็มและคลิกด้วย `data-action="offline"`
-- CI Runs #32–36 ยืนยันว่าปุ่มเตรียม Offline และ Cache entries สำเร็จ แต่ Entry JS/CSS ไม่ถูกคืนหลังตัด Network เพราะ Request variant ไม่ตรงกับ Cache lookup
-- Service Worker แก้ให้ Pre-cache `index.html`, รอ Navigation/runtime cache writes และเรียก `caches.match(request, { ignoreVary: true })`
-- Browser test ตรวจ Service Worker controller และยืนยันว่า Cache มี App Shell, Entry JS, CSS และ JSON Formatter chunk ก่อนตัด Network
-- CI Run #37 ผ่าน reload หน้า Hub และเปิด JSON Formatter ขณะ Offline ครบทั้ง 3 Browser profiles
+`public/manifest.webmanifest` ไม่มี version field จึงไม่เพิ่ม field ซ้ำกับ package/cache release contract
 
-## WebAssembly decision
+## 6. Bundle budget
 
-Phase 4 ไม่เพิ่ม WebAssembly dependency ในรอบนี้ เพราะ PDF.js มี Worker ของตนเอง และงานที่ UI-blocking ถูกย้ายไป Dedicated Worker ได้โดยไม่เพิ่ม Runtime/Memory overhead ใหม่ การเพิ่ม WASM จะทำเมื่อมี Tool Audio/Video หรือ benchmark จริงยืนยันว่าประโยชน์สูงกว่าขนาด Bundle และ Compatibility cost
+เกณฑ์ repository ปัจจุบันคือ Entry gzip ไม่เกิน 45 KB, lazy chunk ไม่เกิน 900 KB และ JavaScript รวม gzip ไม่เกิน 1,600 KB ผลล่าสุดที่บันทึกไว้ก่อน v0.8 documentation/version patch คือ Entry gzip 18.1 KB, lazy chunk ใหญ่สุด 366.1 KB และ JavaScript รวม gzip 961.4 KB จาก 36 chunks — ผ่านทั้งหมด
 
-## Pre-Phase 5 UX/UI refinement
+หาก build หลัง patch ให้ตัวเลขต่างจาก record นี้ ต้องแทนค่าด้วย output จาก `npm run check:bundle` ก่อนประกาศ release
 
-หลัง PR #10 Merge เข้า `main` ที่ commit `fe194b2c972b57d87f0b930f50569e5cbd3d7318` ได้เพิ่มชุดตรวจสำหรับ Compact Tool Cards และ Micro-interactions บน Branch `agent/pre-phase-5-compact-ui`
+## 7. GitHub Actions requirements
 
-### ผลตรวจในเครื่อง
+`.github/workflows/ci.yml` ต้องรันบนทุก pull request และทุก push ไป `main` ตามลำดับต่อไปนี้:
 
-- TypeScript strict typecheck — **ผ่าน**
-- Vitest — **ผ่าน 40/40 tests**
-- Vite production build — **ผ่าน**
-- Bundle Budget — **ผ่าน**; Entry 11.0 KB gzip, Lazy chunk ใหญ่สุด 366.1 KB, JavaScript รวม 929.8 KB/24 chunks
-- Dependency audit — **0 vulnerabilities**
-- `git diff --check` — **ผ่าน**
+```text
+npm ci
+npm run typecheck
+npm test
+npm run build
+npm run check:bundle
+npx playwright install --with-deps chromium
+npm run test:e2e
+npm audit --audit-level=high
+node --check public/sw.js
+```
 
-### Browser contract ที่เพิ่ม
+หลักฐาน release ที่สมบูรณ์ต้องอ้างอิง GitHub Actions run ที่ผ่านบน commit HEAD เดียวกับ release commit ไม่ใช่ใช้ผล local เพียงอย่างเดียว
 
-- รันเฉพาะ Android entry viewport 360 × 740 สำหรับเกณฑ์ Compact UI
-- หลังเลื่อน Tool Grid เข้าสู่ viewport ต้องเห็น Tool Card เต็มอย่างน้อย 3 ใบพร้อมกัน
-- Tool icon ต้องอยู่ด้านซ้ายของชื่อเครื่องมือ
-- Category button ต้องอัปเดต `aria-pressed` หลังแตะ
-- Favorite button ต้องอัปเดต `aria-pressed`, บันทึกรายการโปรด และประกาศผลผ่าน `aria-live`
+## 8. Production GitHub Pages smoke test
 
-Local workspace ไม่มี Chromium executable จึงยังเริ่ม Browser process ไม่ได้ การเรียก Playwright หยุดก่อนโหลดแอปและไม่ใช่ Source failure
+Production URL ที่ต้องตรวจคือ [https://aodxx.github.io/Personal-Utility-Hub/](https://aodxx.github.io/Personal-Utility-Hub/) และหลักฐานการตรวจบันทึกไว้ที่ [`docs/v0.8-production-smoke-notes.md`](docs/v0.8-production-smoke-notes.md)
 
-GitHub Actions CI Run #40 ยืนยัน Browser contract ใหม่แล้ว: Playwright ผ่าน **37 executions** บน Desktop Chromium, Android entry 360 × 740 และ Android Pixel 7 พร้อม **2 skips ที่ตั้งใจไว้** เนื่องจาก Compact UI case ถูกจำกัดให้รันเฉพาะ Android entry profile ผล Unit/Integration ผ่าน 40/40 และ TypeScript, Production build กับ Bundle Budget ผ่านครบ
+### Hub and navigation checklist
 
-### Tool Card regression fix หลัง Merge PR #11
+| Check | Status | Evidence |
+|---|---|---|
+| Hub เปิดได้ | ผ่านการตรวจเบื้องต้น | URL ข้างต้น; App Shell แสดงผล |
+| Search และ category filter | ผ่านการตรวจเบื้องต้น | Search `รูปภาพ` แสดง 7 ผลลัพธ์; category tabs แสดง 8 หมวด |
+| Favorite และ Settings | Settings ผ่าน; Favorite ยังต้องตรวจซ้ำ | Settings Center, Compatibility Check และ no-backend message แสดงผล |
+| Full-card navigation, back/forward และ refresh hash route | Audio Trimmer route ผ่านเบื้องต้น; back/forward ยังต้องตรวจ | `#/tools/audio-trimmer` เปิดได้และ lazy module เริ่มโหลด |
+| 360 × 740 และ Pixel 7 class layout | รอตรวจบน Production | Local E2E ผ่านบน profiles แล้ว |
+| ไม่มี horizontal overflow หรือ icon/footer overlap | รอตรวจบน Production | Local E2E contract ผ่าน |
 
-การทดสอบ Production พบว่า Mobile icon สามารถล้นกรอบลงทับ Privacy/Offline footer และผู้ใช้ยังต้องแตะลิงก์ “เปิด →” ขนาดเล็ก Draft PR #12 แก้ด้วย Icon Grid area ที่มี `overflow: clip`, ยกเลิก `display: contents`, แยก Favorite control เป็น Layer ของตนเอง และใช้ Semantic link ครอบพื้นที่การ์ดทั้งหมด โดย Favorite/Offline controls อยู่เหนือ Link layer
+### Audio workflow checklist
 
-Playwright เพิ่มการตรวจว่า Icon bounding box ไม่ทับ Footer, Favorite click ไม่เปลี่ยน URL และ Full-card click เปลี่ยนไป `#/tools/base64` พร้อมแสดง H1 จริง GitHub Actions CI Run #44 ผ่าน **37 executions** พร้อม **2 intentional skips**; Unit/Integration ผ่าน 40/40 และ TypeScript, Build, Bundle Budget ผ่านครบ
+ต้องทดสอบด้วยไฟล์เสียงจริงอย่างน้อยหนึ่งไฟล์ที่ browser decode ได้ในแต่ละ tool ตามลำดับ:
 
-## Phase 5 Product Expansion
+```text
+เลือกไฟล์ → แสดงข้อมูล → ตั้งค่า → Process → Preview → Export/Download
+```
 
-Phase 5 เพิ่มภาษาไทย/English ใน App Shell และ metadata ของเครื่องมือ, Settings Center, Portable Settings JSON, การเรียงตามจำนวนครั้งที่เปิด และ Browser Compatibility Check โดยไม่เพิ่ม Backend หรือ Runtime dependency
+| Audio tool | Status |
+|---|---|
+| Audio Trimmer | รอตรวจบน Production |
+| Audio Compressor Pro | รอตรวจบน Production |
+| Audio Merger Studio | รอตรวจบน Production |
+| Silence Remover | รอตรวจบน Production |
+| Audio Finisher | รอตรวจบน Production |
+| Audio Speed & Pitch | รอตรวจบน Production |
+| Audio Chapter Marker & Cue Sheet | รอตรวจบน Production |
 
-### Automated validation ในเครื่อง
+### PWA/offline checklist
 
-- TypeScript strict typecheck — **ผ่าน**
-- Vitest — **ผ่าน 47/47 tests** ใน 12 test files
-- Vite production build — **ผ่าน**
-- Bundle Budget — **ผ่าน**; Entry 15.9 KB gzip, Lazy chunk ใหญ่สุด 366.1 KB, JavaScript รวม 934.8 KB/24 chunks
-- Service Worker syntax — **ผ่าน**
-- Dependency audit — **0 vulnerabilities**
-- `git diff --check` — **ผ่าน**
+ตรวจ manifest, Service Worker registration, controller readiness, v0.8 shell/tool cache names, Offline Preparation และเปิด tool ที่เตรียมไว้หลังตัด network ตาม contract โดยต้องยืนยันว่า cache รุ่นเก่าไม่ถูกใช้แทน asset ของ v0.8
 
-### Phase 5 contracts ที่เพิ่ม
+## 9. Known limitations
 
-- Translation keys และ metadata อังกฤษของ Tool Catalog ทุกเครื่องมือ
-- Usage sorting แบบมากไปน้อย พร้อม Registry-order tie-break
-- Portable Settings `schemaVersion: 1` ตรวจ Theme, Locale, Tool order, Tool IDs, Usage counts และ Recent limit
-- Settings Center เปลี่ยนภาษา/ลำดับและตรวจ Browser capabilities ได้
-- Playwright ตรวจ TH→EN, Usage order พร้อม Full-card navigation, Compatibility/No-backend message และ Export/Import round-trip
+Audio Compressor ใช้ target size แบบประมาณการสำหรับ WAV; Audio Finisher เป็น peak normalization และ clipping protection ไม่ใช่ LUFS mastering; Audio Speed & Pitch เป็น resampling ที่ทำให้ speed และ pitch สัมพันธ์กัน ไม่ใช่ independent time-stretch; และยังไม่มี MP3 export ใน implementation ปัจจุบัน
 
-Playwright suite มี **17 test cases × 3 profiles = 51 executions** แต่ Local workspace ไม่มี Chromium executable จึงหยุดที่ Browser launch ตามข้อจำกัด environment ผล Browser จริงจะยืนยันผ่าน GitHub Actions หลัง Push Branch
+Production smoke, GitHub Actions run บน commit หลัง baseline patch และ dependency audit หลัง `npm ci` ต้องบันทึกผลจริงก่อนทำเครื่องหมาย v0.8 ว่า fully verified
+
+## 10. Release decision
+
+v0.8.0 จะถือว่า **Production Baseline Ready** เมื่อเอกสารทั้งสามฉบับตรงกับ source, local quality gate ผ่าน, GitHub Actions บน HEAD ผ่าน, GitHub Pages smoke test ผ่านบน desktop และ mobile, Audio workflow ผ่านตามรายการ และ PWA/offline behavior ยืนยันด้วย cache version ใหม่โดยไม่มีข้อมูลผู้ใช้เดิมเสียหาย
