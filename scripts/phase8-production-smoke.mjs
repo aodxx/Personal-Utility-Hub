@@ -32,7 +32,12 @@ async function checkProfile(viewport, label) {
     for (const [name, mimeType] of inputs) {
       const filePath = path.join(fixtureDir, name);
       await page.locator('#trim-file').setInputFiles({ name, mimeType, buffer: readFileSync(filePath) });
-      const decoded = await page.locator('#trim-editor').isVisible().catch(() => false);
+      let decoded = true;
+      try {
+        await page.locator('#trim-editor').waitFor({ state: 'visible', timeout: 15_000 });
+      } catch {
+        decoded = false;
+      }
       record(`${label}: decode ${name}`, decoded, decoded ? '' : await page.locator('#trim-status').textContent() || 'editor not visible');
       if (!decoded) continue;
       await page.getByRole('button', { name: 'ตัดเสียงและสร้าง WAV' }).click();

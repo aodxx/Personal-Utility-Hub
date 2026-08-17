@@ -1,6 +1,6 @@
 # Phase 8: Audio Reliability Recovery
 
-**สถานะ:** Implementation complete; production verification pending final deploy  
+**สถานะ:** Complete; production verified on GitHub Pages
 **ขอบเขต:** การถอดรหัสไฟล์เสียงจริง, ความปลอดภัยด้านหน่วยความจำ, DSP artifact reduction, output contracts และการทดสอบบน browser profiles  
 **ผู้จัดทำ:** Manus AI  
 **วันที่:** 17 สิงหาคม 2026
@@ -68,9 +68,9 @@ Unit tests ด้าน DSP และ decoder ผ่านทั้งหมด�
 | `npm run test` | ผ่าน 16 files / 69 tests |
 | `npx playwright test` | ผ่าน 119/129; skipped 10 ตาม profile contract |
 | `npm audit --omit=dev --audit-level=high` | ผ่าน; 0 vulnerabilities |
-| Phase 8 production smoke บน GitHub Pages | รอรันหลัง push commit สุดท้าย |
+| Phase 8 production smoke บน GitHub Pages | ผ่าน 60/60 checks หลัง deploy commit `8d5a695` |
 
-Production smoke จะตรวจซ้ำบน viewport 360×740, Pixel-7-class และ desktop โดยใช้ corpus จริงทุก format, Audio Trimmer export/download WAV, Audio Resampler naming, Chapter Marker ready state และ horizontal-overflow contract [9]
+Production smoke ผ่าน 60/60 checks บน viewport 360×740, Pixel-7-class และ desktop โดยใช้ corpus จริงทุก format, Audio Trimmer export/download WAV, Audio Resampler naming, Chapter Marker ready state และ horizontal-overflow contract [9] การตรวจพบ false negative ครั้งแรกใน WAV เพราะ harness อ่านสถานะก่อน asynchronous decode เสร็จ จึงแก้ harness ให้รอ `#trim-editor` จน visible แล้วรันซ้ำผ่านครบ 60/60; ไม่ใช่ product failure [9]
 
 ## Known limitations และ release policy
 
