@@ -138,3 +138,23 @@ GitHub Actions และ dependency audit หลัง `npm ci` ผ่านแ�
 ## 10. Release decision
 
 v0.8.0 จะถือว่า **Production Baseline Ready** เมื่อเอกสารทั้งสามฉบับตรงกับ source, local quality gate ผ่าน, GitHub Actions บน HEAD ผ่าน, GitHub Pages smoke test ผ่านบน desktop และ mobile, Audio workflow ผ่านตามรายการ และ PWA/offline behavior ยืนยันด้วย cache version ใหม่โดยไม่มีข้อมูลผู้ใช้เดิมเสียหาย
+
+
+## 11. Phase 6 Trust & Usability validation
+
+Phase 6 ชุดแรกเพิ่ม `src/core/tool-guide.ts` และ `src/data/guides.ts` เป็น typed bilingual Guide contract/catalog สำหรับ Active Tools 25 รายการ พร้อม shared AppShell Guide dialog, Privacy route `#/privacy`, accessible privacy links, first-use guidance ที่เก็บ `guideSeen` แบบ local-only และ sample workflows ใน JSON Formatter, Base64 และ Text Formatter
+
+| Phase 6 check | Local status |
+|---|---:|
+| Active Tools มี Guide ครบและ schema valid | ผ่าน 25/25 |
+| Privacy route และ hash parser | ผ่าน |
+| TH/EN guide fields | ผ่าน |
+| guideSeen storage + memory-safe fallback | ผ่าน |
+| Guide open/close และ Escape behavior | ผ่านใน Playwright |
+| First-use dismiss persistence | ผ่านใน Playwright |
+| Sample data workflow | ผ่านใน Playwright |
+| Mobile guide sheet contract | ผ่านใน Android entry profile |
+| Phase 6 trust/unit integration tests | 12/12 ผ่าน |
+| Playwright รวม | 83 passed, 4 intentional skips จาก 87 cases |
+
+Production verification สำหรับ Phase 6 ยังไม่ถูกนับเป็น completed จนกว่าจะ deploy commit นี้ขึ้น GitHub Pages และตรวจ Privacy page, Guide จากแต่ละ category, first-use persistence, sample workflow, mobile dialog, back/forward/refresh, Offline preparation และ Audio regression บน Production URL จริง

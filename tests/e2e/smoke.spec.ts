@@ -80,3 +80,47 @@ test('renders a not-found route', async ({ page }) => {
   await page.goto('./#/missing-route');
   await expect(page.getByRole('heading', { name: 'ไม่พบหน้าที่คุณต้องการ' })).toBeVisible();
 });
+
+
+test('explains privacy and opens the shared bilingual tool guide', async ({ page }) => {
+  await page.goto('./#/privacy');
+  await expect(page.getByRole('heading', { name: 'ข้อมูลของคุณไปไหน?' })).toBeVisible();
+  await expect(page.locator('.privacy-flow > div')).toHaveCount(5);
+  await expect(page.getByRole('link', { name: /ตรวจสอบ source code/ })).toHaveAttribute('href', /github.com\/aodxx\/Personal-Utility-Hub/);
+
+  await page.goto('./#/tools/json-formatter');
+  await expect(page.getByRole('button', { name: /อ่านวิธีใช้|วิธีใช้งาน/ }).first()).toBeVisible();
+  await page.getByRole('button', { name: /วิธีใช้งาน|อ่านวิธีใช้/ }).first().click();
+  const dialog = page.getByRole('dialog', { name: 'วิธีใช้งาน' });
+  await expect(dialog).toBeVisible();
+  await expect(dialog).toContainText('Input');
+  await expect(dialog).toContainText('ข้อจำกัด');
+  await page.keyboard.press('Escape');
+  await expect(dialog).not.toBeVisible();
+});
+
+test('supports first-use dismissal and safe sample data', async ({ page }) => {
+  await page.goto('./');
+  await page.evaluate(() => localStorage.clear());
+  await page.goto('./#/tools/json-formatter');
+  await expect(page.locator('[data-first-use="json-formatter"]')).toBeVisible();
+  await page.getByRole('button', { name: 'ข้าม' }).click();
+  await expect(page.locator('[data-first-use="json-formatter"]')).toHaveCount(0);
+  await page.reload();
+  await expect(page.locator('[data-first-use="json-formatter"]')).toHaveCount(0);
+  await page.getByRole('button', { name: /ลองข้อมูลตัวอย่าง/ }).click();
+  await expect(page.locator('#json-input')).toHaveValue(/Utility Hub/);
+  await expect(page.locator('#json-status')).toContainText('Sample data loaded');
+});
+
+test('keeps the guide usable on 360px mobile', async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name !== 'android-entry', 'ตรวจ guide sheet บน viewport 360px โดยตรง');
+  await page.goto('./#/tools/audio-trimmer');
+  await page.getByRole('button', { name: /วิธีใช้งาน|อ่านวิธีใช้/ }).first().click();
+  const dialog = page.getByRole('dialog');
+  await expect(dialog).toBeVisible();
+  const box = await dialog.boundingBox();
+  expect(box).not.toBeNull();
+  expect(box!.width).toBeLessThanOrEqual(360);
+  await page.keyboard.press('Escape');
+});

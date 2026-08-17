@@ -130,3 +130,23 @@ git diff --check
 ```
 
 ตรวจ `git diff --stat`, `git status --short` และยืนยันว่าไม่มี debug/temp artifacts จากนั้นอัปเดต `README.md`, `PROGRESS.md` และ `TEST_REPORT.md` เมื่อ behavior, version หรือ test evidence เปลี่ยน การประกาศ release ต้องมี GitHub Actions run บน commit HEAD และ Production GitHub Pages smoke evidence ไม่ใช่ local result อย่างเดียว
+
+
+## 8. Phase 6 Trust & Guide contract
+
+Every active tool must expose a bilingual typed guide through `src/data/guides.ts` and the shared AppShell Guide dialog. A guide must include overview, use cases, supported inputs, outputs, steps, limitations, privacy wording, FAQ, and tips where useful. The guide must describe the implementation that exists; it must not promise MP3 export, LUFS mastering, independent pitch/time-stretch, lossless behavior, 100% safety, zero risk, or offline use beyond the tool's actual cache capability.
+
+Before changing a tool from `beta` to `active`, complete this checklist:
+
+- [ ] Metadata and route are valid.
+- [ ] Thai and English title/description and guide content exist.
+- [ ] Shared local-processing notice is visible before processing when the tool accepts user data.
+- [ ] Privacy wording matches the actual processing path.
+- [ ] Inputs, outputs, limitations, and FAQ are documented.
+- [ ] The shared Guide dialog opens without resetting tool state and closes with close control or Escape.
+- [ ] First-use guidance is dismissible and stored only through the local storage abstraction.
+- [ ] Sample data is included when a safe text/data sample improves first-use success.
+- [ ] 360px and Pixel 7-class mobile layouts are checked.
+- [ ] Keyboard focus and important screen-reader labels are checked.
+- [ ] Unit/integration and relevant Playwright workflow tests pass.
+- [ ] Bundle, audit, Service Worker syntax, and production smoke gates pass.

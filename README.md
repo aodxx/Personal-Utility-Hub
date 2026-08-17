@@ -2,7 +2,7 @@
 
 ศูนย์รวม **privacy-first utility tools** แบบ Static PWA ที่ประมวลผลไฟล์และข้อมูลภายในเบราว์เซอร์เป็นหลัก โดยใช้ Modular Tool Registry, Lazy Loading, Dedicated Web Worker และ Offline/PWA support เมื่อความสามารถของเบราว์เซอร์รองรับ
 
-**สถานะปัจจุบัน:** `v0.8.0` — Phase 5 Product Expansion ถูก merge เข้า `main` แล้ว และ Audio Tool Suite พร้อมใช้งานใน repository ปัจจุบัน
+**สถานะปัจจุบัน:** `v0.8.0` — Phase 5 Product Expansion และ Production Audio verification ถูก merge เข้า `main` แล้ว; Phase 6 Trust & Usability อยู่ระหว่างการยกระดับบน baseline เดิม โดยไม่เพิ่มจำนวนเครื่องมือ
 
 ## เครื่องมือที่มีอยู่ใน main
 
@@ -60,6 +60,14 @@ Audio output ในชุดปัจจุบันเป็น **WAV/WAV Compa
 - Audio Speed & Pitch ใช้ resampling ratio เดียว จึงเปลี่ยนความเร็วและ pitch ที่สัมพันธ์กัน ไม่ใช่ advanced time-stretch ที่ควบคุมสองค่าจากกันอย่างอิสระ
 - ไฟล์ต่าง sample rate จะถูก resample ให้เป็น rate ที่ pipeline ใช้ร่วมกัน และ output ยังอยู่ใน WAV family
 - Preview และ Export ใช้ processing path เดียวกัน โดยผลลัพธ์ preview ไม่ถูกดาวน์โหลดจนกว่าผู้ใช้จะสั่ง export
+
+## Phase 6 Trust & Usability
+
+ทุก Active Tool มี shared **วิธีใช้งาน / How to use** dialog แบบ TH/EN พร้อม overview, use cases, supported inputs, outputs, steps, limitations, privacy, FAQ และ tips ตาม `src/data/guides.ts` เปิดคู่มือได้จาก Tool page โดยไม่ reset state และปิดด้วยปุ่มหรือ Escape ได้
+
+หน้า Privacy ใหม่อยู่ที่ [`#/privacy`](https://aodxx.github.io/Personal-Utility-Hub/#/privacy) ใช้ภาษาทั่วไปอธิบายเส้นทาง `ไฟล์ → Browser → เครื่องมือ → ผลลัพธ์ → ดาวน์โหลด` และระบุอย่างตรงไปตรงมาว่า LocalStorage/IndexedDB/Cache Storage ใช้เก็บ settings หรือ offline state ไม่ใช่ user file contents ตาม implementation ปัจจุบัน Tool cards มี privacy badge ที่เปิดคำอธิบายได้ และมี first-use hint ที่เก็บสถานะเฉพาะ local device
+
+เครื่องมือ Text/Data ที่เหมาะสมมี sample workflow เช่น JSON Formatter, Base64 และ Text Formatter เพื่อให้ผู้ใช้เริ่มทดลองโดยไม่ต้องใช้ข้อมูลจริง
 
 ## Processing และ privacy architecture
 
@@ -121,6 +129,8 @@ Playwright ตั้งค่าไว้ 3 projects ได้แก่ Desktop 
 | [`docs/PRIVACY_AND_DEPENDENCIES.md`](docs/PRIVACY_AND_DEPENDENCIES.md) | Privacy baseline และ dependency policy |
 | [`docs/VISUAL_SYSTEM.md`](docs/VISUAL_SYSTEM.md) | Asset และ UI visual system |
 | [`docs/audio-tools-verification.md`](docs/audio-tools-verification.md) | Audio behavior, limitations และ verification notes |
+| [`src/data/guides.ts`](src/data/guides.ts) | Typed bilingual guide catalog สำหรับ Active Tools |
+| [`docs/v0.8-production-smoke-notes.md`](docs/v0.8-production-smoke-notes.md) | Production smoke evidence และ Audio contract |
 
 ## Privacy baseline
 

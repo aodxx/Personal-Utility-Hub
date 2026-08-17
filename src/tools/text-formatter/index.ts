@@ -24,6 +24,11 @@ const handleAction = async (event: Event): Promise<void> => {
     if (action === 'copy') {
       await copyText(input.value);
       setToolStatus(status, 'คัดลอกข้อความแล้ว', 'success');
+    } else if (action === 'sample') {
+      input.value = '  Personal Utility Hub  \n\n  Local processing   keeps files on your device.  ';
+      updateStats();
+      setToolStatus(status, 'ใส่ข้อมูลตัวอย่างแล้ว / Sample data loaded', 'success');
+      input.focus();
     } else if (action === 'clear') {
       input.value = '';
       updateStats();
@@ -61,6 +66,7 @@ const tool: ToolModule = {
         <button class="button" type="button" data-text-action="uppercase">ตัวพิมพ์ใหญ่</button>
         <button class="button" type="button" data-text-action="lowercase">ตัวพิมพ์เล็ก</button>
         <button class="button" type="button" data-text-action="copy">คัดลอก</button>
+        <button class="button button--secondary" type="button" data-text-action="sample">ลองข้อมูลตัวอย่าง / Try sample</button>
         <button class="text-button" type="button" data-text-action="clear">ล้างข้อมูล</button>
       </div>
       <output id="text-status" class="tool-status" aria-live="polite">พร้อมจัดรูปแบบข้อความในอุปกรณ์</output>

@@ -12,6 +12,8 @@ import { assetIcon, toolAssetIcon } from '../components/asset-icon';
 import { allCategories } from '../data/categories';
 import { toolCatalog, toolRegistry } from '../data/tools';
 import { categoryVisuals } from '../data/visual-assets';
+import { getToolGuide } from '../data/guides';
+import { guideText } from '../core/tool-guide';
 import { HashRouter } from './router';
 import type { AppRoute } from './routes';
 
@@ -23,6 +25,7 @@ export class AppShell {
   private readonly offlineTools = new OfflineToolManager(toolRegistry);
   private navigationId = 0;
   private cleanupHome: (() => void) | undefined;
+  private cleanupGuidance: (() => void) | undefined;
   private themeButton: HTMLButtonElement | undefined;
   private settingsButton: HTMLButtonElement | undefined;
 
@@ -47,7 +50,7 @@ export class AppShell {
       <main id="main-content" class="main-content" tabindex="-1"></main>
       <footer class="site-footer">
         <p><strong>Local-first:</strong> ${t(locale, 'footer')}</p>
-        <nav aria-label="${t(locale, 'footerNav')}"><a href="#/">${t(locale, 'tools')}</a><a href="https://github.com/aodxx/Personal-Utility-Hub/blob/main/docs/PRIVACY_AND_DEPENDENCIES.md" target="_blank" rel="noreferrer">${t(locale, 'privacy')}</a></nav>
+        <nav aria-label="${t(locale, 'footerNav')}"><a href="#/">${t(locale, 'tools')}</a><a href="#/privacy">${t(locale, 'privacy')}</a><a href="https://github.com/aodxx/Personal-Utility-Hub/blob/main/docs/PRIVACY_AND_DEPENDENCIES.md" target="_blank" rel="noreferrer">Source policy</a></nav>
       </footer>
       ${this.settingsDialog(locale)}
     `;
@@ -68,6 +71,8 @@ export class AppShell {
   stop(): void {
     this.cleanupHome?.();
     this.cleanupHome = undefined;
+    this.cleanupGuidance?.();
+    this.cleanupGuidance = undefined;
     this.themeButton?.removeEventListener('click', this.handleThemeToggle);
     this.themeButton = undefined;
     this.settingsButton?.removeEventListener('click', this.handleSettingsOpen);
@@ -220,6 +225,11 @@ export class AppShell {
       return;
     }
 
+    if (route.kind === 'privacy') {
+      this.renderPrivacy(main);
+      return;
+    }
+
     if (route.kind === 'not-found') {
       this.renderNotFound(main, route.path);
       return;
@@ -244,13 +254,20 @@ export class AppShell {
         <div class="privacy-note">
           <span aria-hidden="true">✓</span>
           <div><strong>${t(locale, 'localProcessing')}</strong><small>${t(locale, 'localDetail')}${tool.supportsOffline ? t(locale, 'offlineSuffix') : ''}</small></div>
+          <a href="#/privacy" class="privacy-note__link">${t(locale, 'privacyGuide')}</a>
+        </div>
+        <div class="tool-heading__actions">
+          <button class="button button--secondary" type="button" data-guidance-action="open">? ${t(locale, 'howToUse')}</button>
         </div>
       </section>
+      ${this.firstUseHint(tool.id, locale)}
       <div id="tool-container" class="tool-container" aria-live="polite">
         <div class="loading-state"><span class="spinner" aria-hidden="true"></span>${t(locale, 'loading')}</div>
       </div>
+      ${this.guideDialog(tool.id, locale)}
     `;
 
+    this.bindGuidance(main, tool.id);
     const container = main.querySelector<HTMLElement>('#tool-container');
     if (!container) return;
 
@@ -280,6 +297,90 @@ export class AppShell {
         </section>
       `;
     }
+  }
+
+  private renderPrivacy(main: HTMLElement): void {
+    const locale = this.preferences.getLocale();
+    main.innerHTML = `
+      <nav class="breadcrumb" aria-label="Breadcrumb"><a href="#/">${t(locale, 'back')}</a></nav>
+      <section class="privacy-page" aria-labelledby="privacy-page-title">
+        <div class="eyebrow">Trust & Security</div>
+        <h1 id="privacy-page-title">${t(locale, 'privacyPageTitle')}</h1>
+        <p class="privacy-page__intro">${t(locale, 'privacyPageIntro')}</p>
+        <div class="privacy-flow" aria-label="${t(locale, 'privacyPageTitle')}">
+          <div><strong>${t(locale, 'privacyFlowFile')}</strong><span>↓</span></div>
+          <div><strong>${t(locale, 'privacyFlowBrowser')}</strong><span>↓</span></div>
+          <div><strong>${t(locale, 'privacyFlowTool')}</strong><span>↓</span></div>
+          <div><strong>${t(locale, 'privacyFlowResult')}</strong><span>↓</span></div>
+          <div><strong>${t(locale, 'privacyFlowDownload')}</strong></div>
+        </div>
+        <div class="privacy-page__grid">
+          <section class="privacy-page__section"><h2>${t(locale, 'privacyWhatWeDo')}</h2><p>${t(locale, 'privacyWhatWeDoDetail')}</p></section>
+          <section class="privacy-page__section"><h2>${t(locale, 'privacyWhatWeStore')}</h2><p>${t(locale, 'privacyWhatWeStoreDetail')}</p></section>
+          <section class="privacy-page__section privacy-page__section--caution"><h2>${t(locale, 'privacyDoNotPromise')}</h2><p>${t(locale, 'privacyDoNotPromiseDetail')}</p></section>
+        </div>
+        <a class="button" href="https://github.com/aodxx/Personal-Utility-Hub" target="_blank" rel="noreferrer">${t(locale, 'privacySource')}</a>
+      </section>
+    `;
+  }
+
+  private firstUseHint(toolId: string, locale: AppLocale): string {
+    if (this.preferences.hasSeenGuide(toolId)) return '';
+    return `<aside class="first-use-hint" data-first-use="${this.escapeHtml(toolId)}" aria-label="${t(locale, 'firstUseTitle')}">
+      <div><strong>${t(locale, 'firstUseTitle')}</strong><p>${t(locale, 'firstUseDetail')}</p></div>
+      <div class="first-use-hint__actions"><button class="button" type="button" data-guidance-action="open">${t(locale, 'firstUseRead')}</button><button class="text-button" type="button" data-guidance-action="dismiss">${t(locale, 'firstUseDismiss')}</button></div>
+    </aside>`;
+  }
+
+  private guideDialog(toolId: string, locale: AppLocale): string {
+    const guide = getToolGuide(toolId);
+    if (!guide) return '';
+    const list = (items: { th: string; en: string }[], className = '') => `<ul class="guide-list ${className}">${items.map((item) => `<li>${this.escapeHtml(guideText(item, locale))}</li>`).join('')}</ul>`;
+    return `<dialog id="tool-guide-dialog" class="tool-guide-dialog" aria-labelledby="tool-guide-title">
+      <div class="tool-guide-dialog__header"><div><div class="eyebrow">${t(locale, 'privacyGuide')}</div><h2 id="tool-guide-title">${t(locale, 'howToUse')}</h2></div><button class="icon-button" type="button" data-guidance-action="close" aria-label="${t(locale, 'guideClose')}">×</button></div>
+      <div class="tool-guide-dialog__body">
+        <section><h3>${t(locale, 'guideOverview')}</h3><p>${this.escapeHtml(guideText(guide.overview, locale))}</p></section>
+        <section><h3>${t(locale, 'guideUseCases')}</h3>${list(guide.useCases)}</section>
+        <div class="guide-two-column"><section><h3>${t(locale, 'guideInputs')}</h3><p>${this.escapeHtml(guideText(guide.supportedInputs, locale))}</p></section><section><h3>${t(locale, 'guideOutputs')}</h3><p>${this.escapeHtml(guideText(guide.outputs, locale))}</p></section></div>
+        <section><h3>${t(locale, 'guideSteps')}</h3>${list(guide.steps, 'guide-list--numbered')}</section>
+        <section><h3>${t(locale, 'guideLimitations')}</h3>${list(guide.limitations)}</section>
+        <section><h3>${t(locale, 'guidePrivacy')}</h3><p>${this.escapeHtml(guideText(guide.privacy, locale))}</p></section>
+        <section><h3>${t(locale, 'guideFaq')}</h3><div class="guide-faq">${guide.faq.map((item) => `<details><summary>${this.escapeHtml(guideText(item.question, locale))}</summary><p>${this.escapeHtml(guideText(item.answer, locale))}</p></details>`).join('')}</div></section>
+        ${guide.tips.length ? `<section><h3>${t(locale, 'guideTips')}</h3>${list(guide.tips)}</section>` : ''}
+      </div>
+    </dialog>`;
+  }
+
+  private bindGuidance(main: HTMLElement, toolId: string): void {
+    const dialog = main.querySelector<HTMLDialogElement>('#tool-guide-dialog');
+    if (!dialog) return;
+    const open = (): void => {
+      this.preferences.markGuideSeen(toolId);
+      main.querySelector<HTMLElement>('[data-first-use]')?.remove();
+      if (typeof dialog.showModal === 'function') dialog.showModal();
+      else dialog.setAttribute('open', '');
+      dialog.querySelector<HTMLButtonElement>('[data-guidance-action="close"]')?.focus();
+    };
+    const close = (): void => {
+      if (typeof dialog.close === 'function') dialog.close();
+      else dialog.removeAttribute('open');
+    };
+    const handleClick = (event: Event): void => {
+      const action = (event.target as HTMLElement).closest<HTMLElement>('[data-guidance-action]')?.dataset.guidanceAction;
+      if (action === 'open') open();
+      if (action === 'dismiss') {
+        this.preferences.markGuideSeen(toolId);
+        main.querySelector<HTMLElement>('[data-first-use]')?.remove();
+      }
+      if (action === 'close') close();
+    };
+    const handleKeydown = (event: KeyboardEvent): void => { if (event.key === 'Escape' && dialog.open) close(); };
+    main.addEventListener('click', handleClick);
+    main.addEventListener('keydown', handleKeydown);
+    this.cleanupGuidance = () => {
+      main.removeEventListener('click', handleClick);
+      main.removeEventListener('keydown', handleKeydown);
+    };
   }
 
   private renderHome(main: HTMLElement): void {
@@ -487,8 +588,8 @@ export class AppShell {
           <p>${this.escapeHtml(displayed.description)}</p>
         </div>
         <div class="tool-card__footer">
-          <span class="privacy-badge">${t(locale, 'onDeviceBadge')}</span>
-          ${tool.supportsOffline ? `<button class="offline-cache-button" type="button" data-action="offline" data-id="${tool.id}" data-offline-state="not-ready" aria-label="${t(locale, 'prepareOffline')}: ${this.escapeHtml(displayed.title)}">${t(locale, 'prepareOffline')}</button>` : ''}
+          <a class="privacy-badge" href="#/privacy" aria-label="${t(locale, 'privacyExplain')}: ${this.escapeHtml(displayed.title)}" title="${t(locale, 'privacyExplain')}">${t(locale, 'onDeviceBadge')}</a>
+          ${tool.supportsOffline ? `<button class="offline-cache-button" type="button" data-action="offline" data-id="${tool.id}" data-offline-state="not-ready" aria-label="${t(locale, 'prepareOffline')}: ${this.escapeHtml(displayed.title)}" title="${t(locale, 'offlineExplain')}">${t(locale, 'prepareOffline')}</button>` : ''}
           <span class="tool-card__arrow" aria-hidden="true">→</span>
         </div>
       </article>

@@ -21,6 +21,12 @@ const handleAction = async (event: Event): Promise<void> => {
         result.value = decodeBase64(input.value);
         setToolStatus(status, 'ถอดรหัส Base64 สำเร็จ', 'success');
         break;
+      case 'sample':
+        input.value = 'สวัสดี Utility Hub — local-first';
+        result.value = '';
+        setToolStatus(status, 'ใส่ข้อมูลตัวอย่างแล้ว / Sample data loaded', 'success');
+        input.focus();
+        break;
       case 'swap':
         input.value = result.value;
         result.value = '';
@@ -67,6 +73,7 @@ const tool: ToolModule = {
         <button class="button" type="button" data-base64-action="decode">ถอดรหัส</button>
         <button class="button" type="button" data-base64-action="swap">ย้ายผลลัพธ์กลับ</button>
         <button class="button" type="button" data-base64-action="copy">คัดลอก</button>
+        <button class="button button--secondary" type="button" data-base64-action="sample">ลองข้อมูลตัวอย่าง / Try sample</button>
         <button class="text-button" type="button" data-base64-action="clear">ล้างข้อมูล</button>
       </div>
       <output id="base64-status" class="tool-status" aria-live="polite">ไม่มีข้อมูลถูกส่งออกจากอุปกรณ์</output>

@@ -1,5 +1,6 @@
 export type AppRoute =
   | { kind: 'home' }
+  | { kind: 'privacy' }
   | { kind: 'tool'; toolId: string }
   | { kind: 'not-found'; path: string };
 
@@ -14,6 +15,7 @@ export function parseHash(hash: string): AppRoute {
   }
 
   if (path === '/' || path === '') return { kind: 'home' };
+  if (path === '/privacy') return { kind: 'privacy' };
 
   const toolMatch = path.match(/^\/tools\/([a-z0-9]+(?:-[a-z0-9]+)*)\/?$/);
   if (toolMatch?.[1]) return { kind: 'tool', toolId: toolMatch[1] };

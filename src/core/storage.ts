@@ -22,6 +22,7 @@ const THEME_KEY = 'utility-hub:theme';
 const LOCALE_KEY = 'utility-hub:locale';
 const TOOL_ORDER_KEY = 'utility-hub:tool-order';
 const USAGE_KEY = 'utility-hub:usage';
+const GUIDE_SEEN_KEY = 'utility-hub:guide-seen';
 const RECENT_LIMIT = 6;
 
 function parseStringArray(value: string | null): string[] {
@@ -100,6 +101,7 @@ export class LocalPreferences {
   private memoryLocale: AppLocale = 'th';
   private memoryToolOrder: ToolOrder = 'catalog';
   private memoryUsage: Record<string, number> = {};
+  private memoryGuideSeen = new Set<string>();
 
   constructor(storage?: Storage) {
     try {
@@ -113,6 +115,7 @@ export class LocalPreferences {
       const toolOrder = this.storage.getItem(TOOL_ORDER_KEY);
       this.memoryToolOrder = toolOrder === 'frequent' ? 'frequent' : 'catalog';
       this.memoryUsage = parseUsage(this.storage.getItem(USAGE_KEY));
+      this.memoryGuideSeen = new Set(parseStringArray(this.storage.getItem(GUIDE_SEEN_KEY)));
     } catch {
       this.storage = undefined;
     }
@@ -148,6 +151,15 @@ export class LocalPreferences {
 
   getUsage(): Record<string, number> {
     return { ...this.memoryUsage };
+  }
+
+  hasSeenGuide(toolId: string): boolean {
+    return this.memoryGuideSeen.has(toolId);
+  }
+
+  markGuideSeen(toolId: string): void {
+    this.memoryGuideSeen.add(toolId);
+    this.persist(GUIDE_SEEN_KEY, [...this.memoryGuideSeen]);
   }
 
   clearRecent(): void {

@@ -32,6 +32,12 @@ const handleAction = async (event: Event): Promise<void> => {
         await copyText(result.value || input.value);
         setToolStatus(status, 'คัดลอกผลลัพธ์แล้ว', 'success');
         break;
+      case 'sample':
+        input.value = '{"name":"Utility Hub","private":true,"tools":["JSON","CSV","Audio"]}';
+        result.value = '';
+        setToolStatus(status, 'ใส่ข้อมูลตัวอย่างแล้ว / Sample data loaded', 'success');
+        input.focus();
+        break;
       case 'clear':
         input.value = '';
         result.value = '';
@@ -73,6 +79,7 @@ const tool: ToolModule = {
         <button class="button" type="button" data-json-action="validate">ตรวจสอบ</button>
         <button class="button" type="button" data-json-action="minify">ย่อ JSON</button>
         <button class="button" type="button" data-json-action="copy">คัดลอก</button>
+        <button class="button button--secondary" type="button" data-json-action="sample">ลองข้อมูลตัวอย่าง / Try sample</button>
         <button class="text-button" type="button" data-json-action="clear">ล้างข้อมูล</button>
       </div>
       <output id="json-status" class="tool-status" aria-live="polite">ข้อมูลทั้งหมดอยู่ในเบราว์เซอร์ของคุณ</output>
