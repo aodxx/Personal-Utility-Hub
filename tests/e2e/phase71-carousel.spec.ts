@@ -6,19 +6,41 @@ test.beforeEach(async ({ page }) => {
   await page.reload();
 });
 
-test('renders a real visual asset and consistent quick-launch structure for every Most Used card', async ({ page }) => {
+test('renders centered real visual assets and consistent quick-launch structure for every Most Used card', async ({ page }) => {
   const cards = page.locator('#most-used-carousel .quick-tool-card');
   await expect(cards).toHaveCount(5);
   for (const card of await cards.all()) {
     await expect(card.locator('.quick-tool-card__visual .asset-icon')).toHaveCount(1);
+    const cardBox = await card.boundingBox();
     const visual = await card.locator('.quick-tool-card__visual').boundingBox();
     expect(visual?.width ?? 0).toBeGreaterThanOrEqual(72);
     expect(visual?.height ?? 0).toBeGreaterThanOrEqual(72);
+    if (cardBox && visual) {
+      const cardCenter = cardBox.x + cardBox.width / 2;
+      const visualCenter = visual.x + visual.width / 2;
+      expect(Math.abs(cardCenter - visualCenter)).toBeLessThanOrEqual(3);
+    }
     await expect(card.locator('h3')).toBeVisible();
     await expect(card.locator('p')).toBeVisible();
     await expect(card.locator('.privacy-badge')).toContainText(/ในเครื่อง|On device/);
     await expect(card.locator('.tool-card__arrow')).toHaveText('→');
   }
+});
+
+test('uses real local usage ranking and allows frequently used beta tools to enter Most Used', async ({ page }) => {
+  await page.evaluate(() => {
+    localStorage.setItem('utility-hub:usage', JSON.stringify({
+      'line-sticker-studio': 25,
+      'qr-generator': 4,
+      'pdf-merge': 2,
+    }));
+  });
+  await page.reload();
+  const cards = page.locator('#most-used-carousel .quick-tool-card');
+  await expect(cards).toHaveCount(5);
+  await expect(cards.first()).toHaveAttribute('data-tool-id', 'line-sticker-studio');
+  await expect(cards.nth(1)).toHaveAttribute('data-tool-id', 'qr-generator');
+  await expect(cards.nth(2)).toHaveAttribute('data-tool-id', 'pdf-merge');
 });
 
 test('uses native snap behavior and updates dots/arrows when navigating', async ({ page }, testInfo) => {

@@ -18,13 +18,19 @@ const tool = (id: string, status: ToolMetadata['status'] = 'active'): ToolMetada
 });
 
 describe('Phase 7 home personalization', () => {
-  const tools = [tool('image-compressor'), tool('pdf-merge'), tool('qr-generator'), tool('json-formatter'), tool('audio-trimmer'), tool('planned', 'planned')];
+  const tools = [tool('image-compressor'), tool('pdf-merge'), tool('qr-generator'), tool('json-formatter'), tool('audio-trimmer'), tool('line-sticker-studio', 'beta'), tool('planned', 'planned')];
   const order = tools.map(({ id }) => id);
 
-  it('returns five most-used active tools in descending usage order', () => {
-    const result = mostUsedTools(tools, { 'audio-trimmer': 2, 'pdf-merge': 8, 'json-formatter': 4, planned: 99 }, ['image-compressor', 'pdf-merge', 'qr-generator', 'json-formatter', 'audio-trimmer'], order);
-    expect(result.map(({ id }) => id)).toEqual(['pdf-merge', 'json-formatter', 'audio-trimmer', 'image-compressor', 'qr-generator']);
+  it('returns five most-used usable tools in descending usage order', () => {
+    const result = mostUsedTools(tools, { 'line-sticker-studio': 12, 'audio-trimmer': 2, 'pdf-merge': 8, 'json-formatter': 4, planned: 99 }, ['image-compressor', 'pdf-merge', 'qr-generator', 'json-formatter', 'audio-trimmer'], order);
+    expect(result.map(({ id }) => id)).toEqual(['line-sticker-studio', 'pdf-merge', 'json-formatter', 'audio-trimmer', 'image-compressor']);
     expect(result).toHaveLength(5);
+    expect(result.some(({ id }) => id === 'planned')).toBe(false);
+  });
+
+  it('includes a beta tool when local usage makes it one of the most-used tools', () => {
+    const result = mostUsedTools(tools, { 'line-sticker-studio': 7, 'qr-generator': 2 }, [], order);
+    expect(result[0]?.id).toBe('line-sticker-studio');
     expect(result.some(({ id }) => id === 'planned')).toBe(false);
   });
 
