@@ -2,7 +2,7 @@
 
 ศูนย์รวม **privacy-first utility tools** แบบ Static PWA ที่ประมวลผลไฟล์และข้อมูลภายในเบราว์เซอร์เป็นหลัก โดยใช้ Modular Tool Registry, Lazy Loading, Dedicated Web Worker และ Offline/PWA support เมื่อความสามารถของเบราว์เซอร์รองรับ
 
-**สถานะปัจจุบัน:** `v0.8.0` — Phase 5 Product Expansion และ Production Audio verification ถูก merge เข้า `main` แล้ว; Phase 6 Trust & Usability อยู่ระหว่างการยกระดับบน baseline เดิม โดยไม่เพิ่มจำนวนเครื่องมือ
+**สถานะปัจจุบัน:** `v0.8.0` — Phase 5 Product Expansion และ Phase 6 Trust & Usability ถูก merge เข้า `main` แล้ว; 25 active tools มี bilingual tool-specific guides และ Production smoke บน GitHub Pages ผ่าน โดยไม่เพิ่ม backend, accounts หรือ cloud storage
 
 ## เครื่องมือที่มีอยู่ใน main
 
@@ -61,9 +61,11 @@ Audio output ในชุดปัจจุบันเป็น **WAV/WAV Compa
 - ไฟล์ต่าง sample rate จะถูก resample ให้เป็น rate ที่ pipeline ใช้ร่วมกัน และ output ยังอยู่ใน WAV family
 - Preview และ Export ใช้ processing path เดียวกัน โดยผลลัพธ์ preview ไม่ถูกดาวน์โหลดจนกว่าผู้ใช้จะสั่ง export
 
-## Phase 6 Trust & Usability
+## Phase 6 Trust & Usability — complete
 
 ทุก Active Tool มี shared **วิธีใช้งาน / How to use** dialog แบบ TH/EN พร้อม overview, use cases, supported inputs, outputs, steps, limitations, privacy, FAQ และ tips ตาม `src/data/guides.ts` เปิดคู่มือได้จาก Tool page โดยไม่ reset state และปิดด้วยปุ่มหรือ Escape ได้
+
+Production verification ของ final HEAD ผ่าน 10/10 checks ที่ viewport 360 × 740 ครอบคลุม Privacy route, guides จาก 5 categories, JSON sample, Audio Trimmer upload/process/download, no-overflow และ hash back/forward/refresh. รายละเอียดอยู่ใน [`docs/phase6-production-evidence.md`](docs/phase6-production-evidence.md) และ [`docs/phase6-trust-content-audit.md`](docs/phase6-trust-content-audit.md)
 
 หน้า Privacy ใหม่อยู่ที่ [`#/privacy`](https://aodxx.github.io/Personal-Utility-Hub/#/privacy) ใช้ภาษาทั่วไปอธิบายเส้นทาง `ไฟล์ → Browser → เครื่องมือ → ผลลัพธ์ → ดาวน์โหลด` และระบุอย่างตรงไปตรงมาว่า LocalStorage/IndexedDB/Cache Storage ใช้เก็บ settings หรือ offline state ไม่ใช่ user file contents ตาม implementation ปัจจุบัน Tool cards มี privacy badge ที่เปิดคำอธิบายได้ และมี first-use hint ที่เก็บสถานะเฉพาะ local device
 

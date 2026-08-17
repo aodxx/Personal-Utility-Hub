@@ -90,7 +90,7 @@ npm audit --audit-level=high
 node --check public/sw.js
 ```
 
-Local regression suite ล่าสุดผ่าน 86 cases และมี 4 intentional skips จาก 90 cases; CI/Pages evidence ของ final guide commit จะเติมหลัง push และ workflow จบ success โดยห้ามใช้ run ของ commit เก่าแทน HEAD
+Local regression suite ล่าสุดผ่าน 86 cases และมี 4 intentional skips จาก 90 cases. Final HEAD `7ad9194f570d77e207b9a67f5cf2a21049b8847d` ผ่าน [CI run 31993843182](https://github.com/aodxx/Personal-Utility-Hub/actions/runs/31993843182) และ [GitHub Pages deploy run 31993843034](https://github.com/aodxx/Personal-Utility-Hub/actions/runs/31993843034) โดยทั้งสอง run จบด้วย success
 
 ## 8. Production GitHub Pages smoke test
 
@@ -104,8 +104,8 @@ Production URL ที่ต้องตรวจคือ [https://aodxx.github.
 | Search และ category filter | ผ่านการตรวจเบื้องต้น | Search `รูปภาพ` แสดง 7 ผลลัพธ์; category tabs แสดง 8 หมวด |
 | Favorite และ Settings | Settings ผ่าน; Favorite ยังต้องตรวจซ้ำ | Settings Center, Compatibility Check และ no-backend message แสดงผล |
 | Full-card navigation, back/forward และ refresh hash route | Audio Trimmer route ผ่านเบื้องต้น; back/forward ยังต้องตรวจ | `#/tools/audio-trimmer` เปิดได้และ lazy module เริ่มโหลด |
-| 360 × 740 และ Pixel 7 class layout | รอตรวจบน Production | Local E2E ผ่านบน profiles แล้ว |
-| ไม่มี horizontal overflow หรือ icon/footer overlap | รอตรวจบน Production | Local E2E contract ผ่าน |
+| 360 × 740 และ Pixel 7 class layout | ผ่านบน Production smoke 360 × 740; Pixel 7 class ผ่าน local Android current | `scripts/phase6-production-smoke.mjs`, Playwright Android current |
+| ไม่มี horizontal overflow หรือ icon/footer overlap | ผ่านบน Production 360 × 740 | Production smoke `scrollWidth` check และ local E2E contract |
 
 ### Audio workflow checklist
 
@@ -157,4 +157,4 @@ Phase 6 เพิ่ม `src/core/tool-guide.ts` และ `src/data/guides.ts` 
 | Phase 6 trust/unit integration tests | 12/12 ผ่าน |
 | Playwright รวม | 86 passed, 4 intentional skips จาก 90 cases |
 
-Production verification สำหรับ Phase 6 ยังไม่ถูกนับเป็น completed จนกว่าจะ deploy final guide commit ขึ้น GitHub Pages และตรวจ Privacy page, Guide จากอย่างน้อย 5 categories, first-use persistence, sample workflow, mobile dialog, back/forward/refresh, Offline preparation, keyboard/focus/Escape และ Audio regression บน Production URL จริง
+Production verification ของ Phase 6 ผ่าน smoke script `scripts/phase6-production-smoke.mjs` ครบ 10/10 checks บน URL จริงและ viewport 360 × 740: Privacy, guides จาก 5 categories, Audio Trimmer upload → process → WAV result → download, JSON sample, no horizontal overflow, Escape close และ back/forward/refresh. Final HEAD และ Pages deploy ผ่าน CI/Pages runs ที่ระบุในหัวข้อ 7. Audio regression contract เดิมยังผ่านใน local Playwright และ production smoke notes มีหลักฐาน shared audio tools/Chapter Marker; ข้อจำกัดที่เหลือเป็นเรื่อง output/codec ตาม implementation ไม่ใช่ trust/usability gate

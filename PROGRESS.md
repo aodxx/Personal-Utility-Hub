@@ -76,13 +76,13 @@ Audio output ยังอยู่ใน WAV family; target-size เป็นค
 - [`docs/audio-tools-verification.md`](docs/audio-tools-verification.md) — audio behavior และ limitations
 
 
-## Phase 6 — Trust & Usability (in progress)
+## Phase 6 — Trust & Usability (complete)
 
-Phase 6A–6D implementation ชุดแรกเพิ่ม Privacy route ที่ `#/privacy`, shared local-processing links, accessible privacy badges, typed bilingual Guide catalog สำหรับ Active Tools 25 รายการ, shared How-to dialog, Escape/close behavior, first-use hint ที่เก็บ `guideSeen` ผ่าน LocalPreferences และ sample workflows สำหรับ JSON Formatter, Base64 และ Text Formatter โดยไม่เพิ่ม tool ใหม่และไม่เปลี่ยน Portable Settings schema `1`
+Phase 6 เพิ่ม Privacy route ที่ `#/privacy`, shared local-processing links, accessible privacy badges, typed bilingual tool-specific Guide catalog สำหรับ Active Tools 25 รายการ, shared How-to dialog, Escape/close behavior, first-use hint ที่เก็บ `guideSeen` ผ่าน LocalPreferences และ sample workflows สำหรับ JSON Formatter, Base64 และ Text Formatter โดยไม่เพิ่ม tool ใหม่และไม่เปลี่ยน Portable Settings schema `1`
 
-Local validation ล่าสุด: Phase 6 trust tests 12/12 ผ่าน และ Playwright หลังเพิ่ม Privacy/Guide/first-use/sample contracts 83 passed พร้อม 4 intentional skips จาก 87 cases บน Desktop Chromium, Android entry และ Android current profiles Build และ bundle ผ่าน โดย Entry gzip เพิ่มเป็นประมาณ 22.4 KB และ JavaScript รวม gzip ประมาณ 966.0 KB; ยังต้องตรวจ GitHub Actions และ Production GitHub Pages หลัง commit ก่อนปิด Phase 6
+Local validation ล่าสุด: Phase 6 trust tests 12/12 ผ่าน และ Playwright ผ่าน 86 tests พร้อม 4 intentional skips จาก 90 cases บน Desktop Chromium, Android entry และ Android current profiles. Build, bundle, npm audit, Service Worker syntax และ diff checks ผ่าน โดย Entry gzip 32.7 KB, largest lazy chunk 366.1 KB และ JavaScript รวม gzip 976.4 KB. Final HEAD `7ad9194` ผ่าน CI run `31993843182` และ Pages deploy run `31993843034`
 
-ข้อจำกัดที่ยังเหลือก่อน Definition of Done: ต้องตรวจ Privacy/Guide/first-use/sample flows บน Production จริง, ตรวจ keyboard/focus และ no-overflow รอบสุดท้ายบน device profiles, ทำ trust-content audit แบบ repository-wide และตรวจว่าทุก file/text tool ที่เหมาะสมมี sample action ตาม product contract
+Production smoke script `scripts/phase6-production-smoke.mjs` ผ่าน 10/10 checks บน GitHub Pages จริงที่ viewport 360 × 740 ครอบคลุม Privacy, guides จาก 5 categories, Audio Trimmer upload/process/download, JSON sample, no-overflow, Escape และ hash back/forward/refresh. Trust-content audit และ sample metadata audit ถูกบันทึกใน `docs/phase6-trust-content-audit.md`; remaining limitations เป็นข้อจำกัดตาม implementation เช่น WAV output, browser codec support และ memory usage ไม่ใช่ unverified trust claims
 
 
 ## Phase 6 validation update — 17 สิงหาคม 2026
