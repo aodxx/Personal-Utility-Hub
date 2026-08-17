@@ -19,6 +19,19 @@ test('shows Layers and Custom Schema Builder controls', async ({ page }) => {
   await expect(page.getByRole('button', { name: 'เพิ่ม field' })).toBeVisible();
 });
 
+test('uses map-first fieldwork shell with local filters and commands', async ({ page }) => {
+  await page.goto('./#/tools/community-mapping');
+  await expect(page.locator('.community-map-sidebar')).toBeVisible();
+  await expect(page.locator('.community-map-main')).toBeVisible();
+  await expect(page.locator('.community-map-command[data-draw="Point"]')).toBeVisible();
+  await expect(page.getByRole('searchbox', { name: 'ค้นหา records' })).toBeVisible();
+  await expect(page.getByRole('combobox', { name: 'กรองตาม layer' })).toBeVisible();
+  await expect(page.getByRole('button', { name: /นำเข้า JSON/ })).toBeVisible();
+  await expect(page.getByRole('button', { name: /บันทึก/ })).toBeVisible();
+  await page.getByRole('button', { name: 'Records' }).click();
+  await expect(page.getByRole('heading', { name: 'Records จากพื้นที่จริง' })).toBeVisible();
+});
+
 test('keeps Community Mapping inside a 360px viewport', async ({ page }, testInfo) => {
   test.skip(testInfo.project.name !== 'android-entry', 'ตรวจเฉพาะ Android profile');
   await page.goto('./#/tools/community-mapping');
