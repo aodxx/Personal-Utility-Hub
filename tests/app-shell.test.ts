@@ -46,7 +46,7 @@ describe('AppShell integration', () => {
   it('persists favorites, records recent tools and clears history', async () => {
     const root = startApp();
     await vi.waitFor(() => expect(root.querySelectorAll('#tool-grid .tool-card')).toHaveLength(25));
-    const jsonCard = root.querySelector<HTMLElement>('[data-tool-id="json-formatter"]');
+    const jsonCard = root.querySelector<HTMLElement>('#tool-grid [data-tool-id="json-formatter"]');
     expect(jsonCard?.querySelector('.tool-card__tap-target')?.getAttribute('href')).toBe('#/tools/json-formatter');
     expect(jsonCard?.querySelector('.tool-card__link')).toBeNull();
     root.querySelector<HTMLButtonElement>('[data-tool-id="json-formatter"] [data-action="favorite"]')?.click();

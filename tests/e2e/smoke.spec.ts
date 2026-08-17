@@ -12,7 +12,7 @@ test('searches, filters and saves a favorite', async ({ page }) => {
   await page.getByRole('searchbox').fill('รูปภาพ');
   await expect(page.locator('#tool-grid .tool-card')).toHaveCount(7);
   await page.getByRole('searchbox').fill('JSON');
-  await page.getByRole('button', { name: /เพิ่มในรายการโปรด: JSON Formatter/ }).click();
+  await page.locator('#tool-grid').getByRole('button', { name: /เพิ่มในรายการโปรด: JSON Formatter/ }).click();
   await expect(page.locator('#favorites-section')).toContainText('JSON Formatter');
 });
 
@@ -61,7 +61,7 @@ test('keeps mobile tool cards compact with clear touch feedback', async ({ page 
 
 test('opens an active tool, records history and toggles theme', async ({ page }) => {
   await page.goto('./');
-  await page.getByRole('link', { name: 'JSON Formatter / Validator', exact: true }).click();
+  await page.locator('#tool-grid').getByRole('link', { name: 'JSON Formatter / Validator', exact: true }).click();
   await expect(page.getByRole('heading', { name: 'จัดรูปแบบและตรวจสอบ JSON' })).toBeVisible();
   await page.getByRole('link', { name: 'กลับหน้า Hub' }).first().click();
   await expect(page.locator('#recent-section')).toContainText('JSON Formatter');
@@ -143,4 +143,29 @@ test('shows tool-specific guide content across representative categories', async
     await expect(dialog).toContainText(item.marker, { ignoreCase: true });
     await page.keyboard.press('Escape');
   }
+});
+
+
+test('renders compact trust chips and a five-tool Most Used fallback', async ({ page }) => {
+  await page.goto('./');
+  await expect(page.locator('.trust-chip')).toHaveCount(3);
+  await expect(page.locator('.trust-chip').first()).toBeVisible();
+  await page.locator('.trust-chip').first().focus();
+  await expect(page.locator('#trust-chip-detail')).toContainText(/Browser|เบราว์เซอร์/);
+  await expect(page.locator('#most-used-carousel .quick-tool-card')).toHaveCount(5);
+  await expect(page.locator('#most-used-carousel .quick-tool-card').first()).toHaveAttribute('data-tool-id', 'image-compressor');
+  await expect(page.locator('.quick-tool-card__tap-target').first()).toHaveAttribute('href', /#\/tools\//);
+});
+
+test('updates Most Used from local usage and resets to fallback without losing favorites', async ({ page }) => {
+  await page.addInitScript(() => {
+    localStorage.setItem('utility-hub:usage', JSON.stringify({ base64: 4 }));
+    localStorage.setItem('utility-hub:favorites', JSON.stringify(['json-formatter']));
+  });
+  await page.goto('./');
+  await expect(page.locator('#most-used-carousel .quick-tool-card').first()).toHaveAttribute('data-tool-id', 'base64');
+  await page.getByRole('button', { name: /ตั้งค่า|Settings/ }).click();
+  await page.getByRole('button', { name: /ล้างประวัติการใช้บ่อย|Reset Most Used history/ }).click();
+  await expect(page.locator('#most-used-carousel .quick-tool-card').first()).toHaveAttribute('data-tool-id', 'image-compressor');
+  await expect(page.locator('#favorites-section')).toContainText('JSON Formatter');
 });

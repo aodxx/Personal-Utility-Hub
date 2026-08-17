@@ -5,7 +5,7 @@ import { PwaController } from '../core/pwa';
 import { OfflineToolManager } from '../core/offline-tools';
 import { filterTools } from '../core/search';
 import { LocalPreferences, parsePortableSettings, type ThemePreference } from '../core/storage';
-import { orderTools, type ToolOrder } from '../core/tool-order';
+import { mostUsedTools, orderTools, type ToolOrder } from '../core/tool-order';
 import type { ToolMetadata } from '../core/tool-contract';
 import { ToolLoader } from '../core/tool-loader';
 import { assetIcon, toolAssetIcon } from '../components/asset-icon';
@@ -16,6 +16,8 @@ import { getToolGuide } from '../data/guides';
 import { guideText } from '../core/tool-guide';
 import { HashRouter } from './router';
 import type { AppRoute } from './routes';
+
+const MOST_USED_FALLBACK_IDS = ['image-compressor', 'pdf-merge', 'qr-generator', 'json-formatter', 'audio-trimmer'] as const;
 
 export class AppShell {
   private readonly router = new HashRouter();
@@ -131,6 +133,7 @@ export class AppShell {
           <input id="settings-file" class="visually-hidden" type="file" accept="application/json,.json" />
         </div>
         <p class="helper-text">${t(locale, 'importHint')}</p>
+        <section class="settings-reset" aria-labelledby="reset-usage-title"><h3 id="reset-usage-title">${t(locale, 'resetUsage')}</h3><p>${t(locale, 'resetUsageDetail')}</p><button class="button" type="button" data-settings-action="clear-usage">${t(locale, 'resetUsage')}</button></section>
         <output id="settings-status" class="tool-status" aria-live="polite">${t(locale, 'compatibilitySummary')}</output>
       </dialog>
     `;
@@ -161,6 +164,12 @@ export class AppShell {
       }
       if (action === 'export') this.exportSettings(dialog);
       if (action === 'import') fileInput?.click();
+      if (action === 'clear-usage') {
+        this.preferences.clearUsage();
+        this.restart();
+        const status = this.root.querySelector<HTMLOutputElement>('#settings-status');
+        if (status) { status.dataset.tone = 'success'; status.textContent = t(this.preferences.getLocale(), 'resetUsageDone'); }
+      }
     });
     fileInput?.addEventListener('change', () => void this.importSettings(dialog, fileInput));
   }
@@ -411,16 +420,20 @@ export class AppShell {
         </div>
       </section>
 
-      <section class="trust-strip" aria-label="${t(locale, 'trustLabel')}">
-        <div><span aria-hidden="true">01</span><strong>${t(locale, 'trust1')}</strong><small>${t(locale, 'trust1Detail')}</small></div>
-        <div><span aria-hidden="true">02</span><strong>${t(locale, 'trust2')}</strong><small>${t(locale, 'trust2Detail')}</small></div>
-        <div><span aria-hidden="true">03</span><strong>${t(locale, 'trust3')}</strong><small>${t(locale, 'trust3Detail')}</small></div>
+      <section class="trust-chips" aria-label="${t(locale, 'trustLabel')}">
+        <div class="trust-chips__list" role="list">
+          <button class="trust-chip" type="button" data-trust-key="onDevice" aria-expanded="false" aria-describedby="trust-chip-detail"><span aria-hidden="true">✓</span>${t(locale, 'trustOnDevice')}</button>
+          <button class="trust-chip" type="button" data-trust-key="noAccount" aria-expanded="false" aria-describedby="trust-chip-detail">${t(locale, 'trustNoAccount')}</button>
+          <button class="trust-chip" type="button" data-trust-key="offline" aria-expanded="false" aria-describedby="trust-chip-detail">${t(locale, 'trustOffline')}</button>
+        </div>
+        <p id="trust-chip-detail" class="trust-chip__detail" role="status">${t(locale, 'trustChipHint')}</p>
       </section>
 
-      <section class="section-block quick-start" aria-labelledby="quick-start-title">
-        <div class="section-heading"><div><div class="eyebrow">New in Utility Hub</div><h2 id="quick-start-title">${locale === 'th' ? 'เครื่องมือใหม่ที่น่าลอง' : 'New tools to try'}</h2></div><span class="result-count">5</span></div>
-        <p class="section-intro">${locale === 'th' ? 'ออกแบบมาเพื่อความเป็นส่วนตัว พร้อม preview และผลลัพธ์ที่ตรวจสอบได้' : 'Privacy-first workflows with previews and inspectable outputs.'}</p>
-        <div id="quick-start-grid" class="quick-start-grid"></div>
+      <section class="section-block most-used" aria-labelledby="most-used-title">
+        <div class="section-heading"><div><div class="eyebrow">${t(locale, 'mostUsedEyebrow')}</div><h2 id="most-used-title">${t(locale, 'mostUsedTitle')}</h2></div><span class="result-count">5</span></div>
+        <p class="section-intro">${t(locale, 'mostUsedDetail')}</p>
+        <div id="most-used-carousel" class="most-used-carousel" role="region" aria-label="${t(locale, 'mostUsedTitle')}" tabindex="0"></div>
+        <p class="carousel-hint">${t(locale, 'carouselHint')}</p>
       </section>
 
       <section class="section-block section-block--catalog" aria-labelledby="catalog-title">
@@ -443,6 +456,7 @@ export class AppShell {
     const searchInput = main.querySelector<HTMLInputElement>('#tool-search');
     const favoritesCheckbox = main.querySelector<HTMLInputElement>('#favorites-only');
     const categoryTabs = main.querySelector<HTMLElement>('#category-tabs');
+    const trustChips = main.querySelector<HTMLElement>('.trust-chips');
 
     const refresh = (animatedFavoriteId?: string): void => {
       const favorites = this.preferences.getFavorites();
@@ -464,7 +478,7 @@ export class AppShell {
           ? filtered.map((tool) => this.toolCard(tool, favorites, animatedFavoriteId)).join('')
           : this.emptyState(t(locale, 'noResults'), t(locale, 'noResultsDetail'));
       }
-      this.renderQuickStart(main, favorites, animatedFavoriteId);
+      this.renderMostUsed(main, favorites, animatedFavoriteId);
       this.renderFavorites(main, favorites, animatedFavoriteId);
       this.renderRecent(main, favorites, animatedFavoriteId);
       main.querySelectorAll<HTMLElement>('.favorite-button.is-bouncing').forEach((button) => {
@@ -489,6 +503,25 @@ export class AppShell {
         tab.setAttribute('aria-pressed', String(tab === button));
       });
       refresh();
+    };
+    const trustExplanations: Record<string, string> = {
+      onDevice: t(locale, 'trustOnDeviceDetail'),
+      noAccount: t(locale, 'trustNoAccountDetail'),
+      offline: t(locale, 'trustOfflineDetail'),
+    };
+    const activateTrustChip = (chip: HTMLButtonElement): void => {
+      const key = chip.dataset.trustKey ?? '';
+      const detail = main.querySelector<HTMLElement>('#trust-chip-detail');
+      main.querySelectorAll<HTMLButtonElement>('.trust-chip').forEach((item) => item.setAttribute('aria-expanded', String(item === chip)));
+      if (detail && trustExplanations[key]) detail.textContent = trustExplanations[key];
+    };
+    const handleTrustClick = (event: Event): void => {
+      const chip = (event.target as HTMLElement).closest<HTMLButtonElement>('.trust-chip');
+      if (chip) activateTrustChip(chip);
+    };
+    const handleTrustFocus = (event: FocusEvent): void => {
+      const chip = event.target as HTMLButtonElement;
+      if (chip.matches('.trust-chip')) activateTrustChip(chip);
     };
     const handleActions = (event: Event): void => {
       const target = (event.target as HTMLElement).closest<HTMLElement>('[data-action]');
@@ -524,24 +557,27 @@ export class AppShell {
     favoritesCheckbox?.addEventListener('change', handleFavoritesFilter);
     categoryTabs?.addEventListener('click', handleCategory);
     main.addEventListener('click', handleActions);
+    trustChips?.addEventListener('click', handleTrustClick);
+    trustChips?.addEventListener('focusin', handleTrustFocus);
     document.addEventListener('keydown', handleShortcut);
     this.cleanupHome = () => {
       searchInput?.removeEventListener('input', handleInput);
       favoritesCheckbox?.removeEventListener('change', handleFavoritesFilter);
       categoryTabs?.removeEventListener('click', handleCategory);
       main.removeEventListener('click', handleActions);
+      trustChips?.removeEventListener('click', handleTrustClick);
+      trustChips?.removeEventListener('focusin', handleTrustFocus);
       document.removeEventListener('keydown', handleShortcut);
     };
 
     refresh();
   }
 
-  private renderQuickStart(main: HTMLElement, favorites: ReadonlySet<string>, animatedFavoriteId?: string): void {
-    const section = main.querySelector<HTMLElement>('#quick-start-grid');
+  private renderMostUsed(main: HTMLElement, favorites: ReadonlySet<string>, animatedFavoriteId?: string): void {
+    const section = main.querySelector<HTMLElement>('#most-used-carousel');
     if (!section) return;
-    const ids = ['privacy-redactor', 'file-diff', 'image-contact-sheet', 'csv-profiler', 'audio-chapter-marker'];
-    const tools = ids.map((id) => toolCatalog.find((tool) => tool.id === id)).filter((tool): tool is ToolMetadata => Boolean(tool));
-    section.innerHTML = tools.map((tool) => this.toolCard(tool, favorites, animatedFavoriteId, 'quick-tool')).join('');
+    const tools = mostUsedTools(toolCatalog, this.preferences.getUsage(), MOST_USED_FALLBACK_IDS, toolCatalog.map(({ id }) => id));
+    section.innerHTML = tools.map((tool) => this.quickToolCard(tool, favorites, animatedFavoriteId)).join('');
   }
 
   private renderFavorites(main: HTMLElement, favorites: ReadonlySet<string>, animatedFavoriteId?: string): void {
@@ -568,6 +604,19 @@ export class AppShell {
       </div>
       ${tools.length ? `<div class="tool-grid tool-grid--compact">${tools.map((tool) => this.toolCard(tool, favorites, animatedFavoriteId)).join('')}</div>` : this.emptyState(t(locale, 'noRecent'), t(locale, 'noRecentDetail'))}
     `;
+  }
+
+  private quickToolCard(tool: ToolMetadata, favorites: ReadonlySet<string>, animatedFavoriteId?: string): string {
+    const locale = this.preferences.getLocale();
+    const displayed = localizeTool(tool, locale);
+    const isFavorite = favorites.has(tool.id);
+    const animationClass = animatedFavoriteId === tool.id ? ' is-bouncing' : '';
+    return `<article class="quick-tool-card" data-tool-id="${tool.id}">
+      <a class="quick-tool-card__tap-target" href="#${tool.route}" aria-label="${this.escapeHtml(displayed.title)}"></a>
+      <div class="quick-tool-card__header"><span class="quick-tool-card__visual">${toolAssetIcon(tool.icon)}</span><button class="favorite-button favorite-button--compact${animationClass}" type="button" data-action="favorite" data-id="${tool.id}" aria-label="${t(locale, isFavorite ? 'removeFavorite' : 'addFavorite')}: ${this.escapeHtml(displayed.title)}" aria-pressed="${isFavorite}"><span aria-hidden="true">${isFavorite ? '★' : '☆'}</span></button></div>
+      <div class="quick-tool-card__body"><span class="quick-tool-card__category">${this.escapeHtml(displayed.category)}</span><h3>${this.escapeHtml(displayed.title)}</h3><p>${this.escapeHtml(displayed.description)}</p></div>
+      <div class="quick-tool-card__footer"><span class="privacy-badge">${t(locale, 'onDeviceBadge')}</span><span class="tool-card__arrow" aria-hidden="true">→</span></div>
+    </article>`;
   }
 
   private toolCard(tool: ToolMetadata, favorites: ReadonlySet<string>, animatedFavoriteId?: string, extraClass = ''): string {

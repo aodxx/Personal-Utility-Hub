@@ -153,6 +153,11 @@ export class LocalPreferences {
     return { ...this.memoryUsage };
   }
 
+  clearUsage(): void {
+    this.memoryUsage = {};
+    this.persistObject(USAGE_KEY, this.memoryUsage);
+  }
+
   hasSeenGuide(toolId: string): boolean {
     return this.memoryGuideSeen.has(toolId);
   }

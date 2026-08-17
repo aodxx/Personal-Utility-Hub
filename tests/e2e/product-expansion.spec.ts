@@ -14,7 +14,7 @@ test('switches the Hub between Thai and English', async ({ page }) => {
   await expect(page.locator('html')).toHaveAttribute('lang', 'en');
   await expect(page.getByRole('heading', { name: /Every tool you need/ })).toBeVisible();
   await expect(page.getByRole('button', { name: 'Images', exact: true })).toBeVisible();
-  await expect(page.locator('[data-tool-id="image-compressor"]')).toContainText('Reduce JPEG or WebP');
+  await expect(page.locator('#tool-grid [data-tool-id="image-compressor"]')).toContainText('Reduce JPEG or WebP');
 });
 
 test('orders tools by local usage while preserving full-card navigation', async ({ page }) => {
@@ -40,7 +40,7 @@ test('reports browser compatibility without a backend', async ({ page }) => {
 });
 
 test('exports and imports versioned local settings', async ({ page }) => {
-  await page.getByRole('button', { name: /เพิ่มในรายการโปรด: JSON Formatter/ }).click();
+  await page.locator('#tool-grid').getByRole('button', { name: /เพิ่มในรายการโปรด: JSON Formatter/ }).click();
   await page.getByRole('button', { name: 'ตั้งค่า' }).click();
   const downloadPromise = page.waitForEvent('download');
   await page.getByRole('button', { name: 'ส่งออกการตั้งค่า' }).click();
