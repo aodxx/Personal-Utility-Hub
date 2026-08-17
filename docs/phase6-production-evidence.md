@@ -46,3 +46,8 @@ The saved script `scripts/phase6-production-smoke.mjs` was run against the deplo
 Using `/home/ubuntu/audio-test.wav` as a real browser-upload fixture, the production smoke script passed Audio Trimmer upload, editor mount, process, WAV result metadata, and WAV download. The downloaded filename matched the implemented `*-trimmed.wav` contract. This closes the previously unconfirmed Audio Trimmer production process/export gap for the deployed application.
 
 The final reproducible run passed **10/10 checks** at `360 × 740`, including Privacy, five category guides, Audio Trimmer upload/process/export/download, no horizontal overflow, JSON sample, Escape close, and hash back/forward/refresh.
+
+
+## Final release confirmation
+
+The final evidence/documentation HEAD is `c4238a226a5098dc4fb7db99b4c481066ee8303b`. Its [CI run 31994517569](https://github.com/aodxx/Personal-Utility-Hub/actions/runs/31994517569) and [Pages deploy run 31994517551](https://github.com/aodxx/Personal-Utility-Hub/actions/runs/31994517551) both completed successfully. The smoke script was rerun after that deploy and again passed 10/10 at `360 × 740`.

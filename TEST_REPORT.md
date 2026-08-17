@@ -90,7 +90,7 @@ npm audit --audit-level=high
 node --check public/sw.js
 ```
 
-Local regression suite ล่าสุดผ่าน 86 cases และมี 4 intentional skips จาก 90 cases. Final HEAD `7ad9194f570d77e207b9a67f5cf2a21049b8847d` ผ่าน [CI run 31993843182](https://github.com/aodxx/Personal-Utility-Hub/actions/runs/31993843182) และ [GitHub Pages deploy run 31993843034](https://github.com/aodxx/Personal-Utility-Hub/actions/runs/31993843034) โดยทั้งสอง run จบด้วย success
+Local regression suite ล่าสุดผ่าน 86 cases และมี 4 intentional skips จาก 90 cases. Final HEAD `c4238a226a5098dc4fb7db99b4c481066ee8303b` ผ่าน [CI run 31994517569](https://github.com/aodxx/Personal-Utility-Hub/actions/runs/31994517569) และ [GitHub Pages deploy run 31994517551](https://github.com/aodxx/Personal-Utility-Hub/actions/runs/31994517551) โดยทั้งสอง run จบด้วย success
 
 ## 8. Production GitHub Pages smoke test
 
