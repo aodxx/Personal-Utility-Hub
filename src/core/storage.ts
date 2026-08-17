@@ -22,8 +22,10 @@ const THEME_KEY = 'utility-hub:theme';
 const LOCALE_KEY = 'utility-hub:locale';
 const TOOL_ORDER_KEY = 'utility-hub:tool-order';
 const USAGE_KEY = 'utility-hub:usage';
+const USAGE_EVENTS_KEY = 'utility-hub:usage-events';
 const GUIDE_SEEN_KEY = 'utility-hub:guide-seen';
 const RECENT_LIMIT = 6;
+const USAGE_WINDOW_LIMIT = 30;
 
 function parseStringArray(value: string | null): string[] {
   if (!value) return [];
@@ -101,6 +103,7 @@ export class LocalPreferences {
   private memoryLocale: AppLocale = 'th';
   private memoryToolOrder: ToolOrder = 'catalog';
   private memoryUsage: Record<string, number> = {};
+  private memoryUsageEvents: string[] = [];
   private memoryGuideSeen = new Set<string>();
 
   constructor(storage?: Storage) {
@@ -115,6 +118,7 @@ export class LocalPreferences {
       const toolOrder = this.storage.getItem(TOOL_ORDER_KEY);
       this.memoryToolOrder = toolOrder === 'frequent' ? 'frequent' : 'catalog';
       this.memoryUsage = parseUsage(this.storage.getItem(USAGE_KEY));
+      this.memoryUsageEvents = parseStringArray(this.storage.getItem(USAGE_EVENTS_KEY)).slice(-USAGE_WINDOW_LIMIT);
       this.memoryGuideSeen = new Set(parseStringArray(this.storage.getItem(GUIDE_SEEN_KEY)));
     } catch {
       this.storage = undefined;
@@ -145,17 +149,25 @@ export class LocalPreferences {
   recordUse(toolId: string): number {
     const next = Math.min(Number.MAX_SAFE_INTEGER, (this.memoryUsage[toolId] ?? 0) + 1);
     this.memoryUsage = { ...this.memoryUsage, [toolId]: next };
+    this.memoryUsageEvents = [...this.memoryUsageEvents, toolId].slice(-USAGE_WINDOW_LIMIT);
     this.persistObject(USAGE_KEY, this.memoryUsage);
+    this.persist(USAGE_EVENTS_KEY, this.memoryUsageEvents);
     return next;
   }
 
   getUsage(): Record<string, number> {
-    return { ...this.memoryUsage };
+    if (!this.memoryUsageEvents.length) return { ...this.memoryUsage };
+    return this.memoryUsageEvents.reduce<Record<string, number>>((usage, toolId) => {
+      usage[toolId] = (usage[toolId] ?? 0) + 1;
+      return usage;
+    }, {});
   }
 
   clearUsage(): void {
     this.memoryUsage = {};
+    this.memoryUsageEvents = [];
     this.persistObject(USAGE_KEY, this.memoryUsage);
+    this.persist(USAGE_EVENTS_KEY, this.memoryUsageEvents);
   }
 
   hasSeenGuide(toolId: string): boolean {
@@ -221,9 +233,11 @@ export class LocalPreferences {
     this.memoryFavorites = new Set(settings.preferences.favorites);
     this.memoryRecent = settings.preferences.recent.slice(0, RECENT_LIMIT);
     this.memoryUsage = { ...settings.preferences.usage };
+    this.memoryUsageEvents = [];
     this.persist(FAVORITES_KEY, [...this.memoryFavorites]);
     this.persist(RECENT_KEY, this.memoryRecent);
     this.persistObject(USAGE_KEY, this.memoryUsage);
+    this.removeValue(USAGE_EVENTS_KEY);
     this.persistValue(LOCALE_KEY, this.memoryLocale);
     this.persistValue(TOOL_ORDER_KEY, this.memoryToolOrder);
     if (this.memoryTheme) this.persistValue(THEME_KEY, this.memoryTheme);
