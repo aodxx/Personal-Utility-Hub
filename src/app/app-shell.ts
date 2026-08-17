@@ -432,7 +432,12 @@ export class AppShell {
       <section class="section-block most-used" aria-labelledby="most-used-title">
         <div class="section-heading"><div><div class="eyebrow">${t(locale, 'mostUsedEyebrow')}</div><h2 id="most-used-title">${t(locale, 'mostUsedTitle')}</h2></div><span class="result-count">5</span></div>
         <p class="section-intro">${t(locale, 'mostUsedDetail')}</p>
-        <div id="most-used-carousel" class="most-used-carousel" role="region" aria-label="${t(locale, 'mostUsedTitle')}" tabindex="0"></div>
+        <div class="most-used-carousel-shell">
+          <button class="carousel-control carousel-control--previous" type="button" data-carousel-action="previous" aria-label="${t(locale, 'carouselPrevious')}" disabled>←</button>
+          <div id="most-used-carousel" class="most-used-carousel" role="region" aria-label="${t(locale, 'mostUsedTitle')}" tabindex="0"></div>
+          <button class="carousel-control carousel-control--next" type="button" data-carousel-action="next" aria-label="${t(locale, 'carouselNext')}">→</button>
+        </div>
+        <div class="carousel-feedback"><div id="most-used-dots" class="carousel-dots" role="tablist" aria-label="${t(locale, 'carouselPosition')}"></div><span id="most-used-position" class="visually-hidden" role="status"></span></div>
         <p class="carousel-hint">${t(locale, 'carouselHint')}</p>
       </section>
 
@@ -457,6 +462,25 @@ export class AppShell {
     const favoritesCheckbox = main.querySelector<HTMLInputElement>('#favorites-only');
     const categoryTabs = main.querySelector<HTMLElement>('#category-tabs');
     const trustChips = main.querySelector<HTMLElement>('.trust-chips');
+    const mostUsedCarousel = main.querySelector<HTMLElement>('#most-used-carousel');
+    let carouselFrame = 0;
+    const handleCarouselClick = (event: Event): void => {
+      const target = (event.target as HTMLElement).closest<HTMLElement>('[data-carousel-action], [data-carousel-index]');
+      if (!target || !mostUsedCarousel) return;
+      const behavior: ScrollBehavior = window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth';
+      if (target.dataset.carouselIndex) {
+        const card = mostUsedCarousel.querySelector<HTMLElement>(`[data-carousel-card-index="${target.dataset.carouselIndex}"]`);
+        if (card) mostUsedCarousel.scrollTo({ left: card.offsetLeft - 8, behavior });
+        return;
+      }
+      const card = mostUsedCarousel.querySelector<HTMLElement>('.quick-tool-card');
+      const amount = card ? card.getBoundingClientRect().width + 16 : mostUsedCarousel.clientWidth;
+      mostUsedCarousel.scrollBy({ left: target.dataset.carouselAction === 'previous' ? -amount : amount, behavior });
+    };
+    const handleCarouselScroll = (): void => {
+      if (carouselFrame) return;
+      carouselFrame = window.requestAnimationFrame(() => { carouselFrame = 0; this.updateCarouselState(main); });
+    };
 
     const refresh = (animatedFavoriteId?: string): void => {
       const favorites = this.preferences.getFavorites();
@@ -559,6 +583,9 @@ export class AppShell {
     main.addEventListener('click', handleActions);
     trustChips?.addEventListener('click', handleTrustClick);
     trustChips?.addEventListener('focusin', handleTrustFocus);
+    mostUsedCarousel?.addEventListener('click', handleCarouselClick);
+    mostUsedCarousel?.addEventListener('scroll', handleCarouselScroll, { passive: true });
+    main.querySelector<HTMLElement>('.most-used-carousel-shell')?.addEventListener('click', handleCarouselClick);
     document.addEventListener('keydown', handleShortcut);
     this.cleanupHome = () => {
       searchInput?.removeEventListener('input', handleInput);
@@ -567,6 +594,10 @@ export class AppShell {
       main.removeEventListener('click', handleActions);
       trustChips?.removeEventListener('click', handleTrustClick);
       trustChips?.removeEventListener('focusin', handleTrustFocus);
+      mostUsedCarousel?.removeEventListener('click', handleCarouselClick);
+      mostUsedCarousel?.removeEventListener('scroll', handleCarouselScroll);
+      main.querySelector<HTMLElement>('.most-used-carousel-shell')?.removeEventListener('click', handleCarouselClick);
+      if (carouselFrame) window.cancelAnimationFrame(carouselFrame);
       document.removeEventListener('keydown', handleShortcut);
     };
 
@@ -577,7 +608,10 @@ export class AppShell {
     const section = main.querySelector<HTMLElement>('#most-used-carousel');
     if (!section) return;
     const tools = mostUsedTools(toolCatalog, this.preferences.getUsage(), MOST_USED_FALLBACK_IDS, toolCatalog.map(({ id }) => id));
-    section.innerHTML = tools.map((tool) => this.quickToolCard(tool, favorites, animatedFavoriteId)).join('');
+    section.innerHTML = tools.map((tool, index) => this.quickToolCard(tool, favorites, animatedFavoriteId, index)).join('');
+    const dots = main.querySelector<HTMLElement>('#most-used-dots');
+    if (dots) dots.innerHTML = tools.map((tool, index) => `<button class="carousel-dot${index === 0 ? ' is-active' : ''}" type="button" role="tab" data-carousel-index="${index}" aria-label="${t(this.preferences.getLocale(), 'carouselPosition')} ${index + 1}: ${this.escapeHtml(localizeTool(tool, this.preferences.getLocale()).title)}" aria-selected="${index === 0}"></button>`).join('');
+    window.requestAnimationFrame(() => this.updateCarouselState(main));
   }
 
   private renderFavorites(main: HTMLElement, favorites: ReadonlySet<string>, animatedFavoriteId?: string): void {
@@ -606,14 +640,42 @@ export class AppShell {
     `;
   }
 
-  private quickToolCard(tool: ToolMetadata, favorites: ReadonlySet<string>, animatedFavoriteId?: string): string {
+  private updateCarouselState(main: HTMLElement): void {
+    const carousel = main.querySelector<HTMLElement>('#most-used-carousel');
+    if (!carousel) return;
+    const cards = [...carousel.querySelectorAll<HTMLElement>('.quick-tool-card')];
+    if (!cards.length) return;
+    const center = carousel.scrollLeft + carousel.clientWidth / 2;
+    let activeIndex = 0;
+    let closestDistance = Number.POSITIVE_INFINITY;
+    cards.forEach((card, index) => {
+      const cardCenter = card.offsetLeft + card.offsetWidth / 2;
+      const distance = Math.abs(cardCenter - center);
+      if (distance < closestDistance) { closestDistance = distance; activeIndex = index; }
+      card.classList.toggle('is-active', distance === closestDistance);
+    });
+    cards.forEach((card, index) => card.classList.toggle('is-active', index === activeIndex));
+    main.querySelectorAll<HTMLButtonElement>('.carousel-dot').forEach((dot, index) => {
+      dot.classList.toggle('is-active', index === activeIndex);
+      dot.setAttribute('aria-selected', String(index === activeIndex));
+    });
+    const position = main.querySelector<HTMLElement>('#most-used-position');
+    const locale = this.preferences.getLocale();
+    if (position) position.textContent = `${t(locale, 'carouselActive')}: ${activeIndex + 1} / ${cards.length}`;
+    const previous = main.querySelector<HTMLButtonElement>('[data-carousel-action="previous"]');
+    const next = main.querySelector<HTMLButtonElement>('[data-carousel-action="next"]');
+    if (previous) previous.disabled = carousel.scrollLeft <= 2;
+    if (next) next.disabled = carousel.scrollLeft + carousel.clientWidth >= carousel.scrollWidth - 2;
+  }
+
+  private quickToolCard(tool: ToolMetadata, favorites: ReadonlySet<string>, animatedFavoriteId?: string, index = 0): string {
     const locale = this.preferences.getLocale();
     const displayed = localizeTool(tool, locale);
     const isFavorite = favorites.has(tool.id);
     const animationClass = animatedFavoriteId === tool.id ? ' is-bouncing' : '';
-    return `<article class="quick-tool-card" data-tool-id="${tool.id}">
+    return `<article class="quick-tool-card" data-tool-id="${tool.id}" data-carousel-card-index="${index}">
       <a class="quick-tool-card__tap-target" href="#${tool.route}" aria-label="${this.escapeHtml(displayed.title)}"></a>
-      <div class="quick-tool-card__header"><span class="quick-tool-card__visual">${toolAssetIcon(tool.icon)}</span><button class="favorite-button favorite-button--compact${animationClass}" type="button" data-action="favorite" data-id="${tool.id}" aria-label="${t(locale, isFavorite ? 'removeFavorite' : 'addFavorite')}: ${this.escapeHtml(displayed.title)}" aria-pressed="${isFavorite}"><span aria-hidden="true">${isFavorite ? '★' : '☆'}</span></button></div>
+      <div class="quick-tool-card__header"><span class="quick-tool-card__visual" aria-hidden="true">${toolAssetIcon(tool.icon, 'asset-icon--quick')}</span><button class="favorite-button favorite-button--compact${animationClass}" type="button" data-action="favorite" data-id="${tool.id}" aria-label="${t(locale, isFavorite ? 'removeFavorite' : 'addFavorite')}: ${this.escapeHtml(displayed.title)}" aria-pressed="${isFavorite}"><span aria-hidden="true">${isFavorite ? '★' : '☆'}</span></button></div>
       <div class="quick-tool-card__body"><span class="quick-tool-card__category">${this.escapeHtml(displayed.category)}</span><h3>${this.escapeHtml(displayed.title)}</h3><p>${this.escapeHtml(displayed.description)}</p></div>
       <div class="quick-tool-card__footer"><span class="privacy-badge">${t(locale, 'onDeviceBadge')}</span><span class="tool-card__arrow" aria-hidden="true">→</span></div>
     </article>`;
