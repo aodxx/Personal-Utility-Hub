@@ -264,3 +264,19 @@ Wave 0 เพิ่ม `npm run check:registry` ใน quality gate และต
 | Community Mapping interaction | Point → Polygon → GeoJSON ผ่าน |
 
 Entry budget 46 KB เป็น narrow Wave 1 budget ที่บันทึกเหตุผลไว้ใน `scripts/check-bundle.mjs`; lazy และ total JavaScript budgets ไม่ได้ผ่อนปรน
+
+
+## Audio edge cases and Wave 1 Text/Data validation — 19 สิงหาคม 2026
+
+| Check | Result |
+|---|---:|
+| Audio targeted E2E | 21/21 ผ่าน จาก 7 audio/file cases × 3 profiles |
+| Audio coverage | stereo, 44.1 kHz, 16 kHz, silence-then-tone, invalid WAV, repeated Preview และ Download WAV |
+| Wave 1 unit tests | JSON Schema + Markdown Table รวม 5 tests ผ่าน |
+| Full Vitest | 99/99 ผ่าน จาก 21 test files |
+| Wave 1 E2E | 4 ผ่าน, 2 intentional skips |
+| Full Playwright | 181 ผ่าน, 14 intentional skips จาก 195 tests |
+| Registry | 31 modules ผ่าน |
+| Bundle | Entry 46.4 KB gzip / budget 47 KB; largest lazy 366.1 KB; total JS 1,070.6 KB |
+
+JSON Schema Generator และ Markdown Table Builder ยังอยู่สถานะ beta pilot เพราะ schema เป็น inferred จาก sample เดียว และ Markdown parser เป็น simple table parser ไม่ใช่ full CSV dialect engine

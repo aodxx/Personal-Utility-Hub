@@ -13,15 +13,19 @@ async function pdfBuffer(pages: number, title: string): Promise<Buffer> {
   return Buffer.from(await document.save());
 }
 
-function wavBuffer(durationSeconds = 1): Buffer {
-  const sampleRate = 8_000;
-  const frames = sampleRate * durationSeconds;
-  const buffer = Buffer.alloc(44 + frames * 2);
-  buffer.write('RIFF', 0); buffer.writeUInt32LE(36 + frames * 2, 4); buffer.write('WAVE', 8);
-  buffer.write('fmt ', 12); buffer.writeUInt32LE(16, 16); buffer.writeUInt16LE(1, 20); buffer.writeUInt16LE(1, 22);
-  buffer.writeUInt32LE(sampleRate, 24); buffer.writeUInt32LE(sampleRate * 2, 28); buffer.writeUInt16LE(2, 32); buffer.writeUInt16LE(16, 34);
-  buffer.write('data', 36); buffer.writeUInt32LE(frames * 2, 40);
-  for (let index = 0; index < frames; index += 1) buffer.writeInt16LE(Math.round(Math.sin(index / 8) * 8_000), 44 + index * 2);
+function wavBuffer(durationSeconds = 1, sampleRate = 8_000, channels = 1, mode: 'tone' | 'silence' | 'silence-then-tone' = 'tone'): Buffer {
+  const frames = Math.max(1, Math.floor(sampleRate * durationSeconds));
+  const bytesPerFrame = channels * 2;
+  const buffer = Buffer.alloc(44 + frames * bytesPerFrame);
+  buffer.write('RIFF', 0); buffer.writeUInt32LE(36 + frames * bytesPerFrame, 4); buffer.write('WAVE', 8);
+  buffer.write('fmt ', 12); buffer.writeUInt32LE(16, 16); buffer.writeUInt16LE(1, 20); buffer.writeUInt16LE(channels, 22);
+  buffer.writeUInt32LE(sampleRate, 24); buffer.writeUInt32LE(sampleRate * bytesPerFrame, 28); buffer.writeUInt16LE(bytesPerFrame, 32); buffer.writeUInt16LE(16, 34);
+  buffer.write('data', 36); buffer.writeUInt32LE(frames * bytesPerFrame, 40);
+  for (let frame = 0; frame < frames; frame += 1) {
+    const silent = mode === 'silence' || (mode === 'silence-then-tone' && frame < frames / 2);
+    const sample = silent ? 0 : Math.round(Math.sin(frame / 8) * 8_000);
+    for (let channel = 0; channel < channels; channel += 1) buffer.writeInt16LE(sample, 44 + (frame * channels + channel) * 2);
+  }
   return buffer;
 }
 
@@ -64,6 +68,37 @@ test('runs all five new audio workbenches with real output', async ({ page }) =>
     await page.getByRole('button', { name: /ดาวน์โหลด WAV/ }).click();
     expect((await download).suggestedFilename()).toMatch(/\.wav$/);
   }
+});
+
+test('keeps stereo and non-default sample rates through Preview and Export', async ({ page }) => {
+  await page.goto('./#/tools/audio-finisher');
+  await page.locator('#audio-file').setInputFiles({ name: 'stereo-44k.wav', mimeType: 'audio/wav', buffer: wavBuffer(1, 44_100, 2) });
+  await expect(page.locator('#audio-editor')).toBeVisible();
+  await page.getByRole('button', { name: 'Preview ผลลัพธ์' }).click();
+  await expect(page.locator('#audio-status')).toContainText('Preview ready', { timeout: 15_000 });
+  await expect(page.locator('#audio-result-meta')).toContainText('2 ch');
+  await page.getByRole('button', { name: 'Preview ผลลัพธ์' }).click();
+  await expect(page.locator('#audio-status')).toContainText('Preview ready', { timeout: 15_000 });
+  await page.locator('#audio-form').dispatchEvent('submit');
+  await expect(page.locator('#audio-status')).toContainText('Processing complete', { timeout: 15_000 });
+  const download = page.waitForEvent('download');
+  await page.getByRole('button', { name: /ดาวน์โหลด WAV/ }).click();
+  expect((await download).suggestedFilename()).toMatch(/\.wav$/);
+});
+
+test('handles silence input and invalid audio without crashing the workbench', async ({ page }) => {
+  await page.goto('./#/tools/silence-remover');
+  await page.locator('#audio-file').setInputFiles({ name: 'silence-tone.wav', mimeType: 'audio/wav', buffer: wavBuffer(2, 16_000, 1, 'silence-then-tone') });
+  await expect(page.locator('#audio-editor')).toBeVisible();
+  await page.getByRole('button', { name: 'Preview ผลลัพธ์' }).click();
+  await expect(page.locator('#audio-status')).toContainText('Preview ready', { timeout: 15_000 });
+  await page.locator('#audio-form').dispatchEvent('submit');
+  await expect(page.locator('#audio-status')).toContainText('Processing complete', { timeout: 15_000 });
+
+  await page.goto('./#/tools/audio-compressor');
+  await page.locator('#audio-file').setInputFiles({ name: 'not-audio.wav', mimeType: 'audio/wav', buffer: Buffer.from('not a RIFF file') });
+  await expect(page.locator('#audio-status')).toContainText('ไม่สามารถเปิดไฟล์', { timeout: 15_000 });
+  await expect(page.locator('#audio-editor')).toBeHidden();
 });
 
 test('compresses an image and combines images into PDF locally', async ({ page }) => {

@@ -164,3 +164,19 @@ Detailed evidence is in [`docs/phase71-production-evidence.md`](docs/phase71-pro
 
 
 Entry bundle gate ถูกปรับจาก 45 KB เป็น **46 KB gzip** อย่างมีเหตุผลเฉพาะสำหรับ Wave 1 pilot เนื่องจาก static metadata/guide ของ tool ใหม่ทำให้ entry วัดได้ 45.4 KB; lazy chunk ใหญ่สุดยัง 366.1 KB และ JavaScript รวม 1,066.1 KB จึงยังต่ำกว่า total budget 1,600 KB มาก การปรับนี้ถูกบันทึกเป็น comment ใน `scripts/check-bundle.mjs` และยังคงตรวจ `largestLazyGzip`/`totalJavaScriptGzip` เดิม
+
+
+## Audio edge cases and Wave 1 Text/Data expansion — 2026-08-19
+
+รอบนี้ปิด edge cases ของ audio workflow และเพิ่ม Wave 1 Text/Data beta pilots อีก 2 เครื่องมือ โดยยังไม่เพิ่ม category ใหม่
+
+| งาน | ผลล่าสุด |
+|---|---|
+| Audio edge cases | เพิ่ม fixture และ E2E สำหรับ stereo, 44.1 kHz, 16 kHz, silence-then-tone, invalid file และ repeated Preview → Export → Download WAV |
+| JSON Schema Generator | สร้าง inferred JSON Schema draft 2020-12 จาก JSON ตัวอย่าง รองรับ nested object, array, mixed item shapes, Unicode และ local-only error state |
+| Markdown Table Builder | แปลง CSV/TSV/pipe เป็น Markdown table รองรับ quoted comma, pipe escaping, missing-cell padding, copy/sample/clear |
+| Catalog | 31 metadata modules; Text/Data มี 8 tools; เครื่องมือใหม่ทั้งสองเป็น beta เพื่อผ่าน production evidence เพิ่มเติมก่อน active |
+| Registry and guides | lazy registration, bilingual guides, unit tests และ mobile E2E เพิ่มครบ |
+| Bundle | Entry 46.4 KB gzip / 47 KB Wave 1 budget; largest lazy 366.1 KB; total JS 1,070.6 KB |
+
+Targeted audio suite ผ่าน 21/21 tests, Wave 1 E2E ผ่าน 4 testsและ 2 intentional skips, full Playwright ผ่าน 181 testsและ 14 intentional skips, Vitest ผ่าน 99/99 และ registry ผ่าน 31 modules
