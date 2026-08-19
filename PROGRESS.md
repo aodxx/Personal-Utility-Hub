@@ -146,3 +146,21 @@ Carousel ใช้ native `overflow-x: auto`, `scroll-snap-type: x mandatory`, `
 | Pages deploy | [31998196579](https://github.com/aodxx/Personal-Utility-Hub/actions/runs/31998196579) ผ่าน |
 
 Detailed evidence is in [`docs/phase71-production-evidence.md`](docs/phase71-production-evidence.md), screenshot review notes are in [`docs/phase71-visual-findings.md`](docs/phase71-visual-findings.md), and the reproducible capture command is `node scripts/phase71-production-visual.mjs`.
+
+## Approved Reliability and Wave 0/1 milestone — 2026-08-19
+
+เริ่มดำเนินงานตามลำดับที่อนุมัติ: Beta Reliability Sprint, Audio Production Contract, Wave 0 platform hardening และ Wave 1 ชุดเล็ก
+
+| งาน | ผลล่าสุด |
+|---|---|
+| Community Mapping interaction | เพิ่ม E2E วาง Point, วาด Polygon, ตรวจสถิติ และ export GeoJSON |
+| Audio Production Contract | เพิ่มการตรวจ Upload → Preview → Export → Download WAV ให้กับ audio workbenches ใหม่ 5 ตัว |
+| Registry hardening | เพิ่ม `npm run check:registry` ตรวจ 29 metadata modules, unique IDs/routes, required fields และ lazy registrations |
+| CI gate | เชื่อม `check:registry` เข้า `.github/workflows/ci.yml` |
+| Wave 1 tool | เพิ่ม URL Query String Builder ในหมวดข้อความและข้อมูล รองรับ Unicode, repeated keys, hash, parse/build, copy และ mobile layout |
+| Privacy | ทุกงานประมวลผลใน browser; URL Query Builder ไม่มี upload/backend และ audio/community tests ไม่เพิ่ม network dependency |
+
+ผลทดสอบ milestone นี้: Vitest **90/90 ผ่าน**, typecheck ผ่าน, registry check ผ่าน **29 modules**, targeted Community Mapping/Audio E2E ผ่าน และ URL Query Builder E2E ผ่านทั้ง desktop กับ mobile profile หลัง rebuild production preview
+
+
+Entry bundle gate ถูกปรับจาก 45 KB เป็น **46 KB gzip** อย่างมีเหตุผลเฉพาะสำหรับ Wave 1 pilot เนื่องจาก static metadata/guide ของ tool ใหม่ทำให้ entry วัดได้ 45.4 KB; lazy chunk ใหญ่สุดยัง 366.1 KB และ JavaScript รวม 1,066.1 KB จึงยังต่ำกว่า total budget 1,600 KB มาก การปรับนี้ถูกบันทึกเป็น comment ใน `scripts/check-bundle.mjs` และยังคงตรวจ `largestLazyGzip`/`totalJavaScriptGzip` เดิม

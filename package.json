@@ -7,6 +7,7 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "check:bundle": "node scripts/check-bundle.mjs",
+    "check:registry": "node scripts/check-registry.mjs",
     "check:svg-library": "node scripts/check-svg-library.mjs",
     "audit:svg-library": "node scripts/generate-svg-library-audit.mjs",
     "preview": "vite preview",

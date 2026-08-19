@@ -22,6 +22,7 @@ import { metadata as jsonFormatterMetadata } from '../tools/json-formatter/metad
 import { metadata as qrGeneratorMetadata } from '../tools/qr-generator/metadata';
 import { metadata as qrReaderMetadata } from '../tools/qr-reader/metadata';
 import { metadata as textFormatterMetadata } from '../tools/text-formatter/metadata';
+import { metadata as urlQueryBuilderMetadata } from '../tools/url-query-builder/metadata';
 import { metadata as fileMetadata } from '../tools/file-metadata/metadata';
 import { metadata as imageCompressorMetadata } from '../tools/image-compressor/metadata';
 import { metadata as imagesToPdfMetadata } from '../tools/images-to-pdf/metadata';
@@ -56,6 +57,10 @@ export const toolRegistry = [
   {
     metadata: qrGeneratorMetadata,
     load: () => import('../tools/qr-generator'),
+  },
+  {
+    metadata: urlQueryBuilderMetadata,
+    load: () => import('../tools/url-query-builder'),
   },
   {
     metadata: imageResizerMetadata,

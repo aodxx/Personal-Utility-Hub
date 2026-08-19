@@ -228,3 +228,39 @@ Production visual capture ใช้ `node scripts/phase71-production-visual.mjs`
 Implementation HEAD คือ `0475f82f9fba7dd05abb2297a561926bb6e63a7d`. CI [31998196555](https://github.com/aodxx/Personal-Utility-Hub/actions/runs/31998196555) และ Pages deploy [31998196579](https://github.com/aodxx/Personal-Utility-Hub/actions/runs/31998196579) ผ่าน
 
 Visual evidence อยู่ใน [`docs/phase71-production-evidence.md`](docs/phase71-production-evidence.md) และ screenshots อยู่ใน [`docs/phase71-screenshots/`](docs/phase71-screenshots/)
+
+
+## Approved Reliability and Wave 0/1 milestone — 19 สิงหาคม 2026
+
+รอบนี้เพิ่ม regression evidence ก่อนขยาย catalog ต่อ โดยยังคง client-side/local-first architecture เดิม
+
+| Check | Result |
+|---|---:|
+| TypeScript typecheck | ผ่าน |
+| Vitest | 90/90 ผ่าน |
+| Registry validator | ผ่าน 29 metadata modules, unique IDs/routes, required fields และ lazy registrations |
+| Community Mapping targeted E2E | ผ่าน Point, Polygon, statistics และ GeoJSON export |
+| Audio workbench targeted E2E | ผ่าน 5 workbenches สำหรับ Preview → Export → Download WAV |
+| URL Query Builder unit | ผ่าน Unicode, repeated keys, hash, encoding และ invalid input |
+| URL Query Builder E2E | ผ่าน desktop และ Android profiles รวม mobile no-overflow |
+| Production build | ผ่าน; URL Query Builder ถูกแยกเป็น lazy chunk ขนาด 5.01 kB |
+| `git diff --check` | ผ่าน |
+
+Wave 0 เพิ่ม `npm run check:registry` ใน package scripts และ GitHub Actions CI เพื่อป้องกัน metadata/route/lazy registration drift. Wave 1 เพิ่ม `url-query-builder` ในหมวด `ข้อความและข้อมูล` โดยมี bilingual guide, pure logic tests และ browser workflow tests
+
+
+### Wave 0/1 release note — 19 สิงหาคม 2026
+
+Wave 0 เพิ่ม `npm run check:registry` ใน quality gate และตรวจ 29 metadata modules, unique IDs/routes, required fields และ lazy registrations. Wave 1 เพิ่ม URL Query Builder เป็น beta pilot พร้อม unit/E2E contract และ bilingual guide แบบกระชับ
+
+| Check | Result |
+|---|---:|
+| Vitest | 94/94 ผ่าน จาก 20 test files |
+| Typecheck | ผ่าน |
+| Registry | 29 modules ผ่าน |
+| Bundle | Entry 45.4 KB gzip / budget 46 KB; largest lazy 366.1 KB; total JS 1,066.1 KB |
+| Targeted smoke + URL tool E2E | 35 ผ่าน, 4 intentional skips |
+| Audio contract | Preview → Export → Download WAV ผ่าน 5 workbenches |
+| Community Mapping interaction | Point → Polygon → GeoJSON ผ่าน |
+
+Entry budget 46 KB เป็น narrow Wave 1 budget ที่บันทึกเหตุผลไว้ใน `scripts/check-bundle.mjs`; lazy และ total JavaScript budgets ไม่ได้ผ่อนปรน

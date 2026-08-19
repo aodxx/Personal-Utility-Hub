@@ -59,6 +59,10 @@ test('runs all five new audio workbenches with real output', async ({ page }) =>
     await expect(page.locator('#audio-status')).toContainText('Processing complete', { timeout: 15_000 });
     await expect(page.locator('#audio-result')).toBeVisible({ timeout: 15_000 });
     await expect(page.locator('#audio-result-meta')).toContainText('Peak');
+    const download = page.waitForEvent('download');
+    await expect(page.getByRole('button', { name: /ดาวน์โหลด WAV/ })).toBeVisible();
+    await page.getByRole('button', { name: /ดาวน์โหลด WAV/ }).click();
+    expect((await download).suggestedFilename()).toMatch(/\.wav$/);
   }
 });
 
