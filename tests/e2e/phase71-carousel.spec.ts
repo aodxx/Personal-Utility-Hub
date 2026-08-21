@@ -27,6 +27,46 @@ test('renders centered real visual assets and consistent quick-launch structure 
   }
 });
 
+test('keeps Community Mapping and URL Query artwork centered inside the mobile visual frame', async ({ page }) => {
+  await page.evaluate(() => {
+    localStorage.setItem('utility-hub:usage', JSON.stringify({
+      'community-mapping': 20,
+      'url-query-builder': 19,
+    }));
+  });
+  await page.reload();
+
+  const cards = page.locator('#most-used-carousel .quick-tool-card');
+  await expect(cards.first()).toHaveAttribute('data-tool-id', 'community-mapping');
+  await expect(cards.nth(1)).toHaveAttribute('data-tool-id', 'url-query-builder');
+
+  for (const card of [cards.first(), cards.nth(1)]) {
+    const placement = await card.locator('.quick-tool-card__visual').evaluate((frame) => {
+      const frameRect = frame.getBoundingClientRect();
+      const svg = frame.querySelector('svg');
+      const use = frame.querySelector('use');
+      const svgRect = svg?.getBoundingClientRect();
+      const useRect = use?.getBoundingClientRect();
+      const artworkRect = useRect && useRect.width > 0 && useRect.height > 0 ? useRect : svgRect;
+
+      return {
+        horizontalDelta: artworkRect ? (artworkRect.left + artworkRect.width / 2) - (frameRect.left + frameRect.width / 2) : 999,
+        verticalDelta: artworkRect ? (artworkRect.top + artworkRect.height / 2) - (frameRect.top + frameRect.height / 2) : 999,
+        contained: artworkRect
+          ? artworkRect.left >= frameRect.left - 1
+            && artworkRect.right <= frameRect.right + 1
+            && artworkRect.top >= frameRect.top - 1
+            && artworkRect.bottom <= frameRect.bottom + 1
+          : false,
+      };
+    });
+
+    expect(Math.abs(placement.horizontalDelta)).toBeLessThanOrEqual(4);
+    expect(Math.abs(placement.verticalDelta)).toBeLessThanOrEqual(4);
+    expect(placement.contained).toBe(true);
+  }
+});
+
 test('uses real local usage ranking and allows frequently used beta tools to enter Most Used', async ({ page }) => {
   await page.evaluate(() => {
     localStorage.setItem('utility-hub:usage', JSON.stringify({
