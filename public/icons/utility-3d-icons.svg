@@ -297,10 +297,55 @@
     <symbol id="tool-json-schema-generator" viewBox="0 0 128 128"><g filter="url(#soft-shadow)"><rect x="18" y="16" width="92" height="96" rx="14" fill="url(#paper)" stroke="#7d90c3" stroke-width="3"/><path d="M36 38h56M36 57h20M72 57h20M36 76h20M72 76h20M36 95h56" stroke="url(#blue)" stroke-width="6" stroke-linecap="round"/><path d="m57 53 14 14-14 14" fill="none" stroke="#ff675f" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="97" cy="29" r="8" fill="#ffc74a"/></g></symbol>
     <symbol id="tool-markdown-table-builder" viewBox="0 0 128 128"><g filter="url(#soft-shadow)"><rect x="15" y="18" width="98" height="92" rx="14" fill="url(#paper)" stroke="#7d90c3" stroke-width="3"/><path d="M29 45h70M29 68h70M29 91h70M52 30v72M76 30v72" stroke="#267fa9" stroke-width="5"/><path d="M29 30h70" stroke="#ff675f" stroke-width="7" stroke-linecap="round"/><circle cx="40" cy="30" r="4" fill="#ffc74a"/></g></symbol>
     <symbol id="tool-url-query-builder" viewBox="0 0 128 128"><g filter="url(#soft-shadow)"><path d="M18 49h36l10 12H18z" fill="url(#blue)" stroke="#283994" stroke-width="3"/><path d="M74 67h36L99 79H64z" fill="url(#violet)" stroke="#43299d" stroke-width="3"/><path d="M47 55h28M53 73h22" stroke="#ffc74a" stroke-width="6" stroke-linecap="round"/><path d="M32 31h64M32 97h64" stroke="#267fa9" stroke-width="5" stroke-linecap="round"/><circle cx="32" cy="31" r="6" fill="#ff675f"/><circle cx="96" cy="97" r="6" fill="#ff675f"/></g></symbol>
-    <symbol id="category-location" viewBox="0 0 128 128"><g filter="url(#soft-shadow)"><path d="M16 25 43 15l42 10 27-10v88l-27 10-42-10-27 10z" fill="url(#cyan)" stroke="#267fa9" stroke-width="3"/><path d="M43 15v88M85 25v88" stroke="#fff" stroke-width="3" opacity=".85"/><path d="M27 73c13-25 23 18 35-5s20 10 36-18" fill="none" stroke="#ffc74a" stroke-width="6" stroke-linecap="round"/><circle cx="64" cy="52" r="9" fill="#ff675f" stroke="#fff" stroke-width="4"/></g></symbol>
-    <symbol id="category-files" viewBox="0 0 128 128"><g filter="url(#soft-shadow)"><path d="M25 14h51l20 20v70a11 11 0 0 1-11 11H25a11 11 0 0 1-11-11V25a11 11 0 0 1 11-11z" fill="url(#paper)" stroke="#7d90c3" stroke-width="3"/><path d="M76 14v21h20" fill="url(#violet)"/><path d="M31 56h43M31 73h55M31 90h32" stroke="url(#blue)" stroke-width="7" stroke-linecap="round"/><circle cx="88" cy="90" r="15" fill="#ffc74a" stroke="#ff675f" stroke-width="3"/><path d="M88 82v16M80 90h16" stroke="#fff" stroke-width="5" stroke-linecap="round"/></g></symbol>
-    <symbol id="category-diagrams" viewBox="0 0 128 128"><g filter="url(#soft-shadow)"><rect x="14" y="14" width="42" height="28" rx="7" fill="url(#cyan)" stroke="#267fa9" stroke-width="3"/><rect x="72" y="14" width="42" height="28" rx="7" fill="url(#violet)" stroke="#7866b5" stroke-width="3"/><rect x="43" y="86" width="42" height="28" rx="7" fill="url(#paper)" stroke="#7d90c3" stroke-width="3"/><path d="M35 42v17h58V42M64 59v27" fill="none" stroke="#ffc74a" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/><circle cx="35" cy="59" r="5" fill="#ff675f"/><circle cx="93" cy="59" r="5" fill="#ff675f"/></g></symbol>
-    <symbol id="category-games" viewBox="0 0 128 128"><g filter="url(#soft-shadow)"><path d="M24 50c4-18 17-27 32-20l8 4 8-4c15-7 28 2 32 20l7 32c3 13-13 21-22 11L78 80H50l-11 13c-9 10-25 2-22-11z" fill="url(#violet)" stroke="#6959a5" stroke-width="3"/><path d="M35 54v18M26 63h18" stroke="#fff" stroke-width="6" stroke-linecap="round"/><circle cx="88" cy="59" r="5" fill="#ffc74a"/><circle cx="99" cy="70" r="5" fill="#ff675f"/><circle cx="87" cy="79" r="5" fill="#76d6ba"/></g></symbol>
-    <symbol id="category-fortune" viewBox="0 0 128 128"><g filter="url(#soft-shadow)"><path d="M64 12 76 42l32 2-25 20 8 31-27-17-27 17 8-31-25-20 32-2z" fill="url(#gold)" stroke="#d39b2f" stroke-width="3"/><circle cx="64" cy="57" r="13" fill="#fff" opacity=".8"/><path d="M64 46v22M53 57h22" stroke="#7e67b8" stroke-width="4" stroke-linecap="round"/><circle cx="26" cy="29" r="4" fill="#ffc74a"/><circle cx="103" cy="30" r="4" fill="#76d6ba"/><circle cx="21" cy="91" r="3" fill="#ff675f"/><circle cx="108" cy="94" r="3" fill="#ffc74a"/></g></symbol>
+    <symbol id="category-location" viewBox="0 0 128 128">
+      <g filter="url(#soft-shadow)">
+        <path d="M14 31 43 18l42 12 29-13v82l-29 13-42-12-29 13z" fill="url(#paper)" stroke="#7d90c3" stroke-width="3" stroke-linejoin="round"/>
+        <path d="M43 18v82M85 30v82" stroke="#7d90c3" stroke-width="3"/>
+        <path d="M24 86c13-20 25 10 38-5s21 6 39-17" fill="none" stroke="url(#cyan)" stroke-width="7" stroke-linecap="round"/>
+        <path d="M88 19c-12 0-22 10-22 22 0 17 22 34 22 34s22-17 22-34c0-12-10-22-22-22z" fill="url(#violet)" stroke="#43299d" stroke-width="3"/>
+        <circle cx="88" cy="41" r="8" fill="#fff"/>
+        <circle cx="88" cy="41" r="4" fill="#ff675f"/>
+      </g>
+    </symbol>
+    <symbol id="category-files" viewBox="0 0 128 128">
+      <g filter="url(#soft-shadow)">
+        <path d="M15 38a12 12 0 0 1 12-12h25l10 11h39a12 12 0 0 1 12 12v49a13 13 0 0 1-13 13H28a13 13 0 0 1-13-13z" fill="url(#cyan)" stroke="#267fa9" stroke-width="3"/>
+        <path d="M20 55h88v44a10 10 0 0 1-10 10H30a10 10 0 0 1-10-10z" fill="url(#blue)" stroke="#283994" stroke-width="3"/>
+        <path d="M39 44h42l14 15v35H39z" fill="url(#paper)" stroke="#7d90c3" stroke-width="3"/>
+        <path d="M81 44v16h14" fill="url(#lime)"/>
+        <path d="M49 68h34M49 80h25" stroke="#5f75b8" stroke-width="5" stroke-linecap="round"/>
+        <path d="M79 76h25l14 14-24 24-15-15z" fill="url(#violet)" stroke="#43299d" stroke-width="3"/>
+        <circle cx="101" cy="89" r="5" fill="#fff"/>
+      </g>
+    </symbol>
+    <symbol id="category-diagrams" viewBox="0 0 128 128">
+      <g filter="url(#soft-shadow)">
+        <rect x="13" y="16" width="102" height="96" rx="18" fill="url(#glass)" stroke="#6989dd" stroke-width="3"/>
+        <path d="M42 44h22v19M86 44H64v19M64 63v22M42 85h44" fill="none" stroke="#fff" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+        <rect x="24" y="28" width="36" height="26" rx="9" fill="url(#blue)" stroke="#283994" stroke-width="3"/>
+        <rect x="68" y="28" width="36" height="26" rx="9" fill="url(#violet)" stroke="#43299d" stroke-width="3"/>
+        <circle cx="42" cy="91" r="16" fill="url(#lime)" stroke="#61a91b" stroke-width="3"/>
+        <path d="m75 75 19 8v20l-19 8-19-8V83z" fill="url(#cyan)" stroke="#267fa9" stroke-width="3"/>
+      </g>
+    </symbol>
+    <symbol id="category-games" viewBox="0 0 128 128">
+      <g filter="url(#soft-shadow)">
+        <path d="M36 39h56c11 0 18 8 21 20l7 30c3 13-11 22-21 13L83 89H45l-16 13c-10 9-24 0-21-13l7-30c3-12 10-20 21-20z" fill="url(#violet)" stroke="#43299d" stroke-width="3"/>
+        <path d="M36 59v24M24 71h24" stroke="#fff" stroke-width="8" stroke-linecap="round"/>
+        <circle cx="91" cy="62" r="7" fill="#ff675f"/>
+        <circle cx="104" cy="76" r="7" fill="#ffc74a"/>
+        <rect x="54" y="48" width="20" height="9" rx="4.5" fill="url(#cyan)"/>
+        <circle cx="59" cy="75" r="5" fill="url(#lime)"/>
+      </g>
+    </symbol>
+    <symbol id="category-fortune" viewBox="0 0 128 128">
+      <g filter="url(#soft-shadow)">
+        <circle cx="64" cy="53" r="39" fill="url(#glass)" stroke="#6989dd" stroke-width="3"/>
+        <path d="M73 28c-15 2-24 16-20 30 4 15 20 23 34 17-8 11-23 16-36 10-17-7-25-27-18-44 6-13 22-20 40-13z" fill="#fff" fill-opacity=".9"/>
+        <path d="m89 38 3 7 7 3-7 3-3 8-3-8-8-3 8-3zM43 34l2 5 5 2-5 2-2 6-2-6-6-2 6-2z" fill="#ffc74a"/>
+        <path d="M39 86h50l13 24H26z" fill="url(#violet)" stroke="#43299d" stroke-width="3" stroke-linejoin="round"/>
+        <path d="M43 98h42" stroke="url(#lime)" stroke-width="7" stroke-linecap="round"/>
+      </g>
+    </symbol>
   </defs>
 </svg>
