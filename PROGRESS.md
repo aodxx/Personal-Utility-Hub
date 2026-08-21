@@ -283,3 +283,9 @@ Entry gzip หลังเพิ่ม tool อยู่ที่ 49.9 KB ภา
 เพิ่ม quality layer สำหรับงานวัดภาคสนาม: accuracy thresholds (`<=10 m` good, `>10–30 m` review, `>30 m` poor), bilingual quality summary, accuracy badge รายจุด, GPS recapture รายจุด, geometry validation สำหรับ duplicate/collinear/self-intersecting polygons และปุ่ม fit map ให้เห็นจุดทั้งหมด. Area จะไม่แสดงค่าผลลัพธ์เป็นค่าที่เชื่อถือได้เมื่อ geometry ไม่ผ่าน validation และจะแสดงข้อผิดพลาดที่แก้ไขได้แทน.
 
 เพิ่ม unit coverage เป็น 115/115 รวม accuracy classification และ polygon validation และขยาย Land Measurement E2E ให้ตรวจ quality panel กับ fit-map status. Build และ bundle ผ่านที่ 49.9 KB entry gzip; targeted E2E ผ่าน 6/6. Accuracy thresholds เป็น heuristic เพื่อการคัดกรอง ไม่ใช่การรับรอง survey-grade accuracy.
+
+## Land Measurement map visibility and mobile action rail — 22 August 2026
+
+ตรวจสอบปัญหาที่ผู้ใช้ไม่เห็นแผนที่ พบว่า implementation เดิมพึ่งพา OpenStreetMap tile provider เพียงตัวเดียวและไม่มี fallback เมื่อ tile request ล้มเหลว แม้ Leaflet container จะมีความสูงถูกต้อง. เพิ่ม fallback ไปยัง Esri World Street Map เมื่อ tile error ครั้งแรก พร้อมแจ้งสถานะใน UI โดยยังคง attribution และ privacy disclosure เดิม.
+
+ปรับ mobile layout โดยย้ายปุ่ม `ย้อนจุดล่าสุด` และ `ล้างทั้งหมด` จาก results sidebar มาไว้ใน `land-map-actions` ใต้แผนที่โดยตรง พร้อม sticky action rail, touch target อย่างน้อย 46px และ regression assertion ใน Playwright. ตรวจซ้ำแล้ว typecheck, full unit suite 115/115, build, bundle check ที่ 50.0 KB entry gzip และ Land Measurement E2E 6/6 ผ่าน.
