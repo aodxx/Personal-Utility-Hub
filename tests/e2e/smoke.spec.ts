@@ -7,8 +7,8 @@ test('searches, filters and saves a favorite', async ({ page }) => {
   expect(iconResponse.ok()).toBeTruthy();
   await expect(page.locator('.hero .asset-icon--hero')).toBeVisible();
   await expect(page.locator('.category-tab .asset-icon')).toHaveCount(13);
-  await expect(page.locator('#tool-grid .tool-card .asset-icon')).toHaveCount(31);
-  await expect(page.locator('#tool-grid .tool-card')).toHaveCount(31);
+  await expect(page.locator('#tool-grid .tool-card .asset-icon')).toHaveCount(33);
+  await expect(page.locator('#tool-grid .tool-card')).toHaveCount(33);
   await page.getByRole('searchbox').fill('รูปภาพ');
   await expect(page.locator('#tool-grid .tool-card')).toHaveCount(9);
   await page.getByRole('searchbox').fill('JSON');
@@ -25,7 +25,7 @@ test('keeps mobile tool cards compact with clear touch feedback', async ({ page 
   await page.goto('./');
 
   const cards = page.locator('#tool-grid .tool-card');
-  await expect(cards).toHaveCount(31);
+  await expect(cards).toHaveCount(33);
   const firstCard = cards.first();
   const firstBox = await firstCard.boundingBox();
   expect(firstBox).not.toBeNull();
@@ -80,7 +80,20 @@ test('opens the lazy-loaded lifecycle demo', async ({ page }) => {
   await expect(page.getByText('Event listener ทำงาน 1 ครั้งใน session นี้')).toBeVisible();
 });
 
-test('renders a not-found route', async ({ page }) => {
+test('opens both playable games and starts their sessions', async ({ page }) => {
+  await page.goto('./#/tools/orbit-catcher');
+  await expect(page.locator('#tool-container').getByRole('heading', { name: 'Orbit Catcher' })).toBeVisible();
+  await page.getByRole('button', { name: 'เริ่มเกม' }).click();
+  await expect(page.locator('[data-overlay]')).toBeHidden();
+  await expect(page.locator('[data-score]')).toHaveText('0');
+  await page.goto('./#/tools/pattern-pulse');
+  await expect(page.locator('#tool-container').getByRole('heading', { name: 'Pattern Pulse' })).toBeVisible();
+  await page.getByRole('button', { name: 'เริ่มเกม' }).click();
+  await expect(page.locator('[data-status]')).toContainText('จำลำดับสี');
+  await expect(page.locator('.pattern-tile')).toHaveCount(4);
+});
+
+test('opens a not-found route', async ({ page }) => {
   await page.goto('./#/missing-route');
   await expect(page.getByRole('heading', { name: 'ไม่พบหน้าที่คุณต้องการ' })).toBeVisible();
 });

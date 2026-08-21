@@ -55,6 +55,8 @@ const categoryEnglish: Record<string, string> = {
 };
 
   const toolEnglish: Record<string, Pick<ToolMetadata, 'title' | 'description'>> = {
+  'orbit-catcher': { title: 'Orbit Catcher', description: 'Catch blue stars, avoid red meteors, and survive for 30 seconds using keyboard, mouse, or touch.' },
+  'pattern-pulse': { title: 'Pattern Pulse', description: 'Repeat an expanding color sequence, score points, and build a personal high score on your device.' },
   'audio-compressor': { title: 'Audio Resampler (WAV)', description: 'Resample audio to a lower sample rate and export honest WAV size metrics.' },
   'audio-merger': { title: 'Audio Merger Studio', description: 'Reorder audio files, add gap or crossfade, and choose the output format.' },
   'silence-remover': { title: 'Silence Remover', description: 'Remove long pauses with threshold, minimum silence and padding controls.' },

@@ -29,8 +29,8 @@ const largest = reports.reduce((current, file) => file.gzip > current.gzip ? fil
 if (!largest) throw new Error('ไม่พบ JavaScript chunk');
 
 const budgets = {
-  // Wave 1 plus the category taxonomy now includes three small static category surfaces; keep a narrow 48 KB entry budget.
-  entryGzip: 48 * 1024,
+  // Two playable games add bilingual metadata and guide copy to the static entry; keep a narrow 50 KB budget.
+  entryGzip: 50 * 1024,
   largestLazyGzip: 900 * 1024,
   totalJavaScriptGzip: 1_600 * 1024,
 };
@@ -39,6 +39,6 @@ console.log(`Entry gzip: ${(entry.gzip / 1024).toFixed(1)} KB`);
 console.log(`Largest lazy chunk: ${largest.name} ${(largest.gzip / 1024).toFixed(1)} KB`);
 console.log(`All JavaScript gzip: ${(totalGzip / 1024).toFixed(1)} KB across ${reports.length} chunks`);
 
-if (entry.gzip > budgets.entryGzip) throw new Error('Entry bundle เกินงบ 48 KB gzip');
+if (entry.gzip > budgets.entryGzip) throw new Error('Entry bundle เกินงบ 50 KB gzip');
 if (largest.gzip > budgets.largestLazyGzip) throw new Error('Lazy chunk ที่ใหญ่ที่สุดเกินงบ 900 KB gzip');
 if (totalGzip > budgets.totalJavaScriptGzip) throw new Error('JavaScript รวมเกินงบ 1,600 KB gzip');

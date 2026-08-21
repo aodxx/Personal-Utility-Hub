@@ -211,3 +211,10 @@ Targeted audio suite ผ่าน 21/21 tests, Wave 1 E2E ผ่าน 4 tests�
 
 
 หมายเหตุ release: entry gzip budget ถูกปรับอย่างมีเหตุผลจาก 47 KB เป็น 48 KB เนื่องจากเพิ่ม category metadata, localization และ visual resolver สำหรับสามหมวดใหม่ โดยผลล่าสุดอยู่ที่ประมาณ 47.0 KB และยังต่ำกว่างบใหม่
+
+
+## Playable Games — 2026-08-22
+
+เพิ่มเกม local-first ที่เล่นได้จริง 2 เกมในหมวด `เกม`: `Orbit Catcher` เกม arcade บน canvas สำหรับเก็บดาวและหลบอุกกาบาต รองรับ keyboard, mouse และ touch พร้อม score, lives และ 30-second session; และ `Pattern Pulse` เกมจำลำดับสี 4 ช่องที่เพิ่ม sequence ทีละรอบ มี level, score และ high score ใน localStorage เกมทั้งสองเป็น lazy-loaded tools มี metadata, bilingual guide, unique SVG icon และไม่ส่งข้อมูลไป backend
+
+หลักฐานล่าสุด: registry ตรวจพบ 33 metadata modules, typecheck ผ่าน, Vitest 101/101 ผ่าน, production build ผ่าน และ smoke E2E 32 ผ่าน 4 skipped รวม gameplay start flow ของทั้งสองเกม

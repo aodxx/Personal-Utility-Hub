@@ -34,6 +34,8 @@ export const visualAssetIds = [
   'tool-line-sticker-studio',
   'tool-svg-asset-studio',
   'tool-community-mapping',
+  'tool-orbit-catcher',
+  'tool-pattern-pulse',
   'tool-audio-trimmer',
   'tool-audio-compressor',
   'tool-audio-finisher',

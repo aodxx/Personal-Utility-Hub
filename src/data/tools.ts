@@ -12,6 +12,8 @@ import { metadata as svgAssetStudioMetadata } from '../tools/svg-asset-studio/me
 import { metadata as csvProfilerMetadata } from '../tools/csv-profiler/metadata';
 import { metadata as audioChapterMarkerMetadata } from '../tools/audio-chapter-marker/metadata';
 import { metadata as communityMappingMetadata } from '../tools/community-mapping/metadata';
+import { metadata as orbitCatcherMetadata } from '../tools/orbit-catcher/metadata';
+import { metadata as patternPulseMetadata } from '../tools/pattern-pulse/metadata';
 import { svgAssetManifest } from './svg-assets/manifest';
 import { metadata as silenceRemoverMetadata } from '../tools/silence-remover/metadata';
 import { metadata as base64Metadata } from '../tools/base64/metadata';
@@ -161,6 +163,8 @@ export const toolRegistry = [
   { metadata: svgAssetStudioMetadata, load: () => import('../tools/svg-asset-studio'), prepareOffline: svgLibraryAssets },
   { metadata: audioChapterMarkerMetadata, load: () => import('../tools/audio-chapter-marker') },
   { metadata: communityMappingMetadata, load: () => import('../tools/community-mapping') },
+  { metadata: orbitCatcherMetadata, load: () => import('../tools/orbit-catcher') },
+  { metadata: patternPulseMetadata, load: () => import('../tools/pattern-pulse') },
 ] satisfies readonly ToolRegistryEntry[];
 
 assertValidRegistry(toolRegistry);
