@@ -8,11 +8,24 @@ import { toolCatalog } from '../src/data/tools';
 
 const declaredHasSymbol = (sprite: string, id: string): boolean => sprite.includes(`<symbol id="${id}"`);
 
-const normalizedSymbolBodies = (sprite: string): Array<{ id: string; body: string }> =>
-  Array.from(sprite.matchAll(/<symbol\s+id="([^"]+)"[^>]*>([\s\S]*?)<\/symbol>/g), ([, id, body]) => ({
-    id,
-    body: body.replace(/>\s+</g, '><').replace(/\s+/g, ' ').trim(),
-  }));
+const normalizedSymbolBodies = (sprite: string): Array<{ id: string; body: string }> => {
+  const symbols: Array<{ id: string; body: string }> = [];
+  const pattern = /<symbol\s+id="([^"]+)"[^>]*>([\s\S]*?)<\/symbol>/g;
+  let match: RegExpExecArray | null;
+
+  while ((match = pattern.exec(sprite)) !== null) {
+    const id = match[1];
+    const body = match[2];
+    if (!id || body === undefined) continue;
+
+    symbols.push({
+      id,
+      body: body.replace(/>\s+</g, '><').replace(/\s+/g, ' ').trim(),
+    });
+  }
+
+  return symbols;
+};
 
 describe('3D visual asset system', () => {
   const sprite = readFileSync('public/icons/utility-3d-icons.svg', 'utf8');
