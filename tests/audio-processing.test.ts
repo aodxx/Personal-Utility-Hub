@@ -44,7 +44,9 @@ describe('Audio processing', () => {
     expect(merger.duration).toBeGreaterThan(1.9);
     expect(silence.duration).toBeLessThan(1);
     expect(finisher.peak).toBeLessThanOrEqual(1);
-    expect(speedPitch.sampleRate).toBeGreaterThan(source.sampleRate);
+    expect(speedPitch.sampleRate).toBe(source.sampleRate);
+    expect(speedPitch.duration).toBeLessThan(1);
+    expect(speedPitch.channels).toBe(source.channels.length);
     const highQuality = processAudio(source, { kind: 'compress', targetBytes: 500, quality: 'high' });
     expect(highQuality.sampleRate).toBeGreaterThanOrEqual(compressor.sampleRate);
   });

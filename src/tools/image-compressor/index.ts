@@ -81,8 +81,9 @@ const handleSubmit = async (event: SubmitEvent): Promise<void> => {
     preview.alt = 'รูปภาพหลังบีบอัด';
     requiredElement<HTMLElement>(panel, '#compress-result').hidden = false;
     const saving = compressionSavingPercent(file.size, result.blob.size);
-    requiredElement<HTMLElement>(panel, '#compress-result-meta').textContent = `${result.width} × ${result.height} px · ${formatBytes(result.blob.size)} · ${saving >= 0 ? `เล็กลง ${saving}%` : `ใหญ่ขึ้น ${Math.abs(saving)}%`}`;
-    setToolStatus(status, 'บีบอัดสำเร็จ ไฟล์พร้อมดาวน์โหลด', 'success');
+    const grew = saving < 0;
+    requiredElement<HTMLElement>(panel, '#compress-result-meta').textContent = `${result.width} × ${result.height} px · ${formatBytes(result.blob.size)} · ${grew ? `ใหญ่ขึ้น ${Math.abs(saving)}% — แนะนำใช้ไฟล์เดิม` : `เล็กลง ${saving}%`}`;
+    setToolStatus(status, grew ? 'ผลลัพธ์ใหญ่กว่าไฟล์เดิม กรุณาพิจารณาใช้ไฟล์เดิม / Output is larger; consider keeping the original' : 'บีบอัดสำเร็จ ไฟล์เล็กลงและพร้อมดาวน์โหลด / Compression complete', grew ? 'warning' : 'success');
   } catch (error) {
     if (!panel || request !== operationId) return;
     setToolStatus(status, isAbortError(error) ? 'ยกเลิกการบีบอัดแล้ว' : getErrorMessage(error), isAbortError(error) ? 'neutral' : 'error');

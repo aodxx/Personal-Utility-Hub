@@ -58,7 +58,8 @@ test('keeps the initial Hub entry small and lazy-loads the processing worker', a
   await expect(page.locator('#compress-status')).toContainText('Canvas');
   await page.locator('#compress-file').setInputFiles({ name: 'worker.png', mimeType: 'image/png', buffer: onePixelPng });
   await page.getByRole('button', { name: 'บีบอัดรูปภาพ' }).click();
-  await expect(page.locator('#compress-status')).toContainText('สำเร็จ');
+  await expect(page.locator('#compress-status')).toHaveAttribute('data-tone', /success|warning/);
+  await expect(page.locator('#compress-status')).toContainText(/สำเร็จ|ใหญ่กว่า/);
   const processedResources = await page.evaluate(() => performance.getEntriesByType('resource').map(({ name }) => name));
   expect(processedResources.some((name) => /processing\.worker/i.test(name))).toBe(true);
 });

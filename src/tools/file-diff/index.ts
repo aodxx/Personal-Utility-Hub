@@ -6,9 +6,17 @@ let panel: HTMLElement | undefined;
 let outputUrl = '';
 
 function parseLines(value: string): string[] { return value.replace(/\r\n/g, '\n').split('\n'); }
-function compare(left: string, right: string): { report: string; added: number; removed: number; changed: number } {
-  const a = parseLines(left); const b = parseLines(right); const max = Math.max(a.length, b.length); let added = 0; let removed = 0; let changed = 0; const rows: string[] = [];
-  for (let index = 0; index < max; index += 1) { const before = a[index]; const after = b[index]; if (before === after) { rows.push(`  ${before ?? ''}`); continue; } if (before !== undefined) { removed += 1; rows.push(`- ${before}`); } if (after !== undefined) { added += 1; rows.push(`+ ${after}`); } if (before !== undefined && after !== undefined) changed += 1; }
+export function compare(left: string, right: string): { report: string; added: number; removed: number; changed: number } {
+  const a = parseLines(left); const b = parseLines(right); const width = b.length + 1;
+  const table = new Uint32Array((a.length + 1) * width);
+  for (let i = a.length - 1; i >= 0; i -= 1) for (let j = b.length - 1; j >= 0; j -= 1) table[i * width + j] = a[i] === b[j] ? table[(i + 1) * width + j + 1]! + 1 : Math.max(table[(i + 1) * width + j]!, table[i * width + j + 1]!);
+  const rows: string[] = []; let i = 0; let j = 0; let added = 0; let removed = 0;
+  while (i < a.length || j < b.length) {
+    if (i < a.length && j < b.length && a[i] === b[j]) { rows.push(`  ${a[i]}`); i += 1; j += 1; }
+    else if (j < b.length && (i >= a.length || table[i * width + j + 1]! >= table[(i + 1) * width + j]!)) { rows.push(`+ ${b[j]}`); added += 1; j += 1; }
+    else { rows.push(`- ${a[i]}`); removed += 1; i += 1; }
+  }
+  const changed = Math.min(added, removed);
   const report = `# File Diff Report\n\n- Added: ${added}\n- Removed: ${removed}\n- Changed lines: ${changed}\n\n## Diff\n\n${rows.join('\n')}`;
   return { report, added, removed, changed };
 }

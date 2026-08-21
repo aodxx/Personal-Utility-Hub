@@ -201,6 +201,7 @@
   color: var(--color-text-muted);
   font-size: .8rem;
 }
+.tool-status[data-tone="warning"] { border-color: color-mix(in srgb, #d89b2b 55%, var(--color-border)); background: color-mix(in srgb, #d89b2b 10%, var(--color-surface)); color: #9a6500; }
 .tool-status[data-tone="success"] { border-color: color-mix(in srgb, var(--color-success) 42%, var(--color-border)); background: color-mix(in srgb, var(--color-success) 8%, var(--color-surface)); color: var(--color-success); }
 .tool-status[data-tone="error"] { border-color: color-mix(in srgb, #d14343 48%, var(--color-border)); background: color-mix(in srgb, #d14343 8%, var(--color-surface)); color: #b73030; }
 :root[data-theme="dark"] .tool-status[data-tone="error"] { color: #ff9b9b; }

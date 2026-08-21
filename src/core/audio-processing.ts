@@ -109,9 +109,9 @@ export function audioPeak(channels: Float32Array[]): number {
 
 function clonePcm(pcm: AudioPcmData): AudioPcmData { return { sampleRate: pcm.sampleRate, channels: pcm.channels.map((channel) => new Float32Array(channel)) }; }
 function durationOf(pcm: AudioPcmData): number { return (pcm.channels[0]?.length ?? 0) / pcm.sampleRate; }
-function resamplePcm(pcm: AudioPcmData, targetRate: number, onProgress?: (progress: number, message: string) => void): AudioPcmData {
+function resamplePcm(pcm: AudioPcmData, targetRate: number, onProgress?: (progress: number, message: string) => void, targetLengthOverride?: number): AudioPcmData {
   const sourceLength = pcm.channels[0]?.length ?? 0;
-  const targetLength = Math.max(1, Math.round(sourceLength * targetRate / pcm.sampleRate));
+  const targetLength = Math.max(1, targetLengthOverride ?? Math.round(sourceLength * targetRate / pcm.sampleRate));
   const channels = pcm.channels.map((source) => {
     const output = new Float32Array(targetLength);
     for (let index = 0; index < targetLength; index += 1) {
@@ -123,6 +123,40 @@ function resamplePcm(pcm: AudioPcmData, targetRate: number, onProgress?: (progre
   });
   onProgress?.(42, 'กำลังปรับอัตราสุ่มตัวอย่าง');
   return { channels, sampleRate: targetRate };
+}
+
+function timeStretchChannel(source: Float32Array, rate: number): Float32Array {
+  const safeRate = Math.max(0.25, Math.min(4, rate));
+  const outputLength = Math.max(1, Math.round(source.length / safeRate));
+  if (source.length < 32 || outputLength < 32) return resamplePcm({ sampleRate: 1, channels: [source] }, 1, undefined, outputLength).channels[0]!;
+  const grain = Math.min(1024, Math.max(32, 2 ** Math.floor(Math.log2(Math.min(source.length, 1024)))));
+  const hopIn = Math.max(8, Math.floor(grain / 4));
+  const hopOut = Math.max(8, Math.round(hopIn / safeRate));
+  const output = new Float32Array(outputLength + grain);
+  const weight = new Float32Array(output.length);
+  for (let inputStart = 0, outputStart = 0; inputStart < source.length; inputStart += hopIn, outputStart += hopOut) {
+    for (let offset = 0; offset < grain && inputStart + offset < source.length; offset += 1) {
+      const window = 0.5 - 0.5 * Math.cos((2 * Math.PI * offset) / Math.max(1, grain - 1));
+      const position = outputStart + offset;
+      if (position >= output.length) break;
+      output[position] = (output[position] ?? 0) + (source[inputStart + offset] ?? 0) * window;
+      weight[position] = (weight[position] ?? 0) + window;
+    }
+  }
+  for (let index = 0; index < outputLength; index += 1) output[index] = (weight[index] ?? 0) > 1e-6 ? (output[index] ?? 0) / (weight[index] ?? 1) : 0;
+  return output.subarray(0, outputLength);
+}
+
+function speedPitchPcm(pcm: AudioPcmData, speed: number, semitones: number, onProgress?: (progress: number, message: string) => void): AudioPcmData {
+  const safeSpeed = Math.max(0.25, Math.min(4, speed));
+  const pitchRatio = 2 ** (Math.max(-12, Math.min(12, semitones)) / 12);
+  const pitchShifted = pcm.channels.map((channel) => {
+    const compressed = resamplePcm({ sampleRate: pcm.sampleRate, channels: [channel] }, pcm.sampleRate, undefined, Math.max(1, Math.round(channel.length / pitchRatio))).channels[0]!;
+    return timeStretchChannel(compressed, 1 / pitchRatio);
+  });
+  const output = pitchShifted.map((channel) => timeStretchChannel(channel, safeSpeed));
+  onProgress?.(62, 'กำลังแยกการเปลี่ยนความเร็วและโทนเสียง');
+  return { channels: output, sampleRate: pcm.sampleRate };
 }
 export function applyLinearGain(channels: Float32Array[], gain: number): void {
   for (const channel of channels) for (let index = 0; index < channel.length; index += 1) channel[index] = (channel[index] ?? 0) * gain;
@@ -267,8 +301,7 @@ export function processAudio(pcm: AudioPcmData, operation: AudioOperation, onPro
     }
     fadeChannels(output.channels, output.sampleRate, operation.fadeIn, operation.fadeOut);
   } else {
-    const ratio = Math.max(0.25, Math.min(4, operation.speed * 2 ** (operation.semitones / 12)));
-    output = resamplePcm(clonePcm(pcm), Math.max(8_000, Math.round(pcm.sampleRate * ratio)), onProgress);
+    output = speedPitchPcm(clonePcm(pcm), operation.speed, operation.semitones, onProgress);
   }
   onProgress?.(75, 'กำลังสร้างไฟล์ผลลัพธ์');
   const bytes = encodeWav(output.channels, output.sampleRate, onProgress, outputFormat === 'wav-compact' ? 8 : 16);

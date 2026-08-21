@@ -1,4 +1,4 @@
-export type ToolStatusTone = 'neutral' | 'success' | 'error' | 'working';
+export type ToolStatusTone = 'neutral' | 'success' | 'warning' | 'error' | 'working';
 
 export function requiredElement<T extends Element>(root: ParentNode, selector: string): T {
   const element = root.querySelector<T>(selector);

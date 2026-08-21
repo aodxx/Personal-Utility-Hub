@@ -106,7 +106,8 @@ test('compresses an image and combines images into PDF locally', async ({ page }
   await page.locator('#compress-file').setInputFiles({ name: 'pixel.png', mimeType: 'image/png', buffer: onePixelPng });
   await page.getByRole('button', { name: 'บีบอัดรูปภาพ' }).click();
   await expect(page.locator('#compress-result')).toBeVisible();
-  await expect(page.locator('#compress-status')).toContainText('สำเร็จ');
+  await expect(page.locator('#compress-status')).toHaveAttribute('data-tone', /success|warning/);
+  await expect(page.locator('#compress-status')).toContainText(/สำเร็จ|ใหญ่กว่า/);
 
   await page.goto('./#/tools/images-to-pdf');
   await page.locator('#images-pdf-files').setInputFiles([

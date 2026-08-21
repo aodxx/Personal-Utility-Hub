@@ -228,3 +228,19 @@ Targeted audio suite ผ่าน 21/21 tests, Wave 1 E2E ผ่าน 4 tests�
 ## Icon Visibility Cache Fix — 2026-08-22
 
 ตรวจสอบ Production แล้วพบว่า commit และ SVG ใหม่ถูกเผยแพร่จริงครบทั้ง `category-fortune`, `tool-foundation-demo` และ `tool-file-metadata` แต่ PWA ใช้ cache-first สำหรับ asset และยังมี cache namespace เดิม `v0.8.1` จึงอาจทำให้มือถือแสดง JavaScript/SVG sprite รุ่นเก่า แก้โดยเปลี่ยน shell/tool cache เป็น `v0.8.2-icons` และเพิ่ม query version `v=0.8.2-icons` ให้ SVG icon references เพื่อบังคับโหลด asset ใหม่ โดยยังคง local-first และ offline behavior
+
+
+## Reliability Remediation — 2026-08-22
+
+แก้ P0 Audio Speed & Pitch โดยแยก pitch shift, time stretch และ speed control ออกจากกัน ทำให้ sample rate คงเดิมและ duration เปลี่ยนตาม speed จริง พร้อมเพิ่ม regression test
+
+แก้ P0 Privacy Redactor โดยตรวจ credential ก่อน PII รองรับ key/value secrets, Bearer/JWT-like values, OpenAI-style `sk-/pk-/rk-` keys และ AWS access keys รวมถึงสะสม count จากหลาย secret patterns และไม่แสดงข้อความ success เมื่อไม่พบรูปแบบที่รองรับ
+
+แก้ P1 Image Compressor ให้แสดงสถานะ warning เมื่อ output ใหญ่กว่า original, แก้ P1 File Diff เป็น LCS diff เพื่อไม่ให้ insertion ทำให้บรรทัดถัดไปถูกนับผิด และแก้ P1 CSV Profiler ให้รองรับ quoted newline, delimiter comma/semicolon/tab, file-size guard และคำนวณ duplicate จาก cleaned rows จริง
+
+แก้ accessibility ของ Community Mapping และ SVG Asset Studio โดยเปลี่ยน nested `<main>` ภายในเป็น labelled `section[role=region]` พร้อมเพิ่ม regression tests ครบชุด
+
+
+## Reliability Validation — 2026-08-22
+
+ผลตรวจหลังแก้ไข: regression tests ใหม่ครอบคลุม P0/P1 และ accessibility; Vitest ผ่าน 109 tests, E2E ผ่าน 187 tests และ skipped 14 ตามเงื่อนไข environment, registry check ผ่าน 33 modules, SVG integrity ผ่าน 120 assets, typecheck/build/bundle check ผ่าน โดย entry gzip อยู่ที่ 48.9 KB จากงบ 50 KB
