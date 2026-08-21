@@ -14,6 +14,10 @@ test('searches, filters and saves a favorite', async ({ page }) => {
   await page.getByRole('searchbox').fill('JSON');
   await page.locator('#tool-grid').getByRole('button', { name: /เพิ่มในรายการโปรด: JSON Formatter/ }).click();
   await expect(page.locator('#favorites-section')).toContainText('JSON Formatter');
+  await expect(page.locator('.developer-credit')).toContainText('Developed by aod');
+  await expect(page.locator('.developer-credit__social')).toHaveAttribute('href', 'https://www.facebook.com/share/1AWvhjdr44/');
+  await expect(page.locator('.developer-credit__social')).toHaveAttribute('target', '_blank');
+  await expect(page.locator('.developer-credit__social')).toHaveAttribute('aria-label', /Facebook/);
 });
 
 test('keeps mobile tool cards compact with clear touch feedback', async ({ page }, testInfo) => {

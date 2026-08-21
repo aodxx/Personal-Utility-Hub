@@ -23,8 +23,16 @@
   font-size: 0.8rem;
 }
 .site-footer p { margin: 0; }
-.site-footer nav { display: flex; flex-wrap: wrap; gap: var(--space-4); }
+.site-footer__brand { display: grid; gap: .65rem; }
+.site-footer nav { display: flex; flex-wrap: wrap; gap: var(--space-4); align-items: center; }
 .site-footer a { font-weight: 700; text-decoration: none; }
+.developer-credit { width: fit-content; display: inline-flex; align-items: center; gap: .65rem; padding: .42rem .5rem .42rem .8rem; border: 1px solid color-mix(in srgb, var(--color-accent) 26%, var(--color-border)); border-radius: 999px; background: linear-gradient(110deg, color-mix(in srgb, var(--color-accent-soft) 72%, var(--color-surface)), var(--color-surface)); box-shadow: 0 8px 22px rgb(29 45 92 / 8%); color: var(--color-text); letter-spacing: .01em; }
+.developer-credit__label { font-size: .76rem; }
+.developer-credit__label strong { color: var(--color-accent); }
+.developer-credit__social { width: 1.9rem; height: 1.9rem; display: inline-grid; place-items: center; border-radius: 50%; background: #1877f2; color: #fff; transition: transform .2s ease, box-shadow .2s ease; }
+.developer-credit__social svg { width: 1.2rem; height: 1.2rem; fill: currentColor; }
+.developer-credit__social:hover, .developer-credit__social:focus-visible { transform: translateY(-2px) scale(1.06); box-shadow: 0 6px 14px rgb(24 119 242 / 32%); }
+.developer-credit__social:focus-visible { outline: 3px solid color-mix(in srgb, #1877f2 45%, transparent); outline-offset: 3px; }
 .section-block { margin-top: clamp(4rem, 9vw, 7rem); }
 .section-heading { display: flex; align-items: end; justify-content: space-between; gap: var(--space-4); margin-bottom: var(--space-5); }
 .section-heading h2 { margin: 0; font-size: clamp(1.6rem, 4vw, 2.35rem); }
@@ -34,6 +42,8 @@
 @media (max-width: 52rem) {
   .tool-grid, .tool-grid--compact { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .site-footer { flex-direction: column; }
+  .site-footer__brand, .site-footer nav { width: 100%; }
+  .site-footer nav { gap: .8rem 1.2rem; }
 }
 @media (max-width: 34rem) {
   .site-header, .main-content, .site-footer { width: min(calc(100% - 1.25rem), var(--content-width)); }

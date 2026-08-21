@@ -51,7 +51,10 @@ export class AppShell {
       </header>
       <main id="main-content" class="main-content" tabindex="-1"></main>
       <footer class="site-footer">
-        <p><strong>Local-first:</strong> ${t(locale, 'footer')}</p>
+        <div class="site-footer__brand">
+          <p><strong>Local-first:</strong> ${t(locale, 'footer')}</p>
+          <span class="developer-credit"><span class="developer-credit__label">Developed by <strong>aod</strong></span><a class="developer-credit__social" href="https://www.facebook.com/share/1AWvhjdr44/" target="_blank" rel="noopener noreferrer" aria-label="เปิด Facebook ของ aod"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M13.5 21v-8h2.7l.4-3h-3.1V8.1c0-.9.3-1.5 1.6-1.5h1.7V4a22 22 0 0 0-2.5-.1c-2.5 0-4.2 1.5-4.2 4.3V10H7.3v3h2.8v8h3.4Z"/></svg><span class="visually-hidden">Facebook</span></a></span>
+        </div>
         <nav aria-label="${t(locale, 'footerNav')}"><a href="#/">${t(locale, 'tools')}</a><a href="#/privacy">${t(locale, 'privacy')}</a><a href="https://github.com/aodxx/Personal-Utility-Hub/blob/main/docs/PRIVACY_AND_DEPENDENCIES.md" target="_blank" rel="noreferrer">Source policy</a></nav>
       </footer>
       ${this.settingsDialog(locale)}

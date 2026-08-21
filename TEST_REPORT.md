@@ -280,3 +280,16 @@ Entry budget 46 KB เป็น narrow Wave 1 budget ที่บันทึก
 | Bundle | Entry 46.4 KB gzip / budget 47 KB; largest lazy 366.1 KB; total JS 1,070.6 KB |
 
 JSON Schema Generator และ Markdown Table Builder ยังอยู่สถานะ beta pilot เพราะ schema เป็น inferred จาก sample เดียว และ Markdown parser เป็น simple table parser ไม่ใช่ full CSV dialect engine
+
+
+## Developer credit verification — 19 สิงหาคม 2026
+
+| Check | Result |
+|---|---:|
+| Developer credit text | `Developed by aod` แสดงใน footer |
+| Facebook destination | ตรงกับ `https://www.facebook.com/share/1AWvhjdr44/` |
+| Link safety/accessibility | `target="_blank"`, `rel="noopener noreferrer"`, accessible aria-label และ visually hidden label |
+| Unit/AppShell assertion | ผ่าน |
+| Smoke E2E | 29 ผ่าน, 4 intentional skips |
+| Mobile layout | ผ่าน no-overflow smoke |
+| TypeScript/Vitest/build/bundle | ผ่าน; 99/99 unit tests และ entry 46.7 KB gzip |

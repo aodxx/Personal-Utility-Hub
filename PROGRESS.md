@@ -180,3 +180,10 @@ Entry bundle gate ถูกปรับจาก 45 KB เป็น **46 KB gzip
 | Bundle | Entry 46.4 KB gzip / 47 KB Wave 1 budget; largest lazy 366.1 KB; total JS 1,070.6 KB |
 
 Targeted audio suite ผ่าน 21/21 tests, Wave 1 E2E ผ่าน 4 testsและ 2 intentional skips, full Playwright ผ่าน 181 testsและ 14 intentional skips, Vitest ผ่าน 99/99 และ registry ผ่าน 31 modules
+
+
+## Developer credit — 2026-08-19
+
+เพิ่ม footer developer credit แบบ responsive ด้วยข้อความ **Developed by aod** และปุ่ม Facebook แบบ accessible ที่เปิด `https://www.facebook.com/share/1AWvhjdr44/` ในแท็บใหม่ โดยใช้ inline SVG icon และไม่เพิ่ม dependency หรือ network request ใหม่
+
+ตรวจสอบแล้วด้วย AppShell unit assertion, smoke E2E, typecheck, Vitest, build, bundle และ `git diff --check`

@@ -30,6 +30,11 @@ describe('AppShell integration', () => {
     expect(root.querySelectorAll('#tool-grid .tool-card')).toHaveLength(31);
     expect(root.querySelectorAll('.category-tab .asset-icon')).toHaveLength(8);
     expect(root.querySelectorAll('#tool-grid .tool-card .asset-icon')).toHaveLength(26);
+    expect(root.querySelector('.developer-credit')?.textContent).toContain('Developed by aod');
+    const facebook = root.querySelector<HTMLAnchorElement>('.developer-credit__social');
+    expect(facebook?.getAttribute('href')).toBe('https://www.facebook.com/share/1AWvhjdr44/');
+    expect(facebook?.getAttribute('target')).toBe('_blank');
+    expect(facebook?.getAttribute('aria-label')).toContain('Facebook');
 
     const search = root.querySelector<HTMLInputElement>('#tool-search');
     if (!search) throw new Error('missing search input');
