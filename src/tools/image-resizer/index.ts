@@ -107,8 +107,10 @@ const handleSubmit = async (event: SubmitEvent): Promise<void> => {
     preview.src = outputUrl;
     preview.alt = `รูปผลลัพธ์ขนาด ${width} × ${height} พิกเซล`;
     requiredElement<HTMLElement>(panel, '#resize-result').hidden = false;
-    requiredElement<HTMLElement>(panel, '#resize-result-meta').textContent = `${width} × ${height} px · ${formatBytes(blob.size)}`;
-    setToolStatus(status, 'ปรับขนาดสำเร็จ ไฟล์พร้อมดาวน์โหลด', 'success');
+    const grew = blob.size > file.size;
+    const change = Math.round(Math.abs((blob.size - file.size) / Math.max(1, file.size)) * 100);
+    requiredElement<HTMLElement>(panel, '#resize-result-meta').textContent = `${width} × ${height} px · ${formatBytes(blob.size)} · ${grew ? `ใหญ่ขึ้น ${change}% — แนะนำใช้ไฟล์เดิม` : `เล็กลง ${change}%`}`;
+    setToolStatus(status, grew ? 'ผลลัพธ์ใหญ่กว่าไฟล์เดิม กรุณาพิจารณาใช้ไฟล์เดิม / Output is larger; consider keeping the original' : 'ปรับขนาดสำเร็จ ไฟล์เล็กลงและพร้อมดาวน์โหลด / Resize complete', grew ? 'warning' : 'success');
   } catch (error) {
     if (!panel || currentOperation !== operationId) return;
     setToolStatus(status, isAbortError(error) ? 'ยกเลิกการปรับขนาดแล้ว' : getErrorMessage(error), isAbortError(error) ? 'neutral' : 'error');

@@ -10,7 +10,7 @@ import type { ToolMetadata } from '../core/tool-contract';
 import { ToolLoader } from '../core/tool-loader';
 import { assetIcon, toolAssetIcon } from '../components/asset-icon';
 import { allCategories } from '../data/categories';
-import { toolCatalog, toolRegistry } from '../data/tools';
+import { publicToolCatalog, toolRegistry } from '../data/tools';
 import { categoryVisuals } from '../data/visual-assets';
 import { getToolGuide } from '../data/guides';
 import { guideText } from '../core/tool-guide';
@@ -212,7 +212,7 @@ export class AppShell {
     if (!file) return;
     try {
       if (file.size > 256 * 1024) throw new TypeError('ไฟล์การตั้งค่าต้องไม่เกิน 256 KB');
-      const allowed = new Set(toolCatalog.map(({ id }) => id));
+      const allowed = new Set(publicToolCatalog.map(({ id }) => id));
       const settings = parsePortableSettings(await file.text(), allowed);
       this.preferences.importSettings(settings);
       this.restart();
@@ -487,7 +487,7 @@ export class AppShell {
 
     const refresh = (animatedFavoriteId?: string): void => {
       const favorites = this.preferences.getFavorites();
-      const searchCatalog = toolCatalog.map((tool) => {
+      const searchCatalog = publicToolCatalog.map((tool) => {
         const localized = localizeTool(tool, locale);
         return { ...localized, category: tool.category, tags: [...tool.tags, localized.category] };
       });
@@ -495,7 +495,7 @@ export class AppShell {
         filterTools(searchCatalog, { query, category: activeCategory, favorites, favoritesOnly }),
         this.preferences.getToolOrder(),
         this.preferences.getUsage(),
-        toolCatalog.map(({ id }) => id),
+        publicToolCatalog.map(({ id }) => id),
       );
       const grid = main.querySelector<HTMLElement>('#tool-grid');
       const count = main.querySelector<HTMLOutputElement>('#result-count');
@@ -559,7 +559,7 @@ export class AppShell {
         const isFavorite = this.preferences.toggleFavorite(toolId);
         refresh(toolId);
         const live = main.querySelector<HTMLOutputElement>('#favorite-status');
-        const tool = toolCatalog.find(({ id }) => id === toolId);
+        const tool = publicToolCatalog.find(({ id }) => id === toolId);
         if (live && tool) {
           const title = localizeTool(tool, locale).title;
           live.textContent = `${t(locale, isFavorite ? 'addedFavorite' : 'removedFavorite')} ${title} ${t(locale, isFavorite ? 'favoriteTailAdd' : 'favoriteTailRemove')}`;
@@ -610,7 +610,7 @@ export class AppShell {
   private renderMostUsed(main: HTMLElement, favorites: ReadonlySet<string>, animatedFavoriteId?: string): void {
     const section = main.querySelector<HTMLElement>('#most-used-carousel');
     if (!section) return;
-    const tools = mostUsedTools(toolCatalog, this.preferences.getUsage(), MOST_USED_FALLBACK_IDS, toolCatalog.map(({ id }) => id));
+    const tools = mostUsedTools(publicToolCatalog, this.preferences.getUsage(), MOST_USED_FALLBACK_IDS, publicToolCatalog.map(({ id }) => id));
     section.innerHTML = tools.map((tool, index) => this.quickToolCard(tool, favorites, animatedFavoriteId, index)).join('');
     const dots = main.querySelector<HTMLElement>('#most-used-dots');
     if (dots) dots.innerHTML = tools.map((tool, index) => `<button class="carousel-dot${index === 0 ? ' is-active' : ''}" type="button" role="tab" data-carousel-index="${index}" aria-label="${t(this.preferences.getLocale(), 'carouselPosition')} ${index + 1}: ${this.escapeHtml(localizeTool(tool, this.preferences.getLocale()).title)}" aria-selected="${index === 0}"></button>`).join('');
@@ -621,7 +621,7 @@ export class AppShell {
     const locale = this.preferences.getLocale();
     const section = main.querySelector<HTMLElement>('#favorites-section');
     if (!section) return;
-    const tools = toolCatalog.filter((tool) => favorites.has(tool.id));
+    const tools = publicToolCatalog.filter((tool) => favorites.has(tool.id));
     section.innerHTML = `
       <div class="section-heading"><div><div class="eyebrow">${t(locale, 'savedLocally')}</div><h2 id="favorites-title">${t(locale, 'favorites')}</h2></div><span class="result-count">${tools.length}</span></div>
       ${tools.length ? `<div class="tool-grid tool-grid--compact">${tools.map((tool) => this.toolCard(tool, favorites, animatedFavoriteId)).join('')}</div>` : this.emptyState(t(locale, 'noFavorites'), t(locale, 'noFavoritesDetail'))}
@@ -633,7 +633,7 @@ export class AppShell {
     const section = main.querySelector<HTMLElement>('#recent-section');
     if (!section) return;
     const recentIds = this.preferences.getRecent();
-    const tools = recentIds.map((id) => toolCatalog.find((tool) => tool.id === id)).filter((tool): tool is ToolMetadata => Boolean(tool));
+    const tools = recentIds.map((id) => publicToolCatalog.find((tool) => tool.id === id)).filter((tool): tool is ToolMetadata => Boolean(tool));
     section.innerHTML = `
       <div class="section-heading">
         <div><div class="eyebrow">${t(locale, 'onDevice')}</div><h2 id="recent-title">${t(locale, 'recent')}</h2></div>

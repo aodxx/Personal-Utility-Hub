@@ -244,3 +244,8 @@ Targeted audio suite ผ่าน 21/21 tests, Wave 1 E2E ผ่าน 4 tests�
 ## Reliability Validation — 2026-08-22
 
 ผลตรวจหลังแก้ไข: regression tests ใหม่ครอบคลุม P0/P1 และ accessibility; Vitest ผ่าน 109 tests, E2E ผ่าน 187 tests และ skipped 14 ตามเงื่อนไข environment, registry check ผ่าน 33 modules, SVG integrity ผ่าน 120 assets, typecheck/build/bundle check ผ่าน โดย entry gzip อยู่ที่ 48.9 KB จากงบ 50 KB
+
+
+## Review remediation continuation — 22 August 2026
+
+Follow-up fixes based on `Personal-Utility-Hub-Tool-Review-2026-08-22.md`: the public catalog now excludes the internal Foundation Lifecycle Demo while preserving its direct diagnostic route; Image Resizer and Image Converter compare source/output bytes and use a warning state when output grows; PNG conversion hides the quality control that has no effect; Image Contact Sheet revokes source/output Blob URLs and reports success only after `toBlob`; shared Audio Workbench warns on larger output, missed approximate targets, or clipping; Pattern Pulse now describes failed rounds as game over and includes an explicit local best-score reset; Audio Speed & Pitch and Audio Chapter Marker guides were synchronized with shipped behavior. Typecheck and targeted/full unit tests passed at this checkpoint. Remaining advanced roadmap items such as full PDF queues, semantic JSON diff, LUFS processing, APNG export, and CRS/tile packages remain documented as future waves rather than unverified claims.

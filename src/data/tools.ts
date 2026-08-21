@@ -170,3 +170,5 @@ export const toolRegistry = [
 assertValidRegistry(toolRegistry);
 
 export const toolCatalog = toolRegistry.map(({ metadata }) => metadata);
+/** Public catalog excludes the internal lifecycle diagnostic from the end-user Hub. */
+export const publicToolCatalog = toolCatalog.filter(({ id }) => id !== 'foundation-demo');

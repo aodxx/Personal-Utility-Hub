@@ -57,6 +57,13 @@ const handleQualityInput = (event: Event): void => {
   requiredElement<HTMLOutputElement>(panel, '#convert-quality-value').textContent = `${input.value}%`;
 };
 
+const handleTypeInput = (event: Event): void => {
+  if (!panel) return;
+  const type = (event.currentTarget as HTMLSelectElement).value;
+  const qualityField = requiredElement<HTMLElement>(panel, '#convert-quality-field');
+  qualityField.hidden = type === 'image/png';
+};
+
 const handleSubmit = async (event: SubmitEvent): Promise<void> => {
   event.preventDefault();
   if (!panel) return;
@@ -86,8 +93,10 @@ const handleSubmit = async (event: SubmitEvent): Promise<void> => {
     preview.src = outputUrl;
     preview.alt = `รูปภาพที่แปลงเป็น ${extension.toUpperCase()} แล้ว`;
     requiredElement<HTMLElement>(panel, '#convert-result').hidden = false;
-    requiredElement<HTMLElement>(panel, '#convert-result-meta').textContent = `${extension.toUpperCase()} · ${dimensions.width} × ${dimensions.height} px · ${formatBytes(blob.size)}`;
-    setToolStatus(status, 'แปลงรูปภาพสำเร็จ ไฟล์พร้อมดาวน์โหลด', 'success');
+    const grew = blob.size > file.size;
+    const change = Math.round(Math.abs((blob.size - file.size) / Math.max(1, file.size)) * 100);
+    requiredElement<HTMLElement>(panel, '#convert-result-meta').textContent = `${extension.toUpperCase()} · ${dimensions.width} × ${dimensions.height} px · ${formatBytes(blob.size)} · ${grew ? `ใหญ่ขึ้น ${change}% — แนะนำใช้ไฟล์เดิม` : `เล็กลง ${change}%`}`;
+    setToolStatus(status, grew ? 'ผลลัพธ์ใหญ่กว่าไฟล์เดิม กรุณาพิจารณาใช้ไฟล์เดิม / Output is larger; consider keeping the original' : 'แปลงรูปภาพสำเร็จ ไฟล์พร้อมดาวน์โหลด / Conversion complete', grew ? 'warning' : 'success');
   } catch (error) {
     if (!panel || currentOperation !== operationId) return;
     setToolStatus(status, isAbortError(error) ? 'ยกเลิกการแปลงรูปภาพแล้ว' : getErrorMessage(error), isAbortError(error) ? 'neutral' : 'error');
@@ -120,7 +129,7 @@ const tool: ToolModule = {
         </label>
         <div class="form-row">
           <label class="field" for="convert-type"><span>รูปแบบปลายทาง</span><select id="convert-type"><option value="image/png">PNG</option><option value="image/jpeg">JPEG</option><option value="image/webp" selected>WebP</option></select></label>
-          <label class="field" for="convert-quality"><span>คุณภาพ <output id="convert-quality-value">92%</output></span><input id="convert-quality" type="range" min="40" max="100" value="92" /></label>
+          <label id="convert-quality-field" class="field" for="convert-quality"><span>คุณภาพ <output id="convert-quality-value">92%</output></span><input id="convert-quality" type="range" min="40" max="100" value="92" /></label>
         </div>
         <div class="tool-actions"><button id="convert-submit" class="button button--primary" type="submit">แปลงรูปภาพ</button><button class="button" type="button" data-convert-action="cancel" hidden>ยกเลิก</button></div>
       </form>
@@ -132,6 +141,8 @@ const tool: ToolModule = {
     `;
     requiredElement<HTMLInputElement>(panel, '#convert-file').addEventListener('change', handleFileChange);
     requiredElement<HTMLInputElement>(panel, '#convert-quality').addEventListener('input', handleQualityInput);
+    requiredElement<HTMLSelectElement>(panel, '#convert-type').addEventListener('change', handleTypeInput);
+    handleTypeInput({ currentTarget: requiredElement<HTMLSelectElement>(panel, '#convert-type') } as unknown as Event);
     requiredElement<HTMLFormElement>(panel, '#convert-form').addEventListener('submit', handleFormSubmit);
     panel.addEventListener('click', handleClick);
     container.append(panel);
@@ -142,6 +153,7 @@ const tool: ToolModule = {
     activeJob = undefined;
     panel?.querySelector<HTMLInputElement>('#convert-file')?.removeEventListener('change', handleFileChange);
     panel?.querySelector<HTMLInputElement>('#convert-quality')?.removeEventListener('input', handleQualityInput);
+    panel?.querySelector<HTMLSelectElement>('#convert-type')?.removeEventListener('change', handleTypeInput);
     panel?.querySelector<HTMLFormElement>('#convert-form')?.removeEventListener('submit', handleFormSubmit);
     panel?.removeEventListener('click', handleClick);
     clearOutput();

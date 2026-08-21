@@ -60,7 +60,7 @@ test('runs all five new audio workbenches with real output', async ({ page }) =>
     await expect(page.locator('#audio-status')).toContainText('Preview ready', { timeout: 15_000 });
     await expect(page.locator('#audio-result')).toBeVisible({ timeout: 15_000 });
     await page.locator('#audio-form').dispatchEvent('submit');
-    await expect(page.locator('#audio-status')).toContainText('Processing complete', { timeout: 15_000 });
+    await expect(page.locator('#audio-status')).toContainText(/Processing complete|Complete with warnings/, { timeout: 15_000 });
     await expect(page.locator('#audio-result')).toBeVisible({ timeout: 15_000 });
     await expect(page.locator('#audio-result-meta')).toContainText('Peak');
     const download = page.waitForEvent('download');
@@ -80,7 +80,7 @@ test('keeps stereo and non-default sample rates through Preview and Export', asy
   await page.getByRole('button', { name: 'Preview ผลลัพธ์' }).click();
   await expect(page.locator('#audio-status')).toContainText('Preview ready', { timeout: 15_000 });
   await page.locator('#audio-form').dispatchEvent('submit');
-  await expect(page.locator('#audio-status')).toContainText('Processing complete', { timeout: 15_000 });
+  await expect(page.locator('#audio-status')).toContainText(/Processing complete|Complete with warnings/, { timeout: 15_000 });
   const download = page.waitForEvent('download');
   await page.getByRole('button', { name: /ดาวน์โหลด WAV/ }).click();
   expect((await download).suggestedFilename()).toMatch(/\.wav$/);
@@ -93,7 +93,7 @@ test('handles silence input and invalid audio without crashing the workbench', a
   await page.getByRole('button', { name: 'Preview ผลลัพธ์' }).click();
   await expect(page.locator('#audio-status')).toContainText('Preview ready', { timeout: 15_000 });
   await page.locator('#audio-form').dispatchEvent('submit');
-  await expect(page.locator('#audio-status')).toContainText('Processing complete', { timeout: 15_000 });
+  await expect(page.locator('#audio-status')).toContainText(/Processing complete|Complete with warnings/, { timeout: 15_000 });
 
   await page.goto('./#/tools/audio-compressor');
   await page.locator('#audio-file').setInputFiles({ name: 'not-audio.wav', mimeType: 'audio/wav', buffer: Buffer.from('not a RIFF file') });
