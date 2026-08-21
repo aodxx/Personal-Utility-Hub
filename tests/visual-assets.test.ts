@@ -8,6 +8,12 @@ import { toolCatalog } from '../src/data/tools';
 
 const declaredHasSymbol = (sprite: string, id: string): boolean => sprite.includes(`<symbol id="${id}"`);
 
+const normalizedSymbolBodies = (sprite: string): Array<{ id: string; body: string }> =>
+  Array.from(sprite.matchAll(/<symbol\\s+id="([^"]+)"[^>]*>([\\s\\S]*?)<\\/symbol>/g), ([, id, body]) => ({
+    id,
+    body: body.replace(/>\\s+</g, '><').replace(/\\s+/g, ' ').trim(),
+  }));
+
 describe('3D visual asset system', () => {
   const sprite = readFileSync('public/icons/utility-3d-icons.svg', 'utf8');
 
@@ -28,6 +34,15 @@ describe('3D visual asset system', () => {
     const icons = toolCatalog.map((tool) => tool.icon).filter((icon): icon is string => Boolean(icon));
     expect(new Set(icons).size).toBe(toolCatalog.length);
     expect(icons.every((icon) => declaredHasSymbol(sprite, icon))).toBe(true);
+  });
+
+  it('keeps every visual asset illustration distinct', () => {
+    const seen = new Map<string, string>();
+
+    for (const { id, body } of normalizedSymbolBodies(sprite)) {
+      expect(seen.get(body), `${id} duplicates ${seen.get(body) ?? 'another asset'}`).toBeUndefined();
+      seen.set(body, id);
+    }
   });
 
   it('keeps the sprite self-hosted and free of executable content', () => {
