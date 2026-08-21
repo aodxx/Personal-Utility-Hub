@@ -4,7 +4,7 @@ export const metadata: ToolMetadata = {
   id: 'community-mapping',
   title: 'Community Mapping Studio',
   description: 'สร้างแผนที่ข้อมูลชุมชนแบบ local-first ด้วยจุด เส้น พื้นที่ layers และ spatial analysis โดยไม่อัปโหลดพิกัด',
-  category: 'ข้อมูลและไฟล์',
+  category: 'แผนที่และภูมิสารสนเทศ',
   route: '/tools/community-mapping',
   icon: 'tool-community-mapping',
   tags: ['community', 'mapping', 'geodata', 'survey', 'farm', 'risk', 'offline', 'privacy'],

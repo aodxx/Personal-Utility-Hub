@@ -5,6 +5,8 @@ export const visualAssetIds = [
   'category-text-data',
   'category-qr-barcode',
   'category-media',
+  'category-location',
+  'category-files',
   'category-developer',
   'category-other',
   'tool-json-formatter',

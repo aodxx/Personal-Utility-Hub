@@ -194,3 +194,10 @@ Targeted audio suite ผ่าน 21/21 tests, Wave 1 E2E ผ่าน 4 tests�
 เพิ่ม SVG symbols เฉพาะตัวให้เครื่องมือที่เคยใช้ category icon หรือ fallback ซ้ำ รวมถึงกลุ่ม Audio, Text/Data, File, Image, Community Mapping, LINE Sticker Studio และ SVG Asset Studio ทำให้ catalog tools ทั้ง 31 รายการมี visual asset ID ของตนเอง ไม่มี duplicate symbol ID และยังใช้ sprite แบบ self-hosted โดยไม่เพิ่ม dependency หรือ network request
 
 เพิ่ม visual asset regression test ตรวจว่า tool catalog ทุกตัวมี icon ที่ประกาศใน sprite และบันทึกผล integrity: 120 SVG assets, exact duplicates 0, geometry duplicates 0, near-duplicate warnings 0
+
+
+## Category taxonomy refinement — 2026-08-21
+
+ปรับหมวดหมู่ให้สื่อความหมายตามลักษณะงานมากขึ้น โดยเพิ่ม `แผนที่และภูมิสารสนเทศ` สำหรับ Community Mapping Studio และ `ไฟล์และข้อมูลเมตา` สำหรับ File Metadata Viewer พร้อมเปลี่ยนหมวดเสียงเดิมเป็น `เสียงและดนตรี` และย้าย Silence Remover เข้าหมวดเดียวกัน หมวดทั้งหมดมี 10 รายการรวม `ทั้งหมด` และมี category visuals กับคำแปลภาษาอังกฤษครบทุกหมวด
+
+หลักฐานล่าสุด: TypeScript ผ่าน, Vitest 100/100 ผ่าน, production build ผ่าน และ smoke E2E 29 ผ่าน 4 skipped
