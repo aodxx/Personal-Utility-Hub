@@ -14,6 +14,7 @@ import { metadata as audioChapterMarkerMetadata } from '../tools/audio-chapter-m
 import { metadata as communityMappingMetadata } from '../tools/community-mapping/metadata';
 import { metadata as orbitCatcherMetadata } from '../tools/orbit-catcher/metadata';
 import { metadata as patternPulseMetadata } from '../tools/pattern-pulse/metadata';
+import { metadata as landMeasurementMetadata } from '../tools/land-measurement/metadata';
 import { svgAssetManifest } from './svg-assets/manifest';
 import { metadata as silenceRemoverMetadata } from '../tools/silence-remover/metadata';
 import { metadata as base64Metadata } from '../tools/base64/metadata';
@@ -165,6 +166,7 @@ export const toolRegistry = [
   { metadata: communityMappingMetadata, load: () => import('../tools/community-mapping') },
   { metadata: orbitCatcherMetadata, load: () => import('../tools/orbit-catcher') },
   { metadata: patternPulseMetadata, load: () => import('../tools/pattern-pulse') },
+  { metadata: landMeasurementMetadata, load: () => import('../tools/land-measurement') },
 ] satisfies readonly ToolRegistryEntry[];
 
 assertValidRegistry(toolRegistry);

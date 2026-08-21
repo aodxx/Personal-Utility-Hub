@@ -265,3 +265,11 @@ LUFS/EBU R128 mastering, variable-bitrate MP3, and advanced phase-vocoder qualit
 ## Final quality gate — 22 August 2026
 
 Static checks passed: TypeScript typecheck, Vitest unit suite, production build, 33-tool registry integrity, 120-icon SVG integrity, bundle budget (49.2 KB entry gzip), high-severity audit scan (0 vulnerabilities), service-worker syntax check, and whitespace validation. The complete Playwright suite passed **190 passed / 14 skipped** across 204 tests with `--workers=1`. A 3-worker run reproduced an environment-level Chromium crash under the sandbox memory ceiling after 189 tests passed; the single-worker run completed all coverage without failures and is the authoritative release result for this constrained environment. The realistic 4×4 LINE Sticker export contract is now given a 60-second test budget because 16 PNG encodes plus validation are CPU-heavy on Android under parallel load.
+
+## Land Measurement Tool — implementation update — 22 August 2026
+
+เพิ่มเครื่องมือ `land-measurement` เป็น public tool ลำดับที่ 33 ตามสเปก `TOOL-LAND-MEASUREMENT-SPEC.md` โดยใช้ Leaflet และ Browser Geolocation แบบ client-side. MVP รองรับ map tap distance, area polygon เมื่อมีอย่างน้อย 3 จุด, GPS capture แบบกดทีละจุด, draggable markers, delete/undo/clear, standard/satellite layer, segment distances, perimeter, centroid, Thai rai/ngan/square-wa, m²/hectare/acre, copy summary และ GeoJSON/KML/CSV export.
+
+Geometry core ใช้ Haversine distance และ local equirectangular projection สำหรับพื้นที่แปลงขนาดเล็ก พร้อม unit/exporter pure functions และ tests 4 cases. เพิ่ม Playwright contract 6 cases ครอบคลุม map-first workflow, area/distance, CSV download และ 360px overflow. Full local unit suite ผ่าน 113/113; targeted Land Measurement E2E ผ่าน 6/6; registry ตรวจพบ 34 metadata modules รวม foundation diagnostic และ public catalog 33 tools. Production disclaimer ระบุชัดว่าเป็นค่าประมาณ ไม่ใช่ legal/cadastral survey และ map provider อาจเห็น viewport เมื่อเปิด layer ออนไลน์.
+
+Entry gzip หลังเพิ่ม tool อยู่ที่ 49.9 KB ภายใต้งบ 50 KB. `supportsOffline` เป็น false ตามสเปก เพราะ base-map tiles ต้องใช้เครือข่าย; geometry หลัง map โหลดแล้วคำนวณใน browser. ยังไม่รองรับ background/continuous GPS tracking, legal cadastral lookup, cloud sync, SHP import หรือ elevation profile.

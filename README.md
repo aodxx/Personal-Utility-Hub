@@ -2,7 +2,7 @@
 
 ศูนย์รวม **privacy-first utility tools** แบบ Static PWA ที่ประมวลผลไฟล์และข้อมูลภายในเบราว์เซอร์เป็นหลัก โดยใช้ Modular Tool Registry, Lazy Loading, Dedicated Web Worker และ Offline/PWA support เมื่อความสามารถของเบราว์เซอร์รองรับ
 
-**สถานะปัจจุบัน:** `v0.8.0` — Phase 5 Product Expansion และ Phase 6 Trust & Usability ถูก merge เข้า `main` แล้ว; 25 active tools มี bilingual tool-specific guides และ Production smoke บน GitHub Pages ผ่าน โดยไม่เพิ่ม backend, accounts หรือ cloud storage
+**สถานะปัจจุบัน:** `v0.8.0` — Phase 5 Product Expansion และ Phase 6 Trust & Usability ถูก merge เข้า `main` แล้ว; 33 tools (32 public tools) มี bilingual tool-specific guides และ Production smoke บน GitHub Pages ผ่าน โดยไม่เพิ่ม backend, accounts หรือ cloud storage
 
 ## เครื่องมือที่มีอยู่ใน main
 
@@ -35,6 +35,11 @@
 - PDF to Image
 - File Metadata Viewer
 
+### Maps / Location
+
+- Land Measurement Tool — วัดระยะ เส้นรอบรูป และพื้นที่แปลงจากแผนที่หรือ GPS พร้อม GeoJSON/KML/CSV export
+- Community Mapping Studio
+
 ### Audio
 
 - Audio Trimmer
@@ -44,6 +49,8 @@
 - Audio Finisher
 - Audio Speed & Pitch
 - Audio Chapter Marker & Cue Sheet
+
+Land Measurement ใช้ Leaflet, Browser Geolocation และ geodesic geometry ใน browser; map tiles อาจต้องใช้เครือข่ายและ provider อาจเห็น viewport ตาม layer ที่เลือก ผลลัพธ์เป็นค่าประมาณ ไม่ใช่ legal survey
 
 ทุกเครื่องมือในรายการข้างต้นถูกลงทะเบียนเป็น active tool และโหลดแบบ lazy ตาม route เมื่อเปิดใช้งาน การทำงานหลักเกิดขึ้นบนอุปกรณ์ของผู้ใช้ ไม่มี login, analytics, backend, cloud storage หรือ runtime API request สำหรับส่งไฟล์ออกจากอุปกรณ์
 
