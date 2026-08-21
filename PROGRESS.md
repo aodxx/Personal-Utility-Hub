@@ -208,3 +208,6 @@ Targeted audio suite ผ่าน 21/21 tests, Wave 1 E2E ผ่าน 4 tests�
 เพิ่มหมวดว่างสำหรับการขยายผลิตภัณฑ์ในอนาคต ได้แก่ `ไดอะแกรม` (Diagrams), `เกม` (Games) และ `ดูดวง` (Fortune & Astrology) พร้อมไอคอน SVG เฉพาะหมวดและการแปลภาษาอังกฤษครบถ้วน ปัจจุบัน Hub มีหมวดให้เลือก 13 หมวดรวม `ทั้งหมด` โดยยังไม่มีเครื่องมือในสามหมวดใหม่นี้ จึงพร้อมรองรับการเพิ่มเครื่องมือชุดถัดไปโดยไม่ต้องเปลี่ยน taxonomy อีกครั้ง
 
 หลักฐานล่าสุด: typecheck, registry check, SVG integrity, Vitest 101/101, production build และ smoke E2E 29 ผ่าน 4 skipped
+
+
+หมายเหตุ release: entry gzip budget ถูกปรับอย่างมีเหตุผลจาก 47 KB เป็น 48 KB เนื่องจากเพิ่ม category metadata, localization และ visual resolver สำหรับสามหมวดใหม่ โดยผลล่าสุดอยู่ที่ประมาณ 47.0 KB และยังต่ำกว่างบใหม่
