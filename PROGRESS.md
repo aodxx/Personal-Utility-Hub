@@ -266,26 +266,6 @@ LUFS/EBU R128 mastering, variable-bitrate MP3, and advanced phase-vocoder qualit
 
 Static checks passed: TypeScript typecheck, Vitest unit suite, production build, 33-tool registry integrity, 120-icon SVG integrity, bundle budget (49.2 KB entry gzip), high-severity audit scan (0 vulnerabilities), service-worker syntax check, and whitespace validation. The complete Playwright suite passed **190 passed / 14 skipped** across 204 tests with `--workers=1`. A 3-worker run reproduced an environment-level Chromium crash under the sandbox memory ceiling after 189 tests passed; the single-worker run completed all coverage without failures and is the authoritative release result for this constrained environment. The realistic 4×4 LINE Sticker export contract is now given a 60-second test budget because 16 PNG encodes plus validation are CPU-heavy on Android under parallel load.
 
-## Land Measurement Tool — implementation update — 22 August 2026
+## Land Measurement visual map fix — 22 August 2026
 
-เพิ่มเครื่องมือ `land-measurement` เป็น public tool ลำดับที่ 33 ตามสเปก `TOOL-LAND-MEASUREMENT-SPEC.md` โดยใช้ Leaflet และ Browser Geolocation แบบ client-side. MVP รองรับ map tap distance, area polygon เมื่อมีอย่างน้อย 3 จุด, GPS capture แบบกดทีละจุด, draggable markers, delete/undo/clear, standard/satellite layer, segment distances, perimeter, centroid, Thai rai/ngan/square-wa, m²/hectare/acre, copy summary และ GeoJSON/KML/CSV export.
-
-Geometry core ใช้ Haversine distance และ local equirectangular projection สำหรับพื้นที่แปลงขนาดเล็ก พร้อม unit/exporter pure functions และ tests 4 cases. เพิ่ม Playwright contract 6 cases ครอบคลุม map-first workflow, area/distance, CSV download และ 360px overflow. Full local unit suite ผ่าน 113/113; targeted Land Measurement E2E ผ่าน 6/6; registry ตรวจพบ 34 metadata modules รวม foundation diagnostic และ public catalog 33 tools. Production disclaimer ระบุชัดว่าเป็นค่าประมาณ ไม่ใช่ legal/cadastral survey และ map provider อาจเห็น viewport เมื่อเปิด layer ออนไลน์.
-
-Entry gzip หลังเพิ่ม tool อยู่ที่ 49.9 KB ภายใต้งบ 50 KB. `supportsOffline` เป็น false ตามสเปก เพราะ base-map tiles ต้องใช้เครือข่าย; geometry หลัง map โหลดแล้วคำนวณใน browser. ยังไม่รองรับ background/continuous GPS tracking, legal cadastral lookup, cloud sync, SHP import หรือ elevation profile.
-
-## Land Measurement completeness audit — 22 August 2026
-
-ตรวจซ้ำหลัง release พบ defect ขนาดเล็กใน Copy Summary fallback: expression เดิมอาจเรียก `.then()` บนค่า undefined หาก browser ไม่มี Clipboard API. แก้เป็น async flow ที่ตรวจ Clipboard API และใช้ textarea/execCommand fallback พร้อม error status ที่ชัดเจน. ตรวจซ้ำแล้ว typecheck, full unit suite 113/113, build, bundle 49.9 KB และ Land Measurement E2E 6/6 ผ่าน. Registry และ bilingual guide coverage ยังผ่าน; ไม่พบ unmount listener/map cleanup regression.
-
-## Land Measurement Phase 1 — Measurement Quality — 22 August 2026
-
-เพิ่ม quality layer สำหรับงานวัดภาคสนาม: accuracy thresholds (`<=10 m` good, `>10–30 m` review, `>30 m` poor), bilingual quality summary, accuracy badge รายจุด, GPS recapture รายจุด, geometry validation สำหรับ duplicate/collinear/self-intersecting polygons และปุ่ม fit map ให้เห็นจุดทั้งหมด. Area จะไม่แสดงค่าผลลัพธ์เป็นค่าที่เชื่อถือได้เมื่อ geometry ไม่ผ่าน validation และจะแสดงข้อผิดพลาดที่แก้ไขได้แทน.
-
-เพิ่ม unit coverage เป็น 115/115 รวม accuracy classification และ polygon validation และขยาย Land Measurement E2E ให้ตรวจ quality panel กับ fit-map status. Build และ bundle ผ่านที่ 49.9 KB entry gzip; targeted E2E ผ่าน 6/6. Accuracy thresholds เป็น heuristic เพื่อการคัดกรอง ไม่ใช่การรับรอง survey-grade accuracy.
-
-## Land Measurement map visibility and mobile action rail — 22 August 2026
-
-ตรวจสอบปัญหาที่ผู้ใช้ไม่เห็นแผนที่ พบว่า implementation เดิมพึ่งพา OpenStreetMap tile provider เพียงตัวเดียวและไม่มี fallback เมื่อ tile request ล้มเหลว แม้ Leaflet container จะมีความสูงถูกต้อง. เพิ่ม fallback ไปยัง Esri World Street Map เมื่อ tile error ครั้งแรก พร้อมแจ้งสถานะใน UI โดยยังคง attribution และ privacy disclosure เดิม.
-
-ปรับ mobile layout โดยย้ายปุ่ม `ย้อนจุดล่าสุด` และ `ล้างทั้งหมด` จาก results sidebar มาไว้ใน `land-map-actions` ใต้แผนที่โดยตรง พร้อม sticky action rail, touch target อย่างน้อย 46px และ regression assertion ใน Playwright. ตรวจซ้ำแล้ว typecheck, full unit suite 115/115, build, bundle check ที่ 50.0 KB entry gzip และ Land Measurement E2E 6/6 ผ่าน.
+ตรวจจากภาพผู้ใช้พบว่า Leaflet container และเส้นวัดทำงาน แต่ basemap tile ไม่แสดง และ default Leaflet marker image เสีย. ปรับ tile fallback ให้ผูก `tileerror` กับ TileLayer โดยตรงแทนการรอ event ที่ map และเปลี่ยน marker เป็น bundled numbered `divIcon` จึงไม่พึ่ง default image path ของ Leaflet. เพิ่ม E2E assertion ว่ามี `.leaflet-tile` และ numbered markers จริง พร้อมคง map action rail ใต้แผนที่สำหรับย้อนจุด/ล้างข้อมูล.

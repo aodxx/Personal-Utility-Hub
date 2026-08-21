@@ -41,7 +41,7 @@ class LandMeasurementController {
     const host = this.container.querySelector<HTMLElement>('#land-map');
     if (!host) return;
     this.map = L.map(host, { zoomControl: true }).setView(center, 13);
-    this.basemap = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '&copy; OpenStreetMap contributors', maxZoom: 19 }).addTo(this.map); this.map.on('tileerror', () => { if (this.layer === 'standard' && !this.standardFallbackUsed) { this.standardFallbackUsed = true; this.basemap?.remove(); this.basemap = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}', { attribution: 'Tiles &copy; Esri', maxZoom: 19 }).addTo(this.map!); this.setStatus('สลับไปยังแผนที่สำรอง / Switched to fallback map', 'working'); } });
+    this.basemap = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '&copy; OpenStreetMap contributors', maxZoom: 19 }).addTo(this.map); this.basemap.on('tileerror', () => this.useFallbackBasemap());
     this.map.on('click', (event) => { if (this.mode !== 'gps') this.addPoint(event.latlng.lat, event.latlng.lng, 'map'); });
     window.setTimeout(() => this.map?.invalidateSize(), 0);
   }
@@ -71,11 +71,13 @@ class LandMeasurementController {
     this.render();
   }
 
+  private useFallbackBasemap(): void { if (!this.map || this.standardFallbackUsed || this.layer !== 'standard') return; this.standardFallbackUsed = true; this.basemap?.remove(); this.basemap = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}', { attribution: 'Tiles &copy; Esri', maxZoom: 19 }).addTo(this.map); this.setStatus('สลับไปยังแผนที่สำรอง / Switched to fallback map', 'working'); }
+
   private render(): void {
     this.markers.forEach((marker) => marker.remove()); this.markers.clear(); this.line?.remove(); this.polygon?.remove();
     if (!this.map) return;
     this.points.forEach((point, index) => {
-      const marker = L.marker([point.lat, point.lng], { draggable: true }).addTo(this.map!).bindTooltip(String(index + 1), { permanent: true, direction: 'top' });
+      const marker = L.marker([point.lat, point.lng], { draggable: true, icon: L.divIcon({ className: 'land-number-marker', html: `<span aria-hidden="true">${index + 1}</span>`, iconSize: [30, 30], iconAnchor: [15, 15] }) }).addTo(this.map!).bindTooltip(String(index + 1), { permanent: true, direction: 'top' });
       marker.on('dragend', () => { const position = marker.getLatLng(); const target = this.points.find((item) => item.id === point.id); if (target) { target.lat = position.lat; target.lng = position.lng; this.render(); } });
       this.markers.set(point.id, marker);
     });

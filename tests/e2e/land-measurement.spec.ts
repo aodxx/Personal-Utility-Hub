@@ -5,10 +5,12 @@ test.describe('Land Measurement production contract', () => {
     await page.goto('./#/tools/land-measurement');
     await expect(page.locator('#land-title')).toContainText('วัดระยะและพื้นที่แปลง');
     await expect(page.locator('#land-map')).toBeVisible();
+    await expect(page.locator('#land-map .leaflet-tile')).not.toHaveCount(0, { timeout: 10000 });
     await expect(page.locator('.land-map-actions')).toBeVisible();
     await expect(page.locator('.land-map-actions [data-action="undo"]')).toHaveText('ย้อนจุดล่าสุด');
     await page.locator('#land-map').click({ position: { x: 90, y: 90 } });
     await page.locator('#land-map').click({ position: { x: 260, y: 90 } });
+    await expect(page.locator('#land-map .land-number-marker')).toHaveCount(2);
     await expect(page.locator('#land-summary')).toContainText(/ระยะรวม|Total distance/);
     await expect(page.locator('.land-quality')).toContainText(/ยังประเมินไม่ได้|Not enough quality data/);
     await page.getByRole('button', { name: 'จัดแผนที่ให้เห็นจุด' }).click();
