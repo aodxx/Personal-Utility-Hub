@@ -9,9 +9,9 @@ import { toolCatalog } from '../src/data/tools';
 const declaredHasSymbol = (sprite: string, id: string): boolean => sprite.includes(`<symbol id="${id}"`);
 
 const normalizedSymbolBodies = (sprite: string): Array<{ id: string; body: string }> =>
-  Array.from(sprite.matchAll(/<symbol\\s+id="([^"]+)"[^>]*>([\\s\\S]*?)<\\/symbol>/g), ([, id, body]) => ({
+  Array.from(sprite.matchAll(/<symbol\s+id="([^"]+)"[^>]*>([\s\S]*?)<\/symbol>/g), ([, id, body]) => ({
     id,
-    body: body.replace(/>\\s+</g, '><').replace(/\\s+/g, ' ').trim(),
+    body: body.replace(/>\s+</g, '><').replace(/\s+/g, ' ').trim(),
   }));
 
 describe('3D visual asset system', () => {
