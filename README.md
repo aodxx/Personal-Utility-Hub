@@ -51,13 +51,13 @@
 
 Audio tools ใช้ PCM pipeline ที่แชร์ร่วมกัน โดย `src/core/audio-processing.ts` รับผิดชอบการ decode/normalize/resample และ pure processing operations ส่วน `src/tools/audio-workbench.ts` จัดการ waveform, controls, preview, progress, result metrics, download และ lifecycle ของหน้าเครื่องมือ งานที่ใช้เวลานานถูกส่งผ่าน `src/core/processing-client.ts` ไปยัง `src/workers/processing.worker.ts` เมื่อ Worker พร้อม และมี main-thread fallback สำหรับ browser ที่ไม่รองรับ Worker หรือความสามารถที่จำเป็น
 
-Audio output ในชุดปัจจุบันเป็น **WAV/WAV Compact family** ตาม operation และ quality profile ที่เลือก ไม่ใช่ MP3 encoder และไม่ได้อัปโหลดไฟล์ขึ้น server เครื่องมือรองรับการแสดง duration, channels, sample rate, peak, clipping state, output format และ byte size เมื่อ metric นั้นเกี่ยวข้องกับ operation
+Audio output ในชุดปัจจุบันเป็น **WAV/WAV Compact family** สำหรับ workbench ทั่วไป และ **MP3 128 kbps** สำหรับ Audio Merger โดย encode ใน browser และไม่อัปโหลดไฟล์ขึ้น server เครื่องมือรองรับการแสดง duration, channels, sample rate, peak, RMS loudness, 2x interpolated true-peak screening metric, clipping state, output format และ byte size เมื่อ metric นั้นเกี่ยวข้องกับ operation
 
 ข้อจำกัดที่ควรเข้าใจก่อนใช้งานมีดังนี้:
 
-- Audio Compressor ใช้ target size เป็นค่าประมาณสำหรับ WAV ไม่ใช่การรับประกันขนาดไฟล์สุดท้าย
-- Audio Finisher ใช้ peak normalization และ clipping protection ไม่ใช่ LUFS mastering
-- Audio Speed & Pitch ใช้ resampling ratio เดียว จึงเปลี่ยนความเร็วและ pitch ที่สัมพันธ์กัน ไม่ใช่ advanced time-stretch ที่ควบคุมสองค่าจากกันอย่างอิสระ
+- Audio Compressor ใช้ target size เป็นค่าประมาณสำหรับ WAV ไม่ใช่การรับประกันขนาดไฟล์สุดท้าย; Audio Merger MP3 ใช้ fixed 128 kbps
+- Audio Finisher ใช้ peak normalization และ clipping protection; RMS/true-peak ที่แสดงเป็น screening metrics ไม่ใช่ LUFS mastering ตาม EBU R128
+- Audio Speed & Pitch ใช้ local granular time-stretch แบบประมาณการเพื่อแยก speed กับ pitch แต่อาจมี artifact ในเสียงที่ซับซ้อน และไม่เทียบเท่า advanced DAW time-stretch
 - ไฟล์ต่าง sample rate จะถูก resample ให้เป็น rate ที่ pipeline ใช้ร่วมกัน และ output ยังอยู่ใน WAV family
 - Preview และ Export ใช้ processing path เดียวกัน โดยผลลัพธ์ preview ไม่ถูกดาวน์โหลดจนกว่าผู้ใช้จะสั่ง export
 

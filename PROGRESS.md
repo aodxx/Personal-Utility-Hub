@@ -249,3 +249,19 @@ Targeted audio suite ผ่าน 21/21 tests, Wave 1 E2E ผ่าน 4 tests�
 ## Review remediation continuation — 22 August 2026
 
 Follow-up fixes based on `Personal-Utility-Hub-Tool-Review-2026-08-22.md`: the public catalog now excludes the internal Foundation Lifecycle Demo while preserving its direct diagnostic route; Image Resizer and Image Converter compare source/output bytes and use a warning state when output grows; PNG conversion hides the quality control that has no effect; Image Contact Sheet revokes source/output Blob URLs and reports success only after `toBlob`; shared Audio Workbench warns on larger output, missed approximate targets, or clipping; Pattern Pulse now describes failed rounds as game over and includes an explicit local best-score reset; Audio Speed & Pitch and Audio Chapter Marker guides were synchronized with shipped behavior. Typecheck and targeted/full unit tests passed at this checkpoint. Remaining advanced roadmap items such as full PDF queues, semantic JSON diff, LUFS processing, APNG export, and CRS/tile packages remain documented as future waves rather than unverified claims.
+
+
+## Audio export and metering follow-up — 22 August 2026
+
+เพิ่ม MP3 export แบบ local-only สำหรับ Audio Merger ที่ 128 kbps โดยใช้ browser-compatible vendored encoder bundle ไม่มี runtime network หรือ backend dependency; WAV และ WAV Compact ยังคงเป็น output หลักของ workbench อื่น ๆ. เพิ่ม RMS loudness และ 2x interpolated true-peak screening metrics ให้ผลลัพธ์ audio และเพิ่ม warning เมื่อ output โตขึ้น, missed approximate target หรือมี clipping risk. เพิ่ม unit และ Playwright regression coverage สำหรับ MP3 filename, MP3 frame output, audio metrics และ download flow. MP3 encoder เป็น fixed-bitrate export และ RMS/true-peak เป็น screening metrics ไม่ใช่ LUFS/EBU R128 mastering meter.
+
+
+## Audio backlog closure — 22 August 2026
+
+Audio Merger now supports local MP3 export at fixed 128 kbps in addition to WAV/WAV Compact, with a vendored browser-compatible encoder to avoid the CommonJS `MPEGMode` bundling defect. Shared audio results now expose RMS loudness and an interpolated true-peak screening metric; status becomes a warning for larger outputs, missed approximate targets, or clipping risk. Metadata and bilingual guides were updated, and MP3 frame/filename/download coverage was added to unit and Playwright tests. Targeted Audio E2E passed 66/66 across the configured browser profiles after correcting the download-label contract.
+
+LUFS/EBU R128 mastering, variable-bitrate MP3, and advanced phase-vocoder quality remain explicitly unsupported capabilities rather than falsely marked complete; the UI and guides now state this boundary.
+
+## Final quality gate — 22 August 2026
+
+Static checks passed: TypeScript typecheck, Vitest unit suite, production build, 33-tool registry integrity, 120-icon SVG integrity, bundle budget (49.2 KB entry gzip), high-severity audit scan (0 vulnerabilities), service-worker syntax check, and whitespace validation. The complete Playwright suite passed **190 passed / 14 skipped** across 204 tests with `--workers=1`. A 3-worker run reproduced an environment-level Chromium crash under the sandbox memory ceiling after 189 tests passed; the single-worker run completed all coverage without failures and is the authoritative release result for this constrained environment. The realistic 4×4 LINE Sticker export contract is now given a 60-second test budget because 16 PNG encodes plus validation are CPU-heavy on Android under parallel load.

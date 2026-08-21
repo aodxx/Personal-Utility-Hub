@@ -41,7 +41,7 @@ test.describe('Audio processing production contract', () => {
     await expect(page.locator('#trim-status')).toContainText('ตัดเสียงสำเร็จ');
 
     const downloadPromise = page.waitForEvent('download');
-    await page.getByRole('button', { name: 'ดาวน์โหลด WAV' }).click();
+    await page.getByRole('button', { name: /ดาวน์โหลดไฟล์|ดาวน์โหลด WAV/ }).click();
     const download = await downloadPromise;
     expect(download.suggestedFilename()).toBe('tone-trimmed.wav');
 
@@ -68,7 +68,7 @@ test.describe('Audio processing production contract', () => {
       await expect(page.locator('#audio-result-meta')).toContainText('Peak');
       await expect(page.locator('#audio-status')).toContainText('Processing complete');
       const downloadPromise = page.waitForEvent('download');
-      await page.getByRole('button', { name: 'ดาวน์โหลด WAV / Download' }).click();
+      await page.getByRole('button', { name: /ดาวน์โหลดไฟล์|ดาวน์โหลด WAV/ }).click();
       const download = await downloadPromise;
       expect(download.suggestedFilename()).toContain('.wav');
     });
@@ -113,7 +113,7 @@ test.describe('Phase 8 real media corpus', () => {
       const canPlayWav = await page.evaluate(() => new Audio().canPlayType('audio/wav'));
       expect(canPlayWav).not.toBe('');
       const downloadPromise = page.waitForEvent('download');
-      await page.getByRole('button', { name: 'ดาวน์โหลด WAV' }).click();
+      await page.getByRole('button', { name: /ดาวน์โหลดไฟล์|ดาวน์โหลด WAV/ }).click();
       const download = await downloadPromise;
       const downloadedPath = await download.path();
       expect(downloadedPath).not.toBeNull();
@@ -136,6 +136,23 @@ test.describe('Phase 8 real media corpus', () => {
     await expect(page.locator('#audio-result')).toBeVisible({ timeout: 15_000 });
     await expect(page.locator('#audio-result-meta')).toContainText('WAV PCM 16-bit');
     await expect(page.locator('#audio-output-preview')).toHaveAttribute('src', /^blob:/);
+  });
+
+  test('Audio Merger exports an MP3 locally with an MP3 filename', async ({ page }) => {
+    await page.goto('./#/tools/audio-merger');
+    await page.locator('#audio-file').setInputFiles({ name: 'mp3-source.wav', mimeType: 'audio/wav', buffer: createWavFixture(0.5, 44_100) });
+    await expect(page.locator('#audio-editor')).toBeVisible({ timeout: 15_000 });
+    await page.locator('#audio-format').selectOption('mp3');
+    await page.getByRole('button', { name: 'Export / ประมวลผล' }).click();
+    await expect(page.locator('#audio-result')).toBeVisible({ timeout: 15_000 });
+    await expect(page.locator('#audio-result-meta')).toContainText('MP3 128 kbps');
+    const downloadPromise = page.waitForEvent('download');
+    await page.getByRole('button', { name: /ดาวน์โหลดไฟล์/ }).click();
+    const download = await downloadPromise;
+    expect(download.suggestedFilename()).toMatch(/\.mp3$/);
+    const downloadedPath = await download.path();
+    expect(downloadedPath).not.toBeNull();
+    expect(readFileSync(downloadedPath!).subarray(0, 2).toString('hex')).toMatch(/^(fffb|fff3|4944)$/);
   });
 });
 

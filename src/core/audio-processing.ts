@@ -1,4 +1,7 @@
 import { replaceFileExtension } from './file-processing';
+import lamejs from '../vendor/lame.all';
+
+const Mp3Encoder = lamejs.Mp3Encoder;
 
 export const MAX_AUDIO_BYTES = 80 * 1024 * 1024;
 export const MAX_AUDIO_DURATION_SECONDS = 30 * 60;
@@ -87,7 +90,7 @@ export function trimPcm(pcm: AudioPcmData, options: AudioTrimOptions, onProgress
 
 export type AudioOperation =
   | { kind: 'compress'; targetBytes: number; quality?: 'small' | 'balanced' | 'high' }
-  | { kind: 'merge'; segments: AudioPcmData[]; gap: number; crossfade: number; format: 'wav' | 'wav-compact' }
+  | { kind: 'merge'; segments: AudioPcmData[]; gap: number; crossfade: number; format: 'wav' | 'wav-compact' | 'mp3' }
   | { kind: 'silence'; thresholdDb: number; minimum: number; padding: number }
   | { kind: 'finish'; normalize: boolean; gainDb: number; fadeIn: number; fadeOut: number; loudness?: 'peak' | 'voice' }
   | { kind: 'speed-pitch'; speed: number; semitones: number };
@@ -96,14 +99,33 @@ export interface AudioProcessResult extends AudioTrimResult {
   inputBytes?: number;
   inputPeak: number;
   peak: number;
+  inputRmsDb: number;
+  rmsDb: number;
+  truePeak: number;
   gainApplied: number;
   clipped: boolean;
-  outputFormat: 'wav' | 'wav-compact';
+  outputFormat: 'wav' | 'wav-compact' | 'mp3';
 }
 
 export function audioPeak(channels: Float32Array[]): number {
   let peak = 0;
   for (const channel of channels) for (const sample of channel) peak = Math.max(peak, Math.abs(sample));
+  return peak;
+}
+
+export function audioRmsDb(channels: Float32Array[]): number {
+  let sum = 0; let count = 0;
+  for (const channel of channels) for (const sample of channel) { sum += sample * sample; count += 1; }
+  return count && sum > 0 ? 20 * Math.log10(Math.sqrt(sum / count)) : -Infinity;
+}
+
+/** 2x linear-interpolated peak estimate; it is a screening metric, not a mastering meter. */
+export function audioTruePeak(channels: Float32Array[]): number {
+  let peak = audioPeak(channels);
+  for (const channel of channels) for (let index = 1; index < channel.length; index += 1) {
+    const previous = channel[index - 1] ?? 0; const current = channel[index] ?? 0;
+    peak = Math.max(peak, Math.abs((previous + current) / 2));
+  }
   return peak;
 }
 
@@ -274,8 +296,9 @@ function removeSilence(pcm: AudioPcmData, thresholdDb: number, minimum: number, 
 
 export function processAudio(pcm: AudioPcmData, operation: AudioOperation, onProgress?: (progress: number, message: string) => void): AudioProcessResult {
   const inputPeak = audioPeak(pcm.channels);
+  const inputRmsDb = audioRmsDb(pcm.channels);
   let output: AudioPcmData;
-  let outputFormat: 'wav' | 'wav-compact' = 'wav';
+  let outputFormat: 'wav' | 'wav-compact' | 'mp3' = 'wav';
   let gainApplied = 1;
   if (operation.kind === 'compress') {
     const duration = durationOf(pcm);
@@ -304,9 +327,27 @@ export function processAudio(pcm: AudioPcmData, operation: AudioOperation, onPro
     output = speedPitchPcm(clonePcm(pcm), operation.speed, operation.semitones, onProgress);
   }
   onProgress?.(75, 'กำลังสร้างไฟล์ผลลัพธ์');
-  const bytes = encodeWav(output.channels, output.sampleRate, onProgress, outputFormat === 'wav-compact' ? 8 : 16);
+  const bytes = outputFormat === 'mp3' ? encodeMp3(output.channels, output.sampleRate, onProgress) : encodeWav(output.channels, output.sampleRate, onProgress, outputFormat === 'wav-compact' ? 8 : 16);
   const peak = audioPeak(output.channels);
-  return { bytes, duration: durationOf(output), sampleRate: output.sampleRate, channels: output.channels.length, inputPeak, peak, gainApplied, clipped: peak > 1, outputFormat };
+  const rmsDb = audioRmsDb(output.channels);
+  const truePeak = audioTruePeak(output.channels);
+  return { bytes, duration: durationOf(output), sampleRate: output.sampleRate, channels: output.channels.length, inputPeak, peak, inputRmsDb, rmsDb, truePeak, gainApplied, clipped: truePeak > 1, outputFormat };
+}
+
+export function encodeMp3(channels: Float32Array[], sampleRate: number, onProgress?: (progress: number, message: string) => void, kbps = 128): Uint8Array {
+  const channelCount = Math.min(2, channels.length);
+  const frameCount = channels[0]?.length ?? 0;
+  if (!channelCount || !frameCount) throw new Error('ไม่มีข้อมูลเสียงสำหรับสร้างไฟล์ MP3');
+  const encoder = new Mp3Encoder(channelCount, sampleRate, Math.max(32, Math.min(320, kbps)));
+  const blockSize = 1152; const chunks: number[] = [];
+  for (let start = 0; start < frameCount; start += blockSize) {
+    const end = Math.min(frameCount, start + blockSize); const left = new Int16Array(end - start); const right = channelCount > 1 ? new Int16Array(end - start) : undefined;
+    for (let index = 0; index < left.length; index += 1) { left[index] = Math.round(clamp(channels[0]![start + index] ?? 0, -1, 1) * 32767); if (right) right[index] = Math.round(clamp(channels[1]![start + index] ?? channels[0]![start + index] ?? 0, -1, 1) * 32767); }
+    const encoded = encoder.encodeBuffer(left, right); for (const byte of encoded) chunks.push(byte & 255);
+    onProgress?.(80 + Math.round((end / frameCount) * 15), 'กำลังเข้ารหัส MP3');
+  }
+  const tail = encoder.flush(); for (const byte of tail) chunks.push(byte & 255);
+  return Uint8Array.from(chunks);
 }
 
 export function encodeWav(channels: Float32Array[], sampleRate: number, onProgress?: (progress: number, message: string) => void, bitDepth: 8 | 16 = 16): Uint8Array {

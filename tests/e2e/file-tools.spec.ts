@@ -64,8 +64,8 @@ test('runs all five new audio workbenches with real output', async ({ page }) =>
     await expect(page.locator('#audio-result')).toBeVisible({ timeout: 15_000 });
     await expect(page.locator('#audio-result-meta')).toContainText('Peak');
     const download = page.waitForEvent('download');
-    await expect(page.getByRole('button', { name: /ดาวน์โหลด WAV/ })).toBeVisible();
-    await page.getByRole('button', { name: /ดาวน์โหลด WAV/ }).click();
+    await expect(page.getByRole('button', { name: /ดาวน์โหลดไฟล์|ดาวน์โหลด WAV/ })).toBeVisible();
+    await page.getByRole('button', { name: /ดาวน์โหลดไฟล์|ดาวน์โหลด WAV/ }).click();
     expect((await download).suggestedFilename()).toMatch(/\.wav$/);
   }
 });
@@ -82,7 +82,7 @@ test('keeps stereo and non-default sample rates through Preview and Export', asy
   await page.locator('#audio-form').dispatchEvent('submit');
   await expect(page.locator('#audio-status')).toContainText(/Processing complete|Complete with warnings/, { timeout: 15_000 });
   const download = page.waitForEvent('download');
-  await page.getByRole('button', { name: /ดาวน์โหลด WAV/ }).click();
+  await page.getByRole('button', { name: /ดาวน์โหลดไฟล์|ดาวน์โหลด WAV/ }).click();
   expect((await download).suggestedFilename()).toMatch(/\.wav$/);
 });
 

@@ -119,6 +119,8 @@ test.describe('LINE Sticker Studio production contract', () => {
   });
 
   test('runs realistic 4×4 sheet through split, batch finish, review and export', async ({ page }) => {
+    // 16 PNG encodes plus validation can exceed the default budget on Android when the full suite runs in parallel.
+    test.setTimeout(60_000);
     const downloads: string[] = [];
     page.on('download', async (download) => { const path = await download.path(); if (path) downloads.push(path); });
     await page.goto('./#/tools/line-sticker-studio');
