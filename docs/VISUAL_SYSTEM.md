@@ -33,6 +33,11 @@ Personal Utility Hub ใช้ภาพ 3D clay/glass ที่เป็นร�
 - `category-media`
 - `category-developer`
 - `category-other`
+- `category-location` — แผนที่และภูมิสารสนเทศ
+- `category-files` — ไฟล์และข้อมูลเมตา
+- `category-diagrams` — ไดอะแกรม
+- `category-games` — เกม
+- `category-fortune` — ดูดวง
 
 ### Core tools
 
