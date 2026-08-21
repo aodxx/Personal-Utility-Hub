@@ -38,3 +38,19 @@ describe('land units and exports', () => {
     expect(buildCSV(points)).toContain('gps');
   });
 });
+
+describe('measurement quality', () => {
+  it('classifies GPS accuracy with transparent thresholds', async () => {
+    const { accuracyLevel, measurementQuality } = await import('../src/tools/land-measurement/quality');
+    expect(accuracyLevel(4)).toBe('good');
+    expect(accuracyLevel(18)).toBe('fair');
+    expect(accuracyLevel(45)).toBe('poor');
+    expect(measurementQuality([{ ...points[0]!, source: 'gps', accuracyMeters: 8 }], 'gps')).toBe('good');
+    expect(measurementQuality([{ ...points[0]!, source: 'gps', accuracyMeters: 45 }], 'gps')).toBe('poor');
+  });
+  it('flags duplicate or self-intersecting parcel points before area display', async () => {
+    const { validatePolygon } = await import('../src/tools/land-measurement/quality');
+    expect(validatePolygon([points[0]!, points[1]!, points[1]!, points[3]!]).valid).toBe(false);
+    expect(validatePolygon([points[0]!, points[2]!, points[1]!, points[3]!]).issues).toContain('เส้นขอบแปลงตัดกัน / Self-intersecting boundary');
+  });
+});

@@ -8,6 +8,9 @@ test.describe('Land Measurement production contract', () => {
     await page.locator('#land-map').click({ position: { x: 90, y: 90 } });
     await page.locator('#land-map').click({ position: { x: 260, y: 90 } });
     await expect(page.locator('#land-summary')).toContainText(/ระยะรวม|Total distance/);
+    await expect(page.locator('.land-quality')).toContainText(/ยังประเมินไม่ได้|Not enough quality data/);
+    await page.getByRole('button', { name: 'จัดแผนที่ให้เห็นจุด' }).click();
+    await expect(page.locator('#land-status')).toContainText(/จัดแผนที่|fitted/);
     await expect(page.locator('.land-segments li')).toHaveCount(1);
     await page.getByRole('button', { name: 'วัดพื้นที่' }).click();
     await page.locator('#land-map').click({ position: { x: 260, y: 250 } });

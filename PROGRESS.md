@@ -277,3 +277,9 @@ Entry gzip หลังเพิ่ม tool อยู่ที่ 49.9 KB ภา
 ## Land Measurement completeness audit — 22 August 2026
 
 ตรวจซ้ำหลัง release พบ defect ขนาดเล็กใน Copy Summary fallback: expression เดิมอาจเรียก `.then()` บนค่า undefined หาก browser ไม่มี Clipboard API. แก้เป็น async flow ที่ตรวจ Clipboard API และใช้ textarea/execCommand fallback พร้อม error status ที่ชัดเจน. ตรวจซ้ำแล้ว typecheck, full unit suite 113/113, build, bundle 49.9 KB และ Land Measurement E2E 6/6 ผ่าน. Registry และ bilingual guide coverage ยังผ่าน; ไม่พบ unmount listener/map cleanup regression.
+
+## Land Measurement Phase 1 — Measurement Quality — 22 August 2026
+
+เพิ่ม quality layer สำหรับงานวัดภาคสนาม: accuracy thresholds (`<=10 m` good, `>10–30 m` review, `>30 m` poor), bilingual quality summary, accuracy badge รายจุด, GPS recapture รายจุด, geometry validation สำหรับ duplicate/collinear/self-intersecting polygons และปุ่ม fit map ให้เห็นจุดทั้งหมด. Area จะไม่แสดงค่าผลลัพธ์เป็นค่าที่เชื่อถือได้เมื่อ geometry ไม่ผ่าน validation และจะแสดงข้อผิดพลาดที่แก้ไขได้แทน.
+
+เพิ่ม unit coverage เป็น 115/115 รวม accuracy classification และ polygon validation และขยาย Land Measurement E2E ให้ตรวจ quality panel กับ fit-map status. Build และ bundle ผ่านที่ 49.9 KB entry gzip; targeted E2E ผ่าน 6/6. Accuracy thresholds เป็น heuristic เพื่อการคัดกรอง ไม่ใช่การรับรอง survey-grade accuracy.
