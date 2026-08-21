@@ -36,3 +36,12 @@ test.describe('Land Measurement production contract', () => {
     await expect(page.getByRole('button', { name: 'เดินวัด GPS' })).toBeVisible();
   });
 });
+
+  test('shows a visible local grid when online map tiles are blocked', async ({ page }) => {
+    await page.route('https://tile.openstreetmap.org/**', (route) => route.abort());
+    await page.route('https://server.arcgisonline.com/**', (route) => route.abort());
+    await page.goto('./#/tools/land-measurement');
+    await expect(page.locator('.local-map-fallback')).toBeVisible({ timeout: 15000 });
+    await expect(page.locator('.local-map-fallback')).toContainText(/LOCAL GRID|แผนที่พื้นฐาน/);
+    await expect(page.locator('#land-map')).toBeVisible();
+  });

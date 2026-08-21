@@ -269,3 +269,9 @@ Static checks passed: TypeScript typecheck, Vitest unit suite, production build,
 ## Land Measurement visual map fix — 22 August 2026
 
 ตรวจจากภาพผู้ใช้พบว่า Leaflet container และเส้นวัดทำงาน แต่ basemap tile ไม่แสดง และ default Leaflet marker image เสีย. ปรับ tile fallback ให้ผูก `tileerror` กับ TileLayer โดยตรงแทนการรอ event ที่ map และเปลี่ยน marker เป็น bundled numbered `divIcon` จึงไม่พึ่ง default image path ของ Leaflet. เพิ่ม E2E assertion ว่ามี `.leaflet-tile` และ numbered markers จริง พร้อมคง map action rail ใต้แผนที่สำหรับย้อนจุด/ล้างข้อมูล.
+
+## Land Measurement network-independent map fallback — 22 August 2026
+
+จากภาพการใช้งานจริงพบว่า OSM และ Esri ต่างไม่ส่ง tile ถึงมือถือ แม้ Leaflet และ attribution จะทำงาน จึงเพิ่ม final fallback แบบ local coordinate grid ที่สร้างด้วย CSS/DOM ในเครื่อง ไม่พึ่ง network และยังรองรับการวัด geometry จากจุดที่ผู้ใช้แตะหรือ GPS ได้. Tile errors ของ OSM, Esri street และ Esri satellite ถูกจับแยกตาม layer; เมื่อออนไลน์กลับมา tile ที่โหลดได้จะซ่อน local grid อัตโนมัติ.
+
+เพิ่ม Playwright regression ที่ abort external tile providers ทั้งหมดและตรวจ `.local-map-fallback` แสดงจริง. Full unit 115/115, targeted Land Measurement E2E 9/9, typecheck, build และ bundle check 49.9 KB entry gzip ผ่าน.
