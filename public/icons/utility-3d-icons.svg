@@ -254,17 +254,6 @@
         <path d="M68 96 80 78l9 11 7-8 13 15z" fill="url(#blue)"/>
       </g>
     </symbol>
-
-    <symbol id="tool-file-metadata" viewBox="0 0 128 128">
-      <g filter="url(#soft-shadow)">
-        <path d="M24 14h58l18 19v72a11 11 0 0 1-11 11H24a11 11 0 0 1-11-11V25a11 11 0 0 1 11-11z" fill="url(#paper)" stroke="#7d90c3" stroke-width="3"/>
-        <path d="M82 14v20h18" fill="url(#violet)"/>
-        <path d="M31 51h49M31 68h38M31 85h30" stroke="url(#blue)" stroke-width="7" stroke-linecap="round"/>
-        <circle cx="91" cy="89" r="25" fill="url(#blue)" stroke="#283994" stroke-width="3"/>
-        <circle cx="91" cy="89" r="11" fill="none" stroke="#fff" stroke-width="6"/>
-        <path d="m99 98 12 12" stroke="#fff" stroke-width="7" stroke-linecap="round"/>
-      </g>
-    </symbol>
     <symbol id="tool-audio-trimmer" viewBox="0 0 128 128"><g filter="url(#soft-shadow)"><rect x="13" y="30" width="102" height="68" rx="18" fill="url(#blue)" stroke="#283994" stroke-width="3"/><path d="M24 64h80" stroke="#fff" stroke-width="5" stroke-linecap="round"/><path d="M39 43v42M89 43v42" stroke="#ffc74a" stroke-width="7" stroke-linecap="round"/><path d="m32 64-12-10v20zM96 64l12-10v20z" fill="#ff675f"/></g></symbol>
     <symbol id="tool-audio-compressor" viewBox="0 0 128 128"><g filter="url(#soft-shadow)"><circle cx="64" cy="64" r="48" fill="url(#violet)" stroke="#43299d" stroke-width="3"/><path d="M24 75c13-28 25 28 38 0s25 28 42-4" fill="none" stroke="#fff" stroke-width="7" stroke-linecap="round"/><path d="M29 91h70" stroke="#ffc74a" stroke-width="7" stroke-linecap="round"/><circle cx="64" cy="32" r="7" fill="#ff675f"/></g></symbol>
     <symbol id="tool-audio-finisher" viewBox="0 0 128 128"><g filter="url(#soft-shadow)"><path d="M64 13 76 42l31 3-24 20 7 31-26-16-26 16 7-31-24-20 31-3z" fill="url(#cyan)" stroke="#267fa9" stroke-width="3"/><path d="m64 35 5 18 19 1-15 12 5 18-14-10-14 10 5-18-15-12 19-1z" fill="#ffc74a"/></g></symbol>
@@ -338,19 +327,13 @@
         <circle cx="59" cy="75" r="5" fill="url(#lime)"/>
       </g>
     </symbol>
-    <symbol id="category-fortune" viewBox="0 0 128 128">
-      <g filter="url(#soft-shadow)">
-        <circle cx="64" cy="53" r="39" fill="url(#glass)" stroke="#6989dd" stroke-width="3"/>
-        <path d="M73 28c-15 2-24 16-20 30 4 15 20 23 34 17-8 11-23 16-36 10-17-7-25-27-18-44 6-13 22-20 40-13z" fill="#fff" fill-opacity=".9"/>
-        <path d="m89 38 3 7 7 3-7 3-3 8-3-8-8-3 8-3zM43 34l2 5 5 2-5 2-2 6-2-6-6-2 6-2z" fill="#ffc74a"/>
-        <path d="M39 86h50l13 24H26z" fill="url(#violet)" stroke="#43299d" stroke-width="3" stroke-linejoin="round"/>
-        <path d="M43 98h42" stroke="url(#lime)" stroke-width="7" stroke-linecap="round"/>
-      </g>
-    </symbol>
     <symbol id="tool-orbit-catcher" viewBox="0 0 128 128"><g filter="url(#soft-shadow)"><path d="M64 12 78 48l34 4-26 22 8 34-30-18-30 18 8-34L16 52l34-4z" fill="url(#gold)" stroke="#d39b2f" stroke-width="3"/><path d="M64 36v54M37 63h54" stroke="#fff" stroke-width="3" opacity=".8"/><circle cx="64" cy="63" r="13" fill="#55d9ff" stroke="#fff" stroke-width="4"/><path d="M54 105h20" stroke="#ff6378" stroke-width="6" stroke-linecap="round"/></g></symbol>
     <symbol id="tool-pattern-pulse" viewBox="0 0 128 128"><g filter="url(#soft-shadow)"><rect x="16" y="16" width="42" height="42" rx="10" fill="url(#cyan)" stroke="#267fa9" stroke-width="3"/><rect x="70" y="16" width="42" height="42" rx="10" fill="url(#violet)" stroke="#6959a5" stroke-width="3"/><rect x="16" y="70" width="42" height="42" rx="10" fill="#ff6378" stroke="#b74665" stroke-width="3"/><rect x="70" y="70" width="42" height="42" rx="10" fill="url(#gold)" stroke="#d39b2f" stroke-width="3"/><path d="m48 38 14 14 18-22" fill="none" stroke="#fff" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/></g></symbol>
     
     
     
+    <symbol id="category-fortune" viewBox="0 0 128 128"><g filter="url(#soft-shadow)"><path d="M31 19c17-10 39-6 51 8 15 17 11 43-6 57-12 10-28 14-43 11 15-10 25-24 25-42 0-14-10-27-27-34z" fill="url(#gold)" stroke="#d39b2f" stroke-width="3"/><path d="M78 25a35 35 0 0 1 20 43c-5 12-16 22-29 26" fill="none" stroke="url(#violet)" stroke-width="8" stroke-linecap="round"/><circle cx="77" cy="43" r="4" fill="#55d9ff"/><circle cx="96" cy="58" r="5" fill="#ffc74a"/><circle cx="75" cy="78" r="4" fill="#ff6378"/><path d="m73 48 7 12 13 2-10 9 3 13-12-7-12 7 3-13-10-9 13-2z" fill="#fff" opacity=".9"/></g></symbol>
+    <symbol id="tool-foundation-demo" viewBox="0 0 128 128"><g filter="url(#soft-shadow)"><path d="M22 31 64 15l42 16v54l-42 28-42-28z" fill="url(#violet)" stroke="#6959a5" stroke-width="3" stroke-linejoin="round"/><path d="m64 15 42 16-42 17-42-17z" fill="#7f70d8"/><path d="M64 48v65" stroke="#4334a0" stroke-width="3"/><path d="M38 63h18l7 8 19-24" fill="none" stroke="#ffc74a" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/><circle cx="39" cy="88" r="6" fill="#55d9ff"/><circle cx="89" cy="86" r="6" fill="#ff6378"/><path d="M45 89h35" stroke="#fff" stroke-width="3" stroke-dasharray="4 5"/></g></symbol>
+    <symbol id="tool-file-metadata" viewBox="0 0 128 128"><g filter="url(#soft-shadow)"><path d="M28 13h48l20 20v79a9 9 0 0 1-9 9H28a9 9 0 0 1-9-9V22a9 9 0 0 1 9-9z" fill="url(#paper)" stroke="#7d90c3" stroke-width="3"/><path d="M76 13v22h20" fill="#7f70d8"/><circle cx="51" cy="55" r="18" fill="url(#cyan)" stroke="#267fa9" stroke-width="3"/><path d="M51 45v21M41 55h20" stroke="#fff" stroke-width="5" stroke-linecap="round"/><path d="m65 72 17 17" stroke="#6959a5" stroke-width="8" stroke-linecap="round"/><circle cx="88" cy="95" r="18" fill="url(#gold)" stroke="#d39b2f" stroke-width="3"/><path d="M88 86v12M88 102v1" stroke="#fff" stroke-width="5" stroke-linecap="round"/></g></symbol>
   </defs>
 </svg>

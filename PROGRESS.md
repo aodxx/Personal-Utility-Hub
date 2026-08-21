@@ -218,3 +218,8 @@ Targeted audio suite ผ่าน 21/21 tests, Wave 1 E2E ผ่าน 4 tests�
 เพิ่มเกม local-first ที่เล่นได้จริง 2 เกมในหมวด `เกม`: `Orbit Catcher` เกม arcade บน canvas สำหรับเก็บดาวและหลบอุกกาบาต รองรับ keyboard, mouse และ touch พร้อม score, lives และ 30-second session; และ `Pattern Pulse` เกมจำลำดับสี 4 ช่องที่เพิ่ม sequence ทีละรอบ มี level, score และ high score ใน localStorage เกมทั้งสองเป็น lazy-loaded tools มี metadata, bilingual guide, unique SVG icon และไม่ส่งข้อมูลไป backend
 
 หลักฐานล่าสุด: registry ตรวจพบ 33 metadata modules, typecheck ผ่าน, Vitest 101/101 ผ่าน, production build ผ่าน และ smoke E2E 32 ผ่าน 4 skipped รวม gameplay start flow ของทั้งสองเกม
+
+
+## Icon Refinement — 2026-08-22
+
+ปรับไอคอน visual identity สำหรับหมวด `ดูดวง` และเปลี่ยนไอคอนของ `Foundation Lifecycle Demo` กับ `File Metadata Viewer` จากการใช้ไอคอนหมวดหรือไอคอนร่วม มาเป็น symbol เฉพาะใน SVG sprite ได้แก่ `category-fortune`, `tool-foundation-demo` และ `tool-file-metadata` โดยคงโทน indigo, violet, cyan และ gold ของ Hub ไว้ครบถ้วน ไอคอนใหม่ผ่าน SVG integrity และไม่เกิด duplicate geometry/symbol

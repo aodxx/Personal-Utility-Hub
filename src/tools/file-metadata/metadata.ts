@@ -6,7 +6,7 @@ export const metadata = {
   description: 'ดูชื่อ ชนิด ขนาด วันที่ แฮช และข้อมูลเฉพาะของรูปภาพหรือ PDF',
   category: 'ไฟล์และข้อมูลเมตา',
   route: '/tools/file-metadata',
-  icon: 'tool-file-inspector',
+  icon: 'tool-file-metadata',
   tags: ['file', 'metadata', 'sha-256', 'ข้อมูลไฟล์', 'ขนาดไฟล์'],
   processing: 'client-side',
   supportsOffline: true,

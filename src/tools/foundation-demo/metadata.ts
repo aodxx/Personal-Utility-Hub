@@ -6,7 +6,7 @@ export const foundationDemoMetadata: ToolMetadata = {
   description: 'เครื่องมือภายในสำหรับยืนยันการโหลดแบบ Lazy และวงจร mount/unmount ของ Hub Core',
   category: 'Developer Tools',
   route: '/tools/foundation-demo',
-  icon: 'category-developer',
+  icon: 'tool-foundation-demo',
   tags: ['foundation', 'lifecycle', 'demo'],
   processing: 'client-side',
   supportsOffline: false,

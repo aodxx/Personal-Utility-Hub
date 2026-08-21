@@ -28,6 +28,7 @@ export const visualAssetIds = [
   'tool-pdf-to-image',
   'tool-file-metadata',
   'tool-file-inspector',
+  'tool-foundation-demo',
   'tool-json-schema-generator',
   'tool-markdown-table-builder',
   'tool-url-query-builder',
