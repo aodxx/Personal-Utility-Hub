@@ -58,7 +58,7 @@ export function isVisualAssetId(value: string | undefined): value is VisualAsset
 
 export function assetIcon(id: VisualAssetId, className = ''): string {
   const classes = ['asset-icon', className].filter(Boolean).join(' ');
-  const spriteUrl = `${import.meta.env.BASE_URL}icons/utility-3d-icons.svg#${id}`;
+  const spriteUrl = `${import.meta.env.BASE_URL}icons/utility-3d-icons.svg?v=0.8.2-icons#${id}`;
 
   return `<svg class="${classes}" aria-hidden="true" focusable="false"><use href="${spriteUrl}"></use></svg>`;
 }

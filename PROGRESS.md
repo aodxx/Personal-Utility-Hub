@@ -223,3 +223,8 @@ Targeted audio suite ผ่าน 21/21 tests, Wave 1 E2E ผ่าน 4 tests�
 ## Icon Refinement — 2026-08-22
 
 ปรับไอคอน visual identity สำหรับหมวด `ดูดวง` และเปลี่ยนไอคอนของ `Foundation Lifecycle Demo` กับ `File Metadata Viewer` จากการใช้ไอคอนหมวดหรือไอคอนร่วม มาเป็น symbol เฉพาะใน SVG sprite ได้แก่ `category-fortune`, `tool-foundation-demo` และ `tool-file-metadata` โดยคงโทน indigo, violet, cyan และ gold ของ Hub ไว้ครบถ้วน ไอคอนใหม่ผ่าน SVG integrity และไม่เกิด duplicate geometry/symbol
+
+
+## Icon Visibility Cache Fix — 2026-08-22
+
+ตรวจสอบ Production แล้วพบว่า commit และ SVG ใหม่ถูกเผยแพร่จริงครบทั้ง `category-fortune`, `tool-foundation-demo` และ `tool-file-metadata` แต่ PWA ใช้ cache-first สำหรับ asset และยังมี cache namespace เดิม `v0.8.1` จึงอาจทำให้มือถือแสดง JavaScript/SVG sprite รุ่นเก่า แก้โดยเปลี่ยน shell/tool cache เป็น `v0.8.2-icons` และเพิ่ม query version `v=0.8.2-icons` ให้ SVG icon references เพื่อบังคับโหลด asset ใหม่ โดยยังคง local-first และ offline behavior
