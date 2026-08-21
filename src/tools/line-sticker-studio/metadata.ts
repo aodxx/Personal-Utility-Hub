@@ -6,7 +6,7 @@ export const metadata = {
   description: 'เตรียมชุด LINE Sticker แบบ local-first: split, clean, edit, inspect, prompt และ export PNG/ZIP',
   category: 'รูปภาพ',
   route: '/tools/line-sticker-studio',
-  icon: 'category-images',
+  icon: 'tool-line-sticker-studio',
   tags: ['image', 'line sticker', 'split', 'background cleanup', 'validator', 'zip', 'prompt'],
   processing: 'client-side',
   supportsOffline: true,

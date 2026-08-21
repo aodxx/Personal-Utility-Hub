@@ -6,7 +6,7 @@ export const metadata = {
   description: 'จัดระเบียบข้อความ ลบช่องว่าง และแปลงรูปแบบตัวอักษรอย่างรวดเร็ว',
   category: 'ข้อความและข้อมูล',
   route: '/tools/text-formatter',
-  icon: 'tool-text-formatter',
+  icon: 'tool-text-format',
   tags: ['text', 'format', 'case', 'ข้อความ', 'ช่องว่าง'],
   processing: 'client-side',
   supportsOffline: true,

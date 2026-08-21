@@ -6,7 +6,7 @@ export const metadata = {
   description: 'ปรับขนาดรูปภาพตามพิกเซลหรือสัดส่วน พร้อมดาวน์โหลดไฟล์ใหม่',
   category: 'รูปภาพ',
   route: '/tools/image-resizer',
-  icon: 'tool-image-resizer',
+  icon: 'tool-image-resize',
   tags: ['image', 'resize', 'รูปภาพ', 'ปรับขนาด', 'canvas'],
   processing: 'client-side',
   supportsOffline: true,

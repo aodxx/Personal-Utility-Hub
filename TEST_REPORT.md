@@ -293,3 +293,19 @@ JSON Schema Generator และ Markdown Table Builder ยังอยู่ส�
 | Smoke E2E | 29 ผ่าน, 4 intentional skips |
 | Mobile layout | ผ่าน no-overflow smoke |
 | TypeScript/Vitest/build/bundle | ผ่าน; 99/99 unit tests และ entry 46.7 KB gzip |
+
+
+## Unique tool icon verification — 21 สิงหาคม 2026
+
+| Check | Result |
+|---|---:|
+| Catalog tool icons | 31/31 unique visual asset IDs |
+| Former fallback tools | 3 remapped: Community Mapping, LINE Sticker Studio, SVG Asset Studio |
+| Former shared groups | Audio 6, Text/Data 4, File 2, Image 2 received dedicated symbols |
+| SVG sprite integrity | 120 assets; exact duplicates 0; geometry duplicates 0; near-duplicate warnings 0 |
+| Visual asset unit tests | 4/4 passed |
+| Vitest | 100/100 passed |
+| TypeScript | Passed |
+| Production build | Passed |
+| Bundle | Entry 46.8 KB gzip; all JavaScript 1,071.0 KB |
+| `git diff --check` | Passed |

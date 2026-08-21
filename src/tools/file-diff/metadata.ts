@@ -6,7 +6,7 @@ export const metadata: ToolMetadata = {
   description: 'Compare text or JSON versions and export a readable change report locally.',
   category: 'ข้อความและข้อมูล',
   route: '/tools/file-diff',
-  icon: 'tool-text-formatter',
+  icon: 'tool-file-diff',
   tags: ['diff', 'compare', 'JSON', 'changes', 'เปรียบเทียบ', 'การเปลี่ยนแปลง'],
   processing: 'client-side',
   supportsOffline: true,

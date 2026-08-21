@@ -4,6 +4,9 @@ import { visualAssetIds } from '../src/components/asset-icon';
 import { categoryVisuals } from '../src/data/visual-assets';
 import { coreTools } from '../src/data/core-tools';
 import { fileTools } from '../src/data/file-tools';
+import { toolCatalog } from '../src/data/tools';
+
+const declaredHasSymbol = (sprite: string, id: string): boolean => sprite.includes(`<symbol id="${id}"`);
 
 describe('3D visual asset system', () => {
   const sprite = readFileSync('public/icons/utility-3d-icons.svg', 'utf8');
@@ -19,6 +22,12 @@ describe('3D visual asset system', () => {
     expect(Object.values(categoryVisuals).every((id) => declared.has(id))).toBe(true);
     expect(coreTools.every((tool) => tool.icon && declared.has(tool.icon))).toBe(true);
     expect(fileTools.every((tool) => tool.icon && declared.has(tool.icon))).toBe(true);
+  });
+
+  it('gives every catalog tool a unique declared icon', () => {
+    const icons = toolCatalog.map((tool) => tool.icon).filter((icon): icon is string => Boolean(icon));
+    expect(new Set(icons).size).toBe(toolCatalog.length);
+    expect(icons.every((icon) => declaredHasSymbol(sprite, icon))).toBe(true);
   });
 
   it('keeps the sprite self-hosted and free of executable content', () => {

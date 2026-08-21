@@ -6,7 +6,7 @@ export const metadata: ToolMetadata = {
   description: 'Create labeled image contact sheets and catalogs without uploading your photos.',
   category: 'รูปภาพ',
   route: '/tools/image-contact-sheet',
-  icon: 'tool-image-resizer',
+  icon: 'tool-image-contact-sheet',
   tags: ['contact sheet', 'catalog', 'photos', 'grid', 'รูปภาพ', 'แคตตาล็อก'],
   processing: 'client-side',
   supportsOffline: true,

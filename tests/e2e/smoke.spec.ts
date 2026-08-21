@@ -7,7 +7,7 @@ test('searches, filters and saves a favorite', async ({ page }) => {
   expect(iconResponse.ok()).toBeTruthy();
   await expect(page.locator('.hero .asset-icon--hero')).toBeVisible();
   await expect(page.locator('.category-tab .asset-icon')).toHaveCount(8);
-  await expect(page.locator('#tool-grid .tool-card .asset-icon')).toHaveCount(26);
+  await expect(page.locator('#tool-grid .tool-card .asset-icon')).toHaveCount(31);
   await expect(page.locator('#tool-grid .tool-card')).toHaveCount(31);
   await page.getByRole('searchbox').fill('รูปภาพ');
   await expect(page.locator('#tool-grid .tool-card')).toHaveCount(9);

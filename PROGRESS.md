@@ -187,3 +187,10 @@ Targeted audio suite ผ่าน 21/21 tests, Wave 1 E2E ผ่าน 4 tests�
 เพิ่ม footer developer credit แบบ responsive ด้วยข้อความ **Developed by aod** และปุ่ม Facebook แบบ accessible ที่เปิด `https://www.facebook.com/share/1AWvhjdr44/` ในแท็บใหม่ โดยใช้ inline SVG icon และไม่เพิ่ม dependency หรือ network request ใหม่
 
 ตรวจสอบแล้วด้วย AppShell unit assertion, smoke E2E, typecheck, Vitest, build, bundle และ `git diff --check`
+
+
+## Unique tool icon coverage — 2026-08-21
+
+เพิ่ม SVG symbols เฉพาะตัวให้เครื่องมือที่เคยใช้ category icon หรือ fallback ซ้ำ รวมถึงกลุ่ม Audio, Text/Data, File, Image, Community Mapping, LINE Sticker Studio และ SVG Asset Studio ทำให้ catalog tools ทั้ง 31 รายการมี visual asset ID ของตนเอง ไม่มี duplicate symbol ID และยังใช้ sprite แบบ self-hosted โดยไม่เพิ่ม dependency หรือ network request
+
+เพิ่ม visual asset regression test ตรวจว่า tool catalog ทุกตัวมี icon ที่ประกาศใน sprite และบันทึกผล integrity: 120 SVG assets, exact duplicates 0, geometry duplicates 0, near-duplicate warnings 0

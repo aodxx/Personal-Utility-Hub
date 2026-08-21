@@ -6,7 +6,7 @@ export const metadata: ToolMetadata = {
   description: 'Mark chapters on a local waveform and export cue sheets for podcasts and lectures.',
   category: 'เสียง',
   route: '/tools/audio-chapter-marker',
-  icon: 'tool-file-metadata',
+  icon: 'tool-audio-chapter-marker',
   tags: ['audio', 'chapters', 'cue sheet', 'podcast', 'markers', 'chapter', 'พอดแคสต์'],
   processing: 'client-side',
   supportsOffline: true,

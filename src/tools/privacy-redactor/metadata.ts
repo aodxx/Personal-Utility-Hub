@@ -6,7 +6,7 @@ export const metadata: ToolMetadata = {
   description: 'Find and redact sensitive text locally before sharing a file.',
   category: 'ข้อความและข้อมูล',
   route: '/tools/privacy-redactor',
-  icon: 'tool-text-formatter',
+  icon: 'tool-privacy-redactor',
   tags: ['privacy', 'redact', 'PII', 'mask', 'text', 'ความเป็นส่วนตัว', 'ปิดบังข้อมูล'],
   processing: 'client-side',
   supportsOffline: true,

@@ -6,7 +6,7 @@ export const metadata: ToolMetadata = {
   description: 'ค้นหา ตรวจสอบ แก้ไข sanitize optimize และสร้าง icon pack จาก SVG แบบ local-first',
   category: 'รูปภาพ',
   route: '/tools/svg-asset-studio',
-  icon: 'image',
+  icon: 'tool-svg-asset-studio',
   tags: ['svg', 'icon', 'library', 'sanitize', 'optimize', 'sprite', 'pack', 'css mask', 'developer'],
   processing: 'client-side',
   supportsOffline: true,

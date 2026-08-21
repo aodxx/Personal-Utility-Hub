@@ -6,7 +6,7 @@ export const metadata: ToolMetadata = {
   description: 'สร้างแผนที่ข้อมูลชุมชนแบบ local-first ด้วยจุด เส้น พื้นที่ layers และ spatial analysis โดยไม่อัปโหลดพิกัด',
   category: 'ข้อมูลและไฟล์',
   route: '/tools/community-mapping',
-  icon: 'map',
+  icon: 'tool-community-mapping',
   tags: ['community', 'mapping', 'geodata', 'survey', 'farm', 'risk', 'offline', 'privacy'],
   processing: 'client-side',
   supportsOffline: true,
