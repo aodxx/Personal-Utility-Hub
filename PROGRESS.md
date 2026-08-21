@@ -201,3 +201,10 @@ Targeted audio suite ผ่าน 21/21 tests, Wave 1 E2E ผ่าน 4 tests�
 ปรับหมวดหมู่ให้สื่อความหมายตามลักษณะงานมากขึ้น โดยเพิ่ม `แผนที่และภูมิสารสนเทศ` สำหรับ Community Mapping Studio และ `ไฟล์และข้อมูลเมตา` สำหรับ File Metadata Viewer พร้อมเปลี่ยนหมวดเสียงเดิมเป็น `เสียงและดนตรี` และย้าย Silence Remover เข้าหมวดเดียวกัน หมวดทั้งหมดมี 10 รายการรวม `ทั้งหมด` และมี category visuals กับคำแปลภาษาอังกฤษครบทุกหมวด
 
 หลักฐานล่าสุด: TypeScript ผ่าน, Vitest 100/100 ผ่าน, production build ผ่าน และ smoke E2E 29 ผ่าน 4 skipped
+
+
+## Category groups expansion — 2026-08-21
+
+เพิ่มหมวดว่างสำหรับการขยายผลิตภัณฑ์ในอนาคต ได้แก่ `ไดอะแกรม` (Diagrams), `เกม` (Games) และ `ดูดวง` (Fortune & Astrology) พร้อมไอคอน SVG เฉพาะหมวดและการแปลภาษาอังกฤษครบถ้วน ปัจจุบัน Hub มีหมวดให้เลือก 13 หมวดรวม `ทั้งหมด` โดยยังไม่มีเครื่องมือในสามหมวดใหม่นี้ จึงพร้อมรองรับการเพิ่มเครื่องมือชุดถัดไปโดยไม่ต้องเปลี่ยน taxonomy อีกครั้ง
+
+หลักฐานล่าสุด: typecheck, registry check, SVG integrity, Vitest 101/101, production build และ smoke E2E 29 ผ่าน 4 skipped

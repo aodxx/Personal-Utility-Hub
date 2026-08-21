@@ -51,7 +51,7 @@ export function t(locale: AppLocale, key: MessageKey): string {
 
 const categoryEnglish: Record<string, string> = {
   'ทั้งหมด': 'All', 'รูปภาพ': 'Images', 'PDF และเอกสาร': 'PDF & Documents', 'ข้อความและข้อมูล': 'Text & Data',
-  'QR Code และบาร์โค้ด': 'QR & Barcodes', 'เสียงและดนตรี': 'Audio & Music', 'แผนที่และภูมิสารสนเทศ': 'Maps & Geospatial', 'ไฟล์และข้อมูลเมตา': 'Files & Metadata', 'Developer Tools': 'Developer Tools', 'อื่น ๆ': 'Other',
+  'QR Code และบาร์โค้ด': 'QR & Barcodes', 'เสียงและดนตรี': 'Audio & Music', 'แผนที่และภูมิสารสนเทศ': 'Maps & Geospatial', 'ไฟล์และข้อมูลเมตา': 'Files & Metadata', 'ไดอะแกรม': 'Diagrams', 'เกม': 'Games', 'ดูดวง': 'Fortune & Astrology', 'Developer Tools': 'Developer Tools', 'อื่น ๆ': 'Other',
 };
 
   const toolEnglish: Record<string, Pick<ToolMetadata, 'title' | 'description'>> = {
