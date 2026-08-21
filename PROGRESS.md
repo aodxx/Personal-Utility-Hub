@@ -273,3 +273,7 @@ Static checks passed: TypeScript typecheck, Vitest unit suite, production build,
 Geometry core ใช้ Haversine distance และ local equirectangular projection สำหรับพื้นที่แปลงขนาดเล็ก พร้อม unit/exporter pure functions และ tests 4 cases. เพิ่ม Playwright contract 6 cases ครอบคลุม map-first workflow, area/distance, CSV download และ 360px overflow. Full local unit suite ผ่าน 113/113; targeted Land Measurement E2E ผ่าน 6/6; registry ตรวจพบ 34 metadata modules รวม foundation diagnostic และ public catalog 33 tools. Production disclaimer ระบุชัดว่าเป็นค่าประมาณ ไม่ใช่ legal/cadastral survey และ map provider อาจเห็น viewport เมื่อเปิด layer ออนไลน์.
 
 Entry gzip หลังเพิ่ม tool อยู่ที่ 49.9 KB ภายใต้งบ 50 KB. `supportsOffline` เป็น false ตามสเปก เพราะ base-map tiles ต้องใช้เครือข่าย; geometry หลัง map โหลดแล้วคำนวณใน browser. ยังไม่รองรับ background/continuous GPS tracking, legal cadastral lookup, cloud sync, SHP import หรือ elevation profile.
+
+## Land Measurement completeness audit — 22 August 2026
+
+ตรวจซ้ำหลัง release พบ defect ขนาดเล็กใน Copy Summary fallback: expression เดิมอาจเรียก `.then()` บนค่า undefined หาก browser ไม่มี Clipboard API. แก้เป็น async flow ที่ตรวจ Clipboard API และใช้ textarea/execCommand fallback พร้อม error status ที่ชัดเจน. ตรวจซ้ำแล้ว typecheck, full unit suite 113/113, build, bundle 49.9 KB และ Land Measurement E2E 6/6 ผ่าน. Registry และ bilingual guide coverage ยังผ่าน; ไม่พบ unmount listener/map cleanup regression.
