@@ -2,7 +2,7 @@
 
 > แหล่งข้อมูลกลางสำหรับสถานะการพัฒนา การทดสอบ การ release และข้อจำกัดของ Personal Utility Hub
 
-**อัปเดตล่าสุด:** 17 สิงหาคม 2026
+**อัปเดตล่าสุด:** 22 สิงหาคม 2026
 **สถานะโครงการ:** Production Baseline `v0.8.0` — Phase 5 merge เข้า `main` แล้ว; CI และ Pages deploy บน HEAD ผ่าน
 **เว็บไซต์:** https://aodxx.github.io/Personal-Utility-Hub/
 
@@ -21,7 +21,7 @@
 
 ## ความสามารถปัจจุบัน
 
-Catalog ปัจจุบันมี **25 active tools** และ file-oriented tools 17 รายการ ทุก tool ใช้ client-side processing, lazy loading และ metadata contract ที่ประกาศ processing/privacy behavior อย่างชัดเจน
+Catalog ปัจจุบันมี **33 tools (32 public tools)** และ file-oriented tools 17 รายการ ทุก tool ใช้ client-side processing, lazy loading และ metadata contract ที่ประกาศ processing/privacy behavior อย่างชัดเจน
 
 ### Audio Tool Suite
 
@@ -35,7 +35,7 @@ Catalog ปัจจุบันมี **25 active tools** และ file-orient
 | Audio Speed & Pitch | resampling ที่เชื่อมโยง speed กับ pitch |
 | Audio Chapter Marker & Cue Sheet | วาง markers บน waveform และ export cue sheet |
 
-Audio pipeline แชร์ `src/core/audio-processing.ts`, `src/tools/audio-workbench.ts`, `src/core/processing-client.ts` และ `src/workers/processing.worker.ts` โดยมี main-thread fallback เมื่อจำเป็น ไฟล์ผลลัพธ์อยู่ใน WAV/WAV Compact family; ยังไม่มี MP3 encoder, LUFS mastering หรือ independent time-stretch
+Audio pipeline แชร์ `src/core/audio-processing.ts`, `src/tools/audio-workbench.ts`, `src/core/processing-client.ts` และ `src/workers/processing.worker.ts` โดยมี main-thread fallback เมื่อจำเป็น ไฟล์ผลลัพธ์อยู่ใน WAV/WAV Compact family และ Audio Merger รองรับ MP3 128 kbps แบบ local ด้วย; ยังไม่มี LUFS/EBU R128 mastering, variable-bitrate MP3 หรือ independent time-stretch
 
 ### New Utility Suite
 
@@ -56,13 +56,13 @@ Audio pipeline แชร์ `src/core/audio-processing.ts`, `src/tools/audio-wor
 
 ## Validation status
 
-ผล local quality gate ล่าสุดหลังเพิ่ม Audio production contract regression คือ TypeScript ผ่าน, Vitest 52/52, production build ผ่าน, bundle budget ผ่าน และ Playwright 76 passed พร้อม 2 intentional skips จาก 78 cases บน Desktop Chromium, Android entry `360 × 740` และ Android current profile โดย dedicated Audio spec ครอบคลุม 21 cases
+ผล local quality gate ล่าสุด: TypeScript, Vitest, production build, registry, SVG integrity, bundle budget, audit, Service Worker syntax และ diff checks ผ่าน; Playwright ครบ 204 cases ผ่าน 190 และ skip 14 แบบ intentional เมื่อรัน single-worker เพื่อหลีกเลี่ยง Chromium crash จาก memory pressure ใน sandbox
 
 Production smoke รอบล่าสุดยืนยัน Hub, search/category, Settings, English localization, v0.8 Service Worker/cache และ Audio contract ครบ 7 tools: Audio Trimmer, Audio Compressor Pro, Audio Merger Studio, Silence Remover, Audio Finisher, Audio Speed & Pitch และ Audio Chapter Marker & Cue Sheet โดยรายละเอียดอยู่ใน `docs/v0.8-production-smoke-notes.md` การเพิ่ม one-retry recovery ใน AppShell ช่วยรับมือ transient lazy-module load state ก่อนแสดง error UI
 
 ## Known limitations และ roadmap
 
-Audio output ยังอยู่ใน WAV family; target-size เป็นค่าประมาณ, Audio Finisher เป็น peak-based normalization และ Speed & Pitch เป็น resampling ไม่ใช่ advanced time-stretch งานถัดไปที่ควรพิจารณาหลัง baseline green ได้แก่ MP3 export แบบ optional, LUFS/true-peak metering, segment-level silence editor และ independent time-stretch โดยต้องผ่าน quality benchmark และ bundle review ก่อน
+Audio output ส่วนใหญ่ยังอยู่ใน WAV family; Audio Merger มี MP3 128 kbps แบบ local แล้ว, target-size เป็นค่าประมาณ, Audio Finisher เป็น peak-based normalization และ Speed & Pitch เป็น resampling ไม่ใช่ advanced time-stretch. งานถัดไปที่ควรพิจารณาคือ LUFS/EBU R128 mastering, variable-bitrate MP3, segment-level silence editor, APNG export และ independent time-stretch โดยต้องผ่าน quality benchmark และ bundle review ก่อน
 
 ยังไม่มี Backend, telemetry หรือ cloud storage และยังไม่เริ่ม Wave 1/Wave 3 ของ v0.9 จนกว่าจะรักษา Audio contract, regression coverage และ production evidence นี้ให้ผ่านต่อเนื่องใน CI/Pages release ถัดไป
 
