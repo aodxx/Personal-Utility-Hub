@@ -19,7 +19,7 @@ function uid(): string { return `point-${Date.now()}-${Math.random().toString(36
 class LandMeasurementController {
   private readonly container: HTMLElement;
   private map?: L.Map;
-  private basemap?: L.TileLayer;
+  private basemap?: L.TileLayer; private localBasemap?: L.GeoJSON;
   private satellite?: L.TileLayer;
   private accuracyCircle?: L.Circle;
   private readonly markers = new Map<string, L.Marker>();
@@ -41,7 +41,7 @@ class LandMeasurementController {
     const host = this.container.querySelector<HTMLElement>('#land-map');
     if (!host) return;
     this.map = L.map(host, { zoomControl: true }).setView(center, 13);
-    this.basemap = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '&copy; OpenStreetMap contributors', maxZoom: 19 }).addTo(this.map); this.basemap.on('tileerror', () => this.useFallbackBasemap());
+    this.basemap = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '&copy; OpenStreetMap contributors', maxZoom: 19 }).addTo(this.map); this.basemap.on('tileerror', () => this.useFallbackBasemap()); void this.loadLocalBasemap();
     this.map.on('click', (event) => { if (this.mode !== 'gps') this.addPoint(event.latlng.lat, event.latlng.lng, 'map'); });
     window.setTimeout(() => this.map?.invalidateSize(), 0);
   }
@@ -71,9 +71,30 @@ class LandMeasurementController {
     this.render();
   }
 
-  private useFallbackBasemap(): void { if (!this.map || this.standardFallbackUsed || this.layer !== 'standard') return; this.standardFallbackUsed = true; this.basemap?.remove(); this.basemap = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}', { attribution: 'Tiles &copy; Esri', maxZoom: 19 }).addTo(this.map); this.basemap.on('tileerror', () => this.showLocalFallback()); this.basemap.once('tileload', () => this.localFallback?.remove()); this.setStatus('สลับไปยังแผนที่สำรอง / Switched to fallback map', 'working'); }
+  private async loadLocalBasemap(): Promise<void> {
+    if (!this.map) return;
+    try {
+      const response = await fetch(`${import.meta.env.BASE_URL}data/world-countries.geojson`);
+      if (!response.ok) throw new Error(`offline basemap ${response.status}`);
+      const data = await response.json() as GeoJSON.GeoJsonObject;
+      this.localBasemap = L.geoJSON(data, { style: { color: '#64748b', weight: 1, fillColor: '#94a3b8', fillOpacity: .18 } }).addTo(this.map);
+      this.localBasemap.bringToBack();
+    } catch {
+      this.setStatus('แผนที่ขอบเขตออฟไลน์โหลดไม่สำเร็จ / Offline boundary map unavailable', 'error');
+    }
+  }
 
-  private showLocalFallback(): void { if (!this.map || this.localFallback) return; const host = this.container.querySelector<HTMLElement>('#land-map'); if (!host) return; const fallback = document.createElement('div'); fallback.className = 'local-map-fallback'; fallback.innerHTML = '<strong>LOCAL GRID / แผนที่พื้นฐาน</strong><span>Tile map unavailable · วัดจากพิกัดในเครื่องได้</span>'; host.append(fallback); this.localFallback = fallback; this.setStatus('ไม่พบภาพแผนที่ออนไลน์ แสดงตารางพิกัดในเครื่อง / Online tiles unavailable; local coordinate grid is active', 'working'); }
+  private useFallbackBasemap(): void {
+    if (!this.map || this.standardFallbackUsed || this.layer !== 'standard') return;
+    this.standardFallbackUsed = true;
+    this.basemap?.remove();
+    this.basemap = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}', { attribution: 'Tiles &copy; Esri', maxZoom: 19 }).addTo(this.map);
+    this.basemap.on('tileerror', () => this.showLocalFallback());
+    this.basemap.once('tileload', () => this.localFallback?.remove());
+    this.setStatus('สลับไปยังแผนที่สำรอง / Switched to fallback map', 'working');
+  }
+
+  private showLocalFallback(): void { if (!this.map || this.localFallback) return; const host = this.container.querySelector<HTMLElement>('#land-map'); if (!host) return; const fallback = document.createElement('div'); fallback.className = 'local-map-fallback'; fallback.innerHTML = '<strong>LOCAL MAP / แผนที่ออฟไลน์</strong><span>Online tiles unavailable · country boundaries and local measurement remain available</span>'; host.append(fallback); this.localFallback = fallback; if (this.points.length) this.fitMap(); else this.map.setView(center, 5); this.setStatus('ไม่พบภาพแผนที่ออนไลน์ แสดงขอบเขตประเทศแบบออฟไลน์ / Online tiles unavailable; offline country map is active', 'working'); }
 
   private render(): void {
     this.markers.forEach((marker) => marker.remove()); this.markers.clear(); this.line?.remove(); this.polygon?.remove();
@@ -110,7 +131,7 @@ class LandMeasurementController {
   private async copySummary(): Promise<void> { const text = this.summaryText(); try { if (navigator.clipboard) await navigator.clipboard.writeText(text); else { const textarea = document.createElement('textarea'); textarea.value = text; textarea.style.position = 'fixed'; textarea.style.opacity = '0'; document.body.append(textarea); textarea.select(); if (!document.execCommand('copy')) throw new Error('Copy failed'); textarea.remove(); } this.setStatus('คัดลอกผลการวัดแล้ว / Summary copied', 'success'); } catch { this.setStatus('คัดลอกไม่สำเร็จ / Copy failed', 'error'); } }
   private export(format: ExportFormat): void { if (!this.points.length) { this.setStatus('เพิ่มจุดก่อนส่งออก / Add points before export', 'error'); return; } const content = format === 'geojson' ? buildGeoJSON(this.points, this.mode) : format === 'kml' ? buildKML(this.points, this.mode) : buildCSV(this.points); const mime = format === 'geojson' ? 'application/geo+json' : format === 'kml' ? 'application/vnd.google-earth.kml+xml' : 'text/csv;charset=utf-8'; const url = URL.createObjectURL(new Blob([content], { type: mime })); downloadUrl(url, `land-measurement-${format}.${format === 'geojson' ? 'geojson' : format}`); window.setTimeout(() => URL.revokeObjectURL(url), 1000); this.setStatus(`${format.toUpperCase()} สร้างแล้ว / Export created`, 'success'); }
   private setStatus(message: string, tone: 'neutral' | 'working' | 'success' | 'error' = 'neutral'): void { const output = this.container.querySelector<HTMLOutputElement>('#land-status'); if (output) setToolStatus(output, message, tone); }
-  unmount(): void { if (this.onKeyDown) document.removeEventListener('keydown', this.onKeyDown); this.accuracyCircle?.remove(); this.localFallback?.remove(); this.map?.remove(); this.map = undefined; this.points = []; this.markers.clear(); this.container.innerHTML = ''; }
+  unmount(): void { if (this.onKeyDown) document.removeEventListener('keydown', this.onKeyDown); this.accuracyCircle?.remove(); this.localFallback?.remove(); this.localBasemap?.remove(); this.map?.remove(); this.map = undefined; this.points = []; this.markers.clear(); this.container.innerHTML = ''; }
 }
 
 export const mount = async (container: HTMLElement): Promise<void> => { const controller = new LandMeasurementController(container); activeUnmount = () => controller.unmount(); controller.mount(); };

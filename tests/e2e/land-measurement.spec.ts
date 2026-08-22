@@ -42,6 +42,6 @@ test.describe('Land Measurement production contract', () => {
     await page.route('https://server.arcgisonline.com/**', (route) => route.abort());
     await page.goto('./#/tools/land-measurement');
     await expect(page.locator('.local-map-fallback')).toBeVisible({ timeout: 15000 });
-    await expect(page.locator('.local-map-fallback')).toContainText(/LOCAL GRID|แผนที่พื้นฐาน/);
+    await expect(page.locator('.local-map-fallback')).toContainText(/LOCAL MAP|แผนที่ออฟไลน์/);
     await expect(page.locator('#land-map')).toBeVisible();
   });

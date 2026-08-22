@@ -275,3 +275,9 @@ Static checks passed: TypeScript typecheck, Vitest unit suite, production build,
 จากภาพการใช้งานจริงพบว่า OSM และ Esri ต่างไม่ส่ง tile ถึงมือถือ แม้ Leaflet และ attribution จะทำงาน จึงเพิ่ม final fallback แบบ local coordinate grid ที่สร้างด้วย CSS/DOM ในเครื่อง ไม่พึ่ง network และยังรองรับการวัด geometry จากจุดที่ผู้ใช้แตะหรือ GPS ได้. Tile errors ของ OSM, Esri street และ Esri satellite ถูกจับแยกตาม layer; เมื่อออนไลน์กลับมา tile ที่โหลดได้จะซ่อน local grid อัตโนมัติ.
 
 เพิ่ม Playwright regression ที่ abort external tile providers ทั้งหมดและตรวจ `.local-map-fallback` แสดงจริง. Full unit 115/115, targeted Land Measurement E2E 9/9, typecheck, build และ bundle check 49.9 KB entry gzip ผ่าน.
+
+## Land Measurement real offline geographic basemap — 22 August 2026
+
+ผู้ใช้ยืนยันว่า local grid ไม่ใช่แผนที่ภูมิศาสตร์จริง จึงเพิ่ม Natural Earth public-domain country-boundary GeoJSON ขนาดประมาณ 820 KB เป็น local vector basemap ใน `public/data/world-countries.geojson`. เครื่องมือจะโหลด layer นี้จากอุปกรณ์และแสดงขอบเขตประเทศเป็นบริบทจริงแม้ OSM/Esri tiles ถูกบล็อก; local grid ยังคงเป็นพื้นหลังสำรองหาก asset โหลดไม่ได้. ระบุขอบเขตความสามารถตรงไปตรงมาว่าเป็น country-level context ไม่ใช่ street/parcel map และไม่ใช่ cadastral survey.
+
+เพิ่ม E2E ที่บล็อก external tiles และตรวจ local map fallback, numbered marker และการวัดเดิม. Typecheck, Land Measurement unit tests 6/6, targeted E2E 9/9 และ bundle check 49.9 KB entry gzip ผ่าน.
