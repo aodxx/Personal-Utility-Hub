@@ -37,11 +37,13 @@ test.describe('Land Measurement production contract', () => {
   });
 });
 
-  test('shows a visible local grid when online map tiles are blocked', async ({ page }) => {
+  test('shows visible Phatthalung offline streets when online map tiles are blocked', async ({ page }) => {
     await page.route('https://tile.openstreetmap.org/**', (route) => route.abort());
     await page.route('https://server.arcgisonline.com/**', (route) => route.abort());
     await page.goto('./#/tools/land-measurement');
     await expect(page.locator('.local-map-fallback')).toBeVisible({ timeout: 15000 });
-    await expect(page.locator('.local-map-fallback')).toContainText(/LOCAL MAP|แผนที่ออฟไลน์/);
+    await expect(page.locator('.local-map-fallback')).toContainText(/OFFLINE STREET MAP|ถนนออฟไลน์/);
     await expect(page.locator('#land-map')).toBeVisible();
+    await expect(page.locator('#land-map')).toHaveAttribute('data-offline-roads', 'ready', { timeout: 30000 });
+    await expect(page.locator('#land-map .leaflet-overlay-pane path')).not.toHaveCount(0, { timeout: 15000 });
   });

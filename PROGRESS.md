@@ -281,3 +281,9 @@ Static checks passed: TypeScript typecheck, Vitest unit suite, production build,
 ผู้ใช้ยืนยันว่า local grid ไม่ใช่แผนที่ภูมิศาสตร์จริง จึงเพิ่ม Natural Earth public-domain country-boundary GeoJSON ขนาดประมาณ 820 KB เป็น local vector basemap ใน `public/data/world-countries.geojson`. เครื่องมือจะโหลด layer นี้จากอุปกรณ์และแสดงขอบเขตประเทศเป็นบริบทจริงแม้ OSM/Esri tiles ถูกบล็อก; local grid ยังคงเป็นพื้นหลังสำรองหาก asset โหลดไม่ได้. ระบุขอบเขตความสามารถตรงไปตรงมาว่าเป็น country-level context ไม่ใช่ street/parcel map และไม่ใช่ cadastral survey.
 
 เพิ่ม E2E ที่บล็อก external tiles และตรวจ local map fallback, numbered marker และการวัดเดิม. Typecheck, Land Measurement unit tests 6/6, targeted E2E 9/9 และ bundle check 49.9 KB entry gzip ผ่าน.
+
+## Phatthalung offline street map — 22 August 2026
+
+ตามแนวทาง D เพิ่ม road-only GeoJSON จาก HOT/HDX OpenStreetMap export สำหรับ bounding box จังหวัดพัทลุง (14,608 road features, 9.1 MB) เป็น offline street layer. ระบบโหลด asset เฉพาะเมื่อ OSM/Esri online tiles ล้มเหลว จึงไม่เพิ่ม network/parse cost ให้ผู้ใช้ที่ออนไลน์ตามปกติ. ใน offline mode แผนที่จะโฟกัสพัทลุงโดยอัตโนมัติและแสดงถนนหลัก/ถนนรองเป็นเส้นจริง พร้อม attribution OpenStreetMap Contributors และ HOT/HDX.
+
+ขอบเขต coverage ใช้ bounding box ครอบคลุมจังหวัดพัทลุง ไม่ใช่ cadastral/parcel data และ road extract ไม่มีการรับรองความครบถ้วนหรือความสดของถนนทุกเส้น. Typecheck, Land Measurement unit 6/6, build, bundle check 50.0 KB และ targeted E2E 9/9 ผ่าน.
