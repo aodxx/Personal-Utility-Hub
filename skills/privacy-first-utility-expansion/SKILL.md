@@ -17,6 +17,12 @@ Use this skill to turn a utility idea into a production-ready client-side tool w
 4. **Does the tool need a browser API or permission?** Define the permission boundary explicitly, request it only after a user action, and release resources on success, error, cancel, route change, and unmount.
 5. **Will a new tool change counts, search results, cache versions, or asset registries?** Update affected regression assertions and release metadata in the same change.
 
+## Reusable roadmap planning
+
+When an existing tool already works and the request is to extend it, read [`references/group3-roadmap-playbook.md`](references/group3-roadmap-playbook.md) before editing. Classify the request by user value, correctness/privacy risk, effort, and reuse. Prefer shared preview, safe rendering, batch, progress/cancel, undo/reset, and output verification before adding specialized options. Split work into release slices of 2–4 related tools and define testable acceptance criteria before implementation.
+
+For a complete 36-tool prioritization and release-slice map, read [`docs/reports/GROUP3_DETAILED_DEVELOPMENT_ROADMAP_v0.14.md`](../../docs/reports/GROUP3_DETAILED_DEVELOPMENT_ROADMAP_v0.14.md) when working inside Personal Utility Hub. Do not treat the roadmap as permission to implement every item in one release; re-check current source, tests, bundle budget, and privacy contract at the start of every slice.
+
 ## Required implementation workflow
 
 ### 1. Inspect before editing
