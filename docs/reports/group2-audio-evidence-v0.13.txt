@@ -1,0 +1,460 @@
+=== src/tools/audio-chapter-marker/index.ts ===
+import type { ToolModule } from '../../core/tool-contract';
+import { audioCapabilityHint, decodeAudioFile } from '../../core/audio-decoder';
+import { downloadUrl, getErrorMessage, setToolStatus } from '../../core/tool-ui';
+import { metadata } from './metadata';
+
+interface Marker { time: number; title: string; note: string; }
+let panel: HTMLElement | undefined; let audioUrl = ''; let markers: Marker[] = []; let audio: HTMLAudioElement | undefined; let decodeRequest = 0;
+
+function formatTime(value: number): string { return `${String(Math.floor(value / 60)).padStart(2, '0')}:${(value % 60).toFixed(2).padStart(5, '0')}`; }
+function renderMarkers(): void { const list = panel?.querySelector<HTMLElement>('#chapter-list'); if (!list) return; list.innerHTML = markers.map((marker, index) => `<li><button class="text-button" type="button" data-chapter-action="seek" data-index="${index}">${formatTime(marker.time)}</button><label><span class="visually-hidden">Title</span><input data-marker-field="title" data-index="${index}" value="${marker.title.replace(/"/g, '&quot;')}" /></label><label><span class="visually-hidden">Note</span><input data-marker-field="note" data-index="${index}" value="${marker.note.replace(/"/g, '&quot;')}" placeholder="Note / หมายเหตุ" /></label><button class="text-button" type="button" data-chapter-action="remove" data-index="${index}">ลบ / Remove</button></li>`).join(''); }
+function downloadCue(format: 'json' | 'csv' | 'txt'): void { const name = (panel?.querySelector<HTMLInputElement>('#chapter-name')?.value || 'audio-chapters').trim(); let content = ''; let type = 'text/plain'; if (format === 'json') { content = JSON.stringify({ title: name, markers }, null, 2); type = 'application/json'; } else if (format === 'csv') { content = ['time,title,note', ...markers.map((marker) => `${marker.time.toFixed(3)},"${marker.title.replace(/"/g, '""')}","${marker.note.replace(/"/g, '""')}"`)].join('\n'); type = 'text/csv'; } else content = markers.map((marker) => `${formatTime(marker.time)}\t${marker.title}${marker.note ? `\t${marker.note}` : ''}`).join('\n'); const url = URL.createObjectURL(new Blob([content], { type })); downloadUrl(url, `${name.replace(/\s+/g, '-').toLowerCase()}.${format}`); setTimeout(() => URL.revokeObjectURL(url), 0); }
+
+const tool: ToolModule = {
+  metadata,
+  mount(container) {
+    panel = document.createElement('section'); panel.className = 'utility-panel';
+    panel.innerHTML = `<div class="utility-panel__header"><div><p class="eyebrow">Audio structure</p><h2>ทำ Chapter ให้เสียง / Cue sheet</h2><p class="helper-text">วาง marker ระหว่างฟังเสียง แล้วส่งออกเป็น JSON, CSV หรือ TXT โดยไม่อัปโหลดไฟล์</p></div></div><label class="file-drop" for="chapter-file"><strong>เลือกไฟล์เสียง / Select audio</strong><span>MP3, WAV, M4A, OGG, WebM</span><input id="chapter-file" type="file" accept="audio/*,.mp3,.wav,.m4a,.ogg,.webm" /></label><p class="helper-text">Supported on this browser (playback hint) / คำใบ้การเล่นบน Browser นี้: ${audioCapabilityHint()}</p><label class="field" for="chapter-name"><span>ชื่อรายการ / Project title</span><input id="chapter-name" value="audio-chapters" /></label><div class="audio-preview-row"><audio id="chapter-audio" controls preload="metadata"></audio><button class="button button--primary" type="button" data-chapter-action="add">เพิ่ม marker ณ เวลาปัจจุบัน / Add marker</button></div><div class="chapter-timeline"><input id="chapter-scrubber" type="range" min="0" max="1" step="0.01" value="0" aria-label="Chapter timeline" /><output id="chapter-time">00:00.00</output></div><ol id="chapter-list" class="chapter-list"></ol><div class="tool-actions"><button class="button" type="button" data-chapter-action="export-json">Export JSON</button><button class="button" type="button" data-chapter-action="export-csv">Export CSV</button><button class="button" type="button" data-chapter-action="export-txt">Export TXT</button><button class="text-button" type="button" data-chapter-action="clear">ล้าง markers / Clear</button></div><output id="chapter-status" class="tool-status" aria-live="polite">เลือกเสียงเพื่อเริ่มต้น / Choose audio to begin</output>`;
+    audio = panel.querySelector<HTMLAudioElement>('#chapter-audio')!;
+    panel.querySelector<HTMLInputElement>('#chapter-file')?.addEventListener('change', (event) => { const file = (event.currentTarget as HTMLInputElement).files?.[0]; const player = audio; if (!file || !player) return; const request = ++decodeRequest; if (audioUrl) URL.revokeObjectURL(audioUrl); audioUrl = URL.createObjectURL(file); markers = []; renderMarkers(); const status = panel!.querySelector<HTMLOutputElement>('#chapter-status')!; setToolStatus(status, 'กำลังตรวจ codec และอ่าน metadata / Checking codec and metadata', 'working'); void decodeAudioFile(file).then(() => { if (request === decodeRequest && panel) { player.src = audioUrl; player.load(); setToolStatus(status, 'ไฟล์เสียงพร้อมแล้ว / Audio ready', 'success'); } }).catch((error: unknown) => { if (request === decodeRequest && panel) setToolStatus(status, getErrorMessage(error), 'error'); }); });
+    const player = audio;
+    player.addEventListener('timeupdate', () => { const scrubber = panel?.querySelector<HTMLInputElement>('#chapter-scrubber'); const time = panel?.querySelector<HTMLOutputElement>('#chapter-time'); if (scrubber) { scrubber.max = String(player.duration || 1); scrubber.value = String(player.currentTime); } if (time) time.textContent = formatTime(player.currentTime); });
+    panel.querySelector<HTMLInputElement>('#chapter-scrubber')?.addEventListener('input', (event) => { player.currentTime = Number((event.currentTarget as HTMLInputElement).value); });
+    panel.addEventListener('input', (event) => { const target = event.target as HTMLInputElement; const index = Number(target.dataset.index); const field = target.dataset.markerField; if (field && markers[index]) markers[index][field as 'title' | 'note'] = target.value; });
+    panel.addEventListener('click', (event) => { const target = event.target as HTMLElement; const action = target.closest<HTMLElement>('[data-chapter-action]')?.dataset.chapterAction; if (!action) return; const status = panel!.querySelector<HTMLOutputElement>('#chapter-status')!; try { const index = Number(target.closest<HTMLElement>('[data-index]')?.dataset.index); if (action === 'add') { const player = audio; if (!player?.src) throw new Error('กรุณาเลือกไฟล์เสียง'); markers.push({ time: player.currentTime, title: `Chapter ${markers.length + 1}`, note: '' }); markers.sort((a, b) => a.time - b.time); renderMarkers(); setToolStatus(status, 'เพิ่ม marker แล้ว / Marker added', 'success'); } if (action === 'seek' && markers[index] && audio) audio.currentTime = markers[index].time; if (action === 'remove') { markers.splice(index, 1); renderMarkers(); } if (action === 'export-json') downloadCue('json'); if (action === 'export-csv') downloadCue('csv'); if (action === 'export-txt') downloadCue('txt'); if (action === 'clear') { markers = []; renderMarkers(); } } catch (error) { setToolStatus(status, getErrorMessage(error), 'error'); } });
+    container.append(panel);
+  },
+  unmount() { decodeRequest += 1; if (audioUrl) URL.revokeObjectURL(audioUrl); panel?.remove(); panel = undefined; audio = undefined; markers = []; audioUrl = ''; },
+};
+
+export const { mount, unmount } = tool;
+export { metadata };
+=== src/tools/audio-compressor/index.ts ===
+import { createAudioWorkbench } from '../audio-workbench';
+import { metadata } from './metadata';
+const tool = createAudioWorkbench(metadata, { kind: 'compress', eyebrow: 'WAV sample-rate control', heading: 'Audio Resampler (WAV)', intro: 'ลด sample rate เพื่อประมาณการลดขนาดไฟล์ และส่งออก WAV พร้อม metrics ก่อน/หลังอย่างตรงไปตรงมา', outputSuffix: '-resampled' });
+export const { mount, unmount } = tool;
+export { metadata };
+=== src/tools/audio-finisher/index.ts ===
+import { createAudioWorkbench } from '../audio-workbench';
+import { metadata } from './metadata';
+const tool = createAudioWorkbench(metadata, { kind: 'finish', eyebrow: 'Final polish', heading: 'Audio Finisher', intro: 'ปรับ loudness ขั้นสุดท้ายและตรวจ peak/clipping ก่อนส่งออกไฟล์', outputSuffix: '-finished' });
+export const { mount, unmount } = tool;
+export { metadata };
+=== src/tools/audio-merger/index.ts ===
+import { createAudioWorkbench } from '../audio-workbench';
+import { metadata } from './metadata';
+const tool = createAudioWorkbench(metadata, { kind: 'merge', eyebrow: 'Playlist assembly', heading: 'Audio Merger Studio', intro: 'รวมเสียงหลายไฟล์แบบจัดลำดับได้ พร้อม Gap, Crossfade และรูปแบบ output ที่เลือกเอง', multiple: true, outputSuffix: '-merged' });
+export const { mount, unmount } = tool;
+export { metadata };
+=== src/tools/audio-speed-pitch/index.ts ===
+import { createAudioWorkbench } from '../audio-workbench';
+import { metadata } from './metadata';
+const tool = createAudioWorkbench(metadata, { kind: 'speed-pitch', eyebrow: 'Tempo & pitch', heading: 'Audio Speed & Pitch', intro: 'ทดลองความเร็วและโทนเสียงก่อน export ด้วยการประมวลผล offline ที่คาดเดาได้', outputSuffix: '-speed-pitch' });
+export const { mount, unmount } = tool;
+export { metadata };
+=== src/tools/audio-trimmer/index.ts ===
+import { validateTrimOptions } from '../../core/audio-processing';
+import { audioCapabilityHint, decodeAudioFile } from '../../core/audio-decoder';
+import { trimAudioAsync } from '../../core/processing-client';
+import type { ToolModule } from '../../core/tool-contract';
+import { downloadUrl, formatBytes, getErrorMessage, isAbortError, requiredElement, setProgressStatus, setToolStatus } from '../../core/tool-ui';
+import { metadata } from './metadata';
+
+let panel: HTMLElement | undefined;
+let sourceFile: File | undefined;
+let sourceUrl = '';
+let outputUrl = '';
+let decodedPcm: import('../../core/audio-processing').AudioPcmData | undefined;
+let operationId = 0;
+let activeJob: AbortController | undefined;
+
+function formatTime(seconds: number): string {
+  const safe = Math.max(0, Number.isFinite(seconds) ? seconds : 0);
+  const minutes = Math.floor(safe / 60);
+  const remainder = safe - minutes * 60;
+  return `${String(minutes).padStart(2, '0')}:${remainder.toFixed(2).padStart(5, '0')}`;
+}
+
+function setRunning(running: boolean): void {
+  if (!panel) return;
+  requiredElement<HTMLButtonElement>(panel, '#trim-submit').disabled = running;
+  requiredElement<HTMLButtonElement>(panel, '[data-trim-action="cancel"]').hidden = !running;
+  requiredElement<HTMLInputElement>(panel, '#trim-file').disabled = running;
+}
+
+function clearOutput(): void {
+  if (outputUrl) URL.revokeObjectURL(outputUrl);
+  outputUrl = '';
+  const result = panel?.querySelector<HTMLElement>('#trim-result');
+  if (result) result.hidden = true;
+}
+
+function drawWaveform(): void {
+  if (!panel || !decodedPcm) return;
+  const canvas = requiredElement<HTMLCanvasElement>(panel, '#trim-waveform');
+  const context = canvas.getContext('2d');
+  if (!context) return;
+  const width = Math.max(320, Math.floor(canvas.clientWidth * window.devicePixelRatio));
+  const height = Math.max(110, Math.floor(canvas.clientHeight * window.devicePixelRatio));
+  canvas.width = width;
+  canvas.height = height;
+  context.clearRect(0, 0, width, height);
+  context.fillStyle = '#eef0ff';
+  context.fillRect(0, 0, width, height);
+  const channel = decodedPcm.channels[0];
+  if (!channel) return;
+  const step = Math.max(1, Math.floor(channel.length / width));
+  const middle = height / 2;
+  context.strokeStyle = '#5364c7';
+  context.lineWidth = Math.max(1, window.devicePixelRatio);
+  context.beginPath();
+  for (let x = 0; x < width; x += 1) {
+    let min = 1;
+    let max = -1;
+    const start = x * step;
+    const end = Math.min(channel.length, start + step);
+    for (let index = start; index < end; index += 1) {
+      min = Math.min(min, channel[index] ?? 0);
+      max = Math.max(max, channel[index] ?? 0);
+    }
+    context.moveTo(x, middle + min * middle * 0.88);
+    context.lineTo(x, middle + max * middle * 0.88);
+  }
+  context.stroke();
+  updateSelectionOverlay();
+}
+
+function updateSelectionOverlay(): void {
+  if (!panel || !decodedPcm) return;
+  const canvas = requiredElement<HTMLCanvasElement>(panel, '#trim-waveform');
+  const context = canvas.getContext('2d');
+  if (!context) return;
+  const start = Number(requiredElement<HTMLInputElement>(panel, '#trim-start').value);
+  const end = Number(requiredElement<HTMLInputElement>(panel, '#trim-end').value);
+  const duration = decodedPcm.channels[0] ? decodedPcm.channels[0].length / decodedPcm.sampleRate : 1;
+  const startX = Math.round((start / duration) * canvas.width);
+  const endX = Math.round((end / duration) * canvas.width);
+  context.fillStyle = 'rgb(104 83 198 / 16%)';
+  context.fillRect(0, 0, startX, canvas.height);
+  context.fillRect(endX, 0, canvas.width - endX, canvas.height);
+  context.strokeStyle = '#d95d9b';
+  context.lineWidth = Math.max(2, window.devicePixelRatio);
+  context.beginPath();
+  context.moveTo(startX, 0); context.lineTo(startX, canvas.height);
+  context.moveTo(endX, 0); context.lineTo(endX, canvas.height);
+  context.stroke();
+}
+
+function updateRange(source: 'start' | 'end'): void {
+  if (!panel || !decodedPcm) return;
+  const start = requiredElement<HTMLInputElement>(panel, '#trim-start');
+  const end = requiredElement<HTMLInputElement>(panel, '#trim-end');
+  if (source === 'start') start.value = String(Math.min(Number(start.value), Number(end.value) - 0.01));
+  else end.value = String(Math.max(Number(end.value), Number(start.value) + 0.01));
+  requiredElement<HTMLElement>(panel, '#trim-start-value').textContent = formatTime(Number(start.value));
+  requiredElement<HTMLElement>(panel, '#trim-end-value').textContent = formatTime(Number(end.value));
+  updateSelectionOverlay();
+}
+
+const handleFileChange = async (event: Event): Promise<void> => {
+  if (!panel) return;
+  const status = requiredElement<HTMLOutputElement>(panel, '#trim-status');
+  const request = ++operationId;
+  activeJob?.abort();
+  const controller = new AbortController();
+  activeJob = controller;
+  sourceFile = undefined;
+  decodedPcm = undefined;
+  clearOutput();
+  if (sourceUrl) URL.revokeObjectURL(sourceUrl);
+  sourceUrl = '';
+  try {
+    const file = (event.currentTarget as HTMLInputElement).files?.[0];
+    if (!file) throw new Error('กรุณาเลือกไฟล์เสียง');
+    setRunning(true);
+    setProgressStatus(status, 10, 'กำลังตรวจสอบ codec และอ่านไฟล์เสียง');
+    const decoded = await decodeAudioFile(file, { signal: controller.signal, onProgress: (progress, message) => setProgressStatus(status, progress, message) });
+    if (controller.signal.aborted) throw new DOMException('ยกเลิกการอ่านไฟล์เสียงแล้ว', 'AbortError');
+    if (decoded.duration > 30 * 60) throw new Error('รองรับไฟล์เสียงความยาวไม่เกิน 30 นาที');
+    if (!panel || request !== operationId) return;
+    sourceFile = file;
+    decodedPcm = decoded.pcm;
+    sourceUrl = URL.createObjectURL(file);
+    const start = requiredElement<HTMLInputElement>(panel, '#trim-start');
+    const end = requiredElement<HTMLInputElement>(panel, '#trim-end');
+    start.max = String(decoded.duration);
+    end.max = String(decoded.duration);
+    start.value = '0';
+    end.value = String(decoded.duration.toFixed(2));
+    requiredElement<HTMLElement>(panel, '#trim-start-value').textContent = formatTime(0);
+    requiredElement<HTMLElement>(panel, '#trim-end-value').textContent = formatTime(decoded.duration);
+    requiredElement<HTMLElement>(panel, '#trim-file-meta').textContent = `${file.name} · ${formatTime(decoded.duration)} · ${decoded.pcm.channels.length} ch · ${decoded.pcm.sampleRate.toLocaleString()} Hz · ${formatBytes(file.size)}`;
+    requiredElement<HTMLAudioElement>(panel, '#trim-preview').src = sourceUrl;
+    requiredElement<HTMLElement>(panel, '#trim-editor').hidden = false;
+    drawWaveform();
+    setToolStatus(status, 'อ่านไฟล์เสียงสำเร็จ เลือกช่วงที่ต้องการแล้วกดตัดเสียง', 'success');
+  } catch (error) {
+    if (!panel || request !== operationId) return;
+    setToolStatus(status, isAbortError(error) ? 'ยกเลิกการอ่านไฟล์เสียงแล้ว' : getErrorMessage(error), isAbortError(error) ? 'neutral' : 'error');
+  } finally {
+    if (activeJob === controller) {
+      activeJob = undefined;
+      if (panel) setRunning(false);
+    }
+  }
+};
+
+const handlePreviewTimeUpdate = (event: Event): void => {
+  if (!panel) return;
+  const audio = event.currentTarget as HTMLAudioElement;
+  const end = Number(requiredElement<HTMLInputElement>(panel, '#trim-end').value);
+  if (audio.currentTime >= end) {
+    audio.pause();
+    audio.currentTime = Number(requiredElement<HTMLInputElement>(panel, '#trim-start').value);
+  }
+};
+
+const handlePreview = (): void => {
+  if (!panel || !sourceUrl) return;
+  const audio = requiredElement<HTMLAudioElement>(panel, '#trim-preview');
+  audio.currentTime = Number(requiredElement<HTMLInputElement>(panel, '#trim-start').value);
+  void audio.play();
+};
+
+const handleSubmit = async (event: SubmitEvent): Promise<void> => {
+  event.preventDefault();
+  if (!panel) return;
+  const status = requiredElement<HTMLOutputElement>(panel, '#trim-status');
+  const request = ++operationId;
+  activeJob?.abort();
+  const controller = new AbortController();
+  activeJob = controller;
+  try {
+    if (!sourceFile || !decodedPcm) throw new Error('กรุณาเลือกไฟล์เสียงก่อนตัด');
+    const start = Number(requiredElement<HTMLInputElement>(panel, '#trim-start').value);
+    const end = Number(requiredElement<HTMLInputElement>(panel, '#trim-end').value);
+    const fadeIn = Number(requiredElement<HTMLInputElement>(panel, '#trim-fade-in').value);
+    const fadeOut = Number(requiredElement<HTMLInputElement>(panel, '#trim-fade-out').value);
+    const options = validateTrimOptions(decodedPcm.channels[0] ? decodedPcm.channels[0].length / decodedPcm.sampleRate : 0, { start, end, fadeIn, fadeOut });
+    setRunning(true);
+    setProgressStatus(status, 5, 'กำลังเตรียมเสียงสำหรับตัด');
+    const result = await trimAudioAsync(decodedPcm, options, { signal: controller.signal, onProgress: (progress, message) => setProgressStatus(status, progress, message) });
+    if (controller.signal.aborted) throw new DOMException('ยกเลิกการตัดเสียงแล้ว', 'AbortError');
+    if (!panel || request !== operationId) return;
+    clearOutput();
+    const outputBytes = new Uint8Array(result.bytes);
+    outputUrl = URL.createObjectURL(new Blob([outputBytes.buffer as ArrayBuffer], { type: 'audio/wav' }));
+    requiredElement<HTMLElement>(panel, '#trim-result').hidden = false;
+    requiredElement<HTMLElement>(panel, '#trim-result-meta').textContent = `${formatTime(result.duration)} · WAV PCM 16-bit · ${result.channels} ch · ${result.sampleRate.toLocaleString()} Hz · ${formatBytes(result.bytes.byteLength)}`;
+    requiredElement<HTMLAudioElement>(panel, '#trim-output-preview').src = outputUrl;
+    setToolStatus(status, 'ตัดเสียงสำเร็จ ไฟล์พร้อม Preview และดาวน์โหลด', 'success');
+  } catch (error) {
+    if (!panel || request !== operationId) return;
+    setToolStatus(status, isAbortError(error) ? 'ยกเลิกการตัดเสียงแล้ว' : getErrorMessage(error), isAbortError(error) ? 'neutral' : 'error');
+  } finally {
+    if (activeJob === controller) {
+      activeJob = undefined;
+      if (panel) setRunning(false);
+    }
+  }
+};
+
+const handleClick = (event: Event): void => {
+  const action = (event.target as HTMLElement).closest<HTMLElement>('[data-trim-action]')?.dataset.trimAction;
+  if (action === 'preview') handlePreview();
+  if (action === 'download' && outputUrl && sourceFile) downloadUrl(outputUrl, `${sourceFile.name.replace(/\.[^.]+$/, '')}-trimmed.wav`);
+  if (action === 'cancel') activeJob?.abort();
+};
+
+const handleInput = (event: Event): void => {
+  const id = (event.target as HTMLInputElement).id;
+  if (id === 'trim-start') updateRange('start');
+  if (id === 'trim-end') updateRange('end');
+};
+const handleResize = (): void => drawWaveform();
+const handleFormSubmit = (event: SubmitEvent): void => void handleSubmit(event);
+
+const tool: ToolModule = {
+  metadata,
+  mount(container) {
+    panel = document.createElement('section');
+    panel.className = 'utility-panel';
+    panel.innerHTML = `
+      <div class="utility-panel__header"><div><p class="eyebrow">Precise local editing</p><h2>ตัดไฟล์เสียง</h2></div></div>
+      <form id="trim-form" class="tool-form">
+        <label class="file-drop" for="trim-file"><strong>เลือกไฟล์เสียง</strong><span id="trim-file-meta">MP3, WAV, M4A, OGG หรือ WebM · ไม่เกิน 80 MB / 30 นาที</span><input id="trim-file" type="file" accept="audio/mpeg,audio/wav,audio/x-wav,audio/mp4,audio/x-m4a,audio/ogg,audio/webm,.mp3,.wav,.m4a,.ogg,.webm" required /></label><p class="helper-text">Supported on this browser (playback hint) / คำใบ้การเล่นบน Browser นี้: ${audioCapabilityHint()}</p>
+        <section id="trim-editor" class="audio-editor" hidden>
+          <canvas id="trim-waveform" class="audio-waveform" aria-label="Waveform ของไฟล์เสียง"></canvas>
+          <div class="audio-preview-row"><audio id="trim-preview" controls preload="metadata"></audio><button class="button" type="button" data-trim-action="preview">Preview ช่วงที่เลือก</button></div>
+          <div class="form-row">
+            <label class="field" for="trim-start"><span>เริ่ม <output id="trim-start-value">00:00.00</output></span><input id="trim-start" type="range" min="0" max="1" step="0.01" value="0" /></label>
+            <label class="field" for="trim-end"><span>จบ <output id="trim-end-value">00:00.00</output></span><input id="trim-end" type="range" min="0.01" max="1" step="0.01" value="1" /></label>
+          </div>
+          <div class="form-row">
+            <label class="field" for="trim-fade-in"><span>Fade in (วินาที)</span><input id="trim-fade-in" type="number" min="0" max="30" step="0.1" value="0" /></label>
+            <label class="field" for="trim-fade-out"><span>Fade out (วินาที)</span><input id="trim-fade-out" type="number" min="0" max="30" step="0.1" value="0" /></label>
+          </div>
+        </section>
+        <div class="tool-actions"><button id="trim-submit" class="button button--primary" type="submit">ตัดเสียงและสร้าง WAV</button><button class="button" type="button" data-trim-action="cancel" hidden>ยกเลิก</button></div>
+      </form>
+      <section id="trim-result" class="download-result" hidden><div><strong>ไฟล์เสียงที่ตัดแล้ว</strong><p id="trim-result-meta"></p><audio id="trim-output-preview" controls preload="metadata"></audio></div><button class="button" type="button" data-trim-action="download">ดาวน์โหลด WAV</button></section>
+      <output id="trim-status" class="tool-status" aria-live="polite">ไฟล์จะไม่ออกจากอุปกรณ์ และผลลัพธ์เป็น WAV เพื่อรักษาคุณภาพการตัดต่อ</output>`;
+    requiredElement<HTMLInputElement>(panel, '#trim-file').addEventListener('change', (event) => void handleFileChange(event));
+    requiredElement<HTMLInputElement>(panel, '#trim-start').addEventListener('input', handleInput);
+    requiredElement<HTMLInputElement>(panel, '#trim-end').addEventListener('input', handleInput);
+    requiredElement<HTMLAudioElement>(panel, '#trim-preview').addEventListener('timeupdate', handlePreviewTimeUpdate);
+    requiredElement<HTMLFormElement>(panel, '#trim-form').addEventListener('submit', handleFormSubmit);
+    panel.addEventListener('click', handleClick);
+    window.addEventListener('resize', handleResize);
+    container.append(panel);
+  },
+  unmount() {
+    operationId += 1;
+    activeJob?.abort();
+    activeJob = undefined;
+    panel?.querySelector<HTMLAudioElement>('#trim-preview')?.pause();
+    panel?.querySelector<HTMLAudioElement>('#trim-output-preview')?.pause();
+    panel?.removeEventListener('click', handleClick);
+    window.removeEventListener('resize', handleResize);
+    clearOutput();
+    if (sourceUrl) URL.revokeObjectURL(sourceUrl);
+    sourceUrl = '';
+    sourceFile = undefined;
+    decodedPcm = undefined;
+    panel = undefined;
+  },
+};
+
+export const { mount, unmount } = tool;
+export { metadata };
+=== audio related tests/specs ===
+tests/audio-processing.test.ts:2:import { encodeWav, processAudio, replaceAudioExtension, trimPcm, validateAudioFile, validateTrimOptions } from '../src/core/audio-processing';
+tests/audio-processing.test.ts:4:describe('Audio processing', () => {
+tests/audio-processing.test.ts:6:    expect(() => validateAudioFile(new File(['audio'], 'voice.mp3', { type: 'audio/mpeg' }))).not.toThrow();
+tests/audio-processing.test.ts:7:    expect(() => validateAudioFile(new File(['audio'], 'voice.txt', { type: 'text/plain' }))).toThrow('รองรับไฟล์');
+tests/audio-processing.test.ts:8:    expect(replaceAudioExtension('voice.m4a')).toBe('voice-trimmed.wav');
+tests/audio-processing.test.ts:37:    const compressor = processAudio(source, { kind: 'compress', targetBytes: 500, quality: 'small' });
+tests/audio-processing.test.ts:38:    const merger = processAudio(source, { kind: 'merge', segments: [source, source], gap: 0.1, crossfade: 0, format: 'wav-compact' });
+tests/audio-processing.test.ts:39:    const mp3 = processAudio(source, { kind: 'merge', segments: [source], gap: 0, crossfade: 0, format: 'mp3' });
+tests/audio-processing.test.ts:40:    const silence = processAudio(source, { kind: 'silence', thresholdDb: -30, minimum: 0.01, padding: 0 });
+tests/audio-processing.test.ts:41:    const finisher = processAudio(source, { kind: 'finish', normalize: true, gainDb: 3, fadeIn: 0.05, fadeOut: 0.05, loudness: 'voice' });
+tests/audio-processing.test.ts:42:    const speedPitch = processAudio(source, { kind: 'speed-pitch', speed: 1.5, semitones: 2 });
+tests/audio-processing.test.ts:57:    const highQuality = processAudio(source, { kind: 'compress', targetBytes: 500, quality: 'high' });
+tests/audio-processing.test.ts:76:    const peakSafe = processAudio(source, { kind: 'finish', normalize: true, gainDb: 0, fadeIn: 0, fadeOut: 0, loudness: 'peak' });
+tests/audio-processing.test.ts:77:    const voiceSafe = processAudio(source, { kind: 'finish', normalize: true, gainDb: 0, fadeIn: 0, fadeOut: 0, loudness: 'voice' });
+tests/audio-processing.test.ts:87:    const result = processAudio(first, { kind: 'merge', segments: [first, second], gap: 0, crossfade: 0.4, format: 'wav' });
+tests/audio-processing.test.ts:92:    const noNegative = processAudio(first, { kind: 'merge', segments: [first, second], gap: 0, crossfade: 9, format: 'wav' });
+tests/audio-processing.test.ts:99:    const result = processAudio(first, { kind: 'merge', segments: [first, second], gap: 0.2, crossfade: 0, format: 'wav' });
+tests/audio-processing.test.ts:112:    const { decodeAudioFile, AudioDecodeError } = await import('../src/core/audio-decoder');
+tests/audio-processing.test.ts:114:    await expect(decodeAudioFile(file)).rejects.toSatisfy((error: unknown) => error instanceof AudioDecodeError && error.code === 'unsupported-codec' && error.message.includes('WAV หรือ MP3'));
+tests/e2e/audio-tools.spec.ts:28:test.describe('Audio processing production contract', () => {
+tests/e2e/audio-tools.spec.ts:29:  test('Audio Trimmer completes upload, process, result and download, then can process again', async ({ page }) => {
+tests/e2e/audio-tools.spec.ts:30:    await page.goto('./#/tools/audio-trimmer');
+tests/e2e/audio-tools.spec.ts:31:    await expect(page.locator('h1', { hasText: 'Audio Trimmer' })).toBeVisible();
+tests/e2e/audio-tools.spec.ts:54:    ['audio-compressor', 'Audio Resampler (WAV)'],
+tests/e2e/audio-tools.spec.ts:55:    ['audio-merger', 'Audio Merger Studio'],
+tests/e2e/audio-tools.spec.ts:57:    ['audio-finisher', 'Audio Finisher'],
+tests/e2e/audio-tools.spec.ts:58:    ['audio-speed-pitch', 'Audio Speed & Pitch'],
+tests/e2e/audio-tools.spec.ts:77:  test('Audio Chapter Marker uploads audio, adds a marker and exports a cue sheet', async ({ page }) => {
+tests/e2e/audio-tools.spec.ts:78:    await page.goto('./#/tools/audio-chapter-marker');
+tests/e2e/audio-tools.spec.ts:79:    await expect(page.locator('h1', { hasText: 'Audio Chapter Marker & Cue Sheet' })).toBeVisible();
+tests/e2e/audio-tools.spec.ts:81:    await expect(page.locator('#chapter-status')).toContainText('Audio ready');
+tests/e2e/audio-tools.spec.ts:102:    test(`Audio Trimmer real ${input[0]} decode and process`, async ({ page }) => {
+tests/e2e/audio-tools.spec.ts:103:      await page.goto('./#/tools/audio-trimmer');
+tests/e2e/audio-tools.spec.ts:113:      const canPlayWav = await page.evaluate(() => new Audio().canPlayType('audio/wav'));
+tests/e2e/audio-tools.spec.ts:127:  test('Audio Merger real stereo/sample-rate files crossfade and outputs playable WAV', async ({ page }) => {
+tests/e2e/audio-tools.spec.ts:128:    await page.goto('./#/tools/audio-merger');
+tests/e2e/audio-tools.spec.ts:141:  test('Audio Merger exports an MP3 locally with an MP3 filename', async ({ page }) => {
+tests/e2e/audio-tools.spec.ts:142:    await page.goto('./#/tools/audio-merger');
+tests/e2e/audio-tools.spec.ts:160:test('Audio Trimmer reports a useful codec/decode error for malformed media', async ({ page }) => {
+tests/e2e/audio-tools.spec.ts:161:  await page.goto('./#/tools/audio-trimmer');
+tests/e2e/file-tools.spec.ts:33:  await page.goto('./#/tools/audio-trimmer');
+tests/e2e/file-tools.spec.ts:45:test('runs all five new audio workbenches with real output', async ({ page }) => {
+tests/e2e/file-tools.spec.ts:48:    { route: 'audio-compressor', input: [{ name: 'compress.wav', mimeType: 'audio/wav', buffer: wavBuffer() }], setup: async () => { await page.locator('#audio-target').fill('0.05'); await page.locator('#audio-quality').selectOption('small'); } },
+tests/e2e/file-tools.spec.ts:49:    { route: 'audio-merger', input: [{ name: 'one.wav', mimeType: 'audio/wav', buffer: wavBuffer() }, { name: 'two.wav', mimeType: 'audio/wav', buffer: wavBuffer() }], setup: async () => { await expect(page.locator('#audio-file-list li')).toHaveCount(2); await page.locator('[data-audio-move="up"]').last().click(); await page.locator('#audio-gap').fill('0.1'); await page.locator('#audio-crossfade').fill('0.05'); } },
+tests/e2e/file-tools.spec.ts:51:    { route: 'audio-finisher', input: [{ name: 'finish.wav', mimeType: 'audio/wav', buffer: wavBuffer() }], setup: async () => { await page.locator('#audio-gain').fill('2'); await page.locator('#audio-fade-out').fill('0.1'); await page.locator('#audio-loudness').selectOption('voice'); } },
+tests/e2e/file-tools.spec.ts:52:    { route: 'audio-speed-pitch', input: [{ name: 'speed.wav', mimeType: 'audio/wav', buffer: wavBuffer() }], setup: async () => { await page.locator('#audio-speed').fill('1.25'); await page.locator('#audio-semitones').fill('2'); } },
+tests/e2e/file-tools.spec.ts:74:  await page.goto('./#/tools/audio-finisher');
+tests/e2e/file-tools.spec.ts:98:  await page.goto('./#/tools/audio-compressor');
+tests/e2e/smoke.spec.ts:136:  await page.goto('./#/tools/audio-trimmer');
+tests/e2e/smoke.spec.ts:153:    { route: 'audio-trimmer', marker: 'WAV' },
+tests/e2e/smoke.spec.ts:154:    { route: 'audio-finisher', marker: 'LUFS' },
+tests/e2e/smoke.spec.ts:155:    { route: 'audio-speed-pitch', marker: 'resampling' },
+tests/phase6-trust.test.ts:31:    expect(getToolGuide('audio-trimmer')?.outputs.en).toContain('WAV');
+tests/phase6-trust.test.ts:32:    expect(getToolGuide('audio-compressor')?.limitations.some((item) => item.en.includes('approximate'))).toBe(true);
+tests/phase6-trust.test.ts:33:    expect(getToolGuide('audio-finisher')?.limitations.some((item) => item.en.includes('LUFS'))).toBe(true);
+tests/phase6-trust.test.ts:34:    expect(getToolGuide('audio-speed-pitch')?.limitations.some((item) => item.en.toLowerCase().includes('resampling'))).toBe(true);
+tests/phase7-home.test.ts:33:  const tools = [tool('image-compressor'), tool('pdf-merge'), tool('qr-generator'), tool('json-formatter'), tool('audio-trimmer'), tool('line-sticker-studio', 'beta'), tool('planned', 'planned')];
+tests/phase7-home.test.ts:37:    const result = mostUsedTools(tools, { 'line-sticker-studio': 12, 'audio-trimmer': 2, 'pdf-merge': 8, 'json-formatter': 4, planned: 99 }, ['image-compressor', 'pdf-merge', 'qr-generator', 'json-formatter', 'audio-trimmer'], order);
+tests/phase7-home.test.ts:38:    expect(result.map(({ id }) => id)).toEqual(['line-sticker-studio', 'pdf-merge', 'json-formatter', 'audio-trimmer', 'image-compressor']);
+tests/phase7-home.test.ts:67:    const result = mostUsedTools(tools, {}, ['image-compressor', 'pdf-merge', 'qr-generator', 'json-formatter', 'audio-trimmer'], order);
+tests/phase7-home.test.ts:68:    expect(result.map(({ id }) => id)).toEqual(['image-compressor', 'pdf-merge', 'qr-generator', 'json-formatter', 'audio-trimmer']);
+tests/processing-client.test.ts:2:import { processAudioAsync } from '../src/core/processing-client';
+tests/processing-client.test.ts:12:    const result = await processAudioAsync(source, { kind: 'finish', normalize: false, gainDb: 0, fadeIn: 0, fadeOut: 0, loudness: 'peak' }, { onProgress: (value) => progress.push(value) });
+tests/processing-client.test.ts:23:    await expect(processAudioAsync(source, { kind: 'finish', normalize: false, gainDb: 0, fadeIn: 0, fadeOut: 0, loudness: 'peak' }, { signal: controller.signal })).rejects.toMatchObject({ name: 'AbortError' });
+src/core/audio-decoder.ts:1:import { MAX_AUDIO_BYTES, MAX_AUDIO_DURATION_SECONDS, validateAudioFile, type AudioPcmData } from './audio-processing';
+src/core/audio-decoder.ts:5:export type AudioDecodeSupport = 'supported' | 'browser-dependent' | 'unavailable';
+src/core/audio-decoder.ts:7:export interface AudioDecodeOptions {
+src/core/audio-decoder.ts:12:export interface DecodedAudioFile {
+src/core/audio-decoder.ts:14:  pcm: AudioPcmData;
+src/core/audio-decoder.ts:17:  playbackSupport: AudioDecodeSupport;
+src/core/audio-decoder.ts:21:export class AudioDecodeError extends Error {
+src/core/audio-decoder.ts:25:  constructor(code: AudioDecodeError['code'], file: File, message: string) {
+src/core/audio-decoder.ts:27:    this.name = 'AudioDecodeError';
+src/core/audio-decoder.ts:43:function canPlayType(file: File): AudioDecodeSupport {
+src/core/audio-decoder.ts:44:  if (typeof Audio !== 'function') return 'browser-dependent';
+src/core/audio-decoder.ts:45:  const value = new Audio().canPlayType(extensionMime(file));
+src/core/audio-decoder.ts:50:  if (typeof Audio !== 'function') return 'WAV · MP3 · M4A/AAC · OGG · WebM: browser-dependent';
+src/core/audio-decoder.ts:51:  const audio = new Audio();
+src/core/audio-decoder.ts:56:function pcmFromBuffer(buffer: AudioBuffer): AudioPcmData {
+src/core/audio-decoder.ts:60:function audioContextConstructor(): typeof AudioContext | undefined {
+src/core/audio-decoder.ts:61:  if (typeof AudioContext === 'function') return AudioContext;
+src/core/audio-decoder.ts:62:  const candidate = (globalThis as typeof globalThis & { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
+src/core/audio-decoder.ts:70:export function audioMemoryError(file: File, estimatedBytes: number): AudioDecodeError {
+src/core/audio-decoder.ts:71:  return new AudioDecodeError('memory-limit', file, `ไฟล์ ${file.name} อาจใช้หน่วยความจำมากเกินไปเมื่อถอดรหัส (${Math.round(estimatedBytes / 1024 / 1024)} MB PCM) · ลองใช้ไฟล์ที่สั้นลงหรือแปลงเป็น WAV/MP3 ที่เล็กลง`);
+src/core/audio-decoder.ts:74:export async function decodeAudioFile(file: File, options: AudioDecodeOptions = {}): Promise<DecodedAudioFile> {
+src/core/audio-decoder.ts:76:    validateAudioFile(file);
+src/core/audio-decoder.ts:78:    throw new AudioDecodeError('invalid-file', file, error instanceof Error ? error.message : 'ไฟล์เสียงไม่ถูกต้อง');
+src/core/audio-decoder.ts:80:  if (file.size > MAX_AUDIO_BYTES) throw new AudioDecodeError('memory-limit', file, 'ไฟล์เสียงมีขนาดใหญ่เกิน 80 MB สำหรับการประมวลผลใน Browser');
+src/core/audio-decoder.ts:83:  if (!Constructor) throw new AudioDecodeError('unsupported-codec', file, `Browser นี้ไม่มี AudioContext สำหรับเปิดไฟล์ ${file.name} · ลองแปลงเป็น WAV หรือ MP3 ก่อน`);
+src/core/audio-decoder.ts:85:  let context: AudioContext | undefined;
+src/core/audio-decoder.ts:91:    const buffer = await context.decodeAudioData(bytes.slice(0));
+src/core/audio-decoder.ts:94:      throw new AudioDecodeError('invalid-file', file, 'รองรับไฟล์เสียงความยาวไม่เกิน 30 นาที');
+src/core/audio-decoder.ts:103:    if (error instanceof AudioDecodeError) throw error;
+src/core/audio-decoder.ts:104:    throw new AudioDecodeError('decode-failed', file, `Browser นี้ไม่สามารถเปิดไฟล์ ${file.name} (${extensionMime(file)}) ได้ · ลองแปลงไฟล์เป็น WAV หรือ MP3 ก่อน`);
+src/core/audio-processing.ts:10:export interface AudioPcmData {
+src/core/audio-processing.ts:15:export interface AudioTrimOptions {
+src/core/audio-processing.ts:22:export interface AudioTrimResult {
+src/core/audio-processing.ts:29:export function validateAudioFile(file: File): void {
+src/core/audio-processing.ts:40:export function replaceAudioExtension(filename: string, suffix = '-trimmed'): string {
+src/core/audio-processing.ts:48:export function validateTrimOptions(duration: number, options: AudioTrimOptions): AudioTrimOptions {
+src/core/audio-processing.ts:59:export function trimPcm(pcm: AudioPcmData, options: AudioTrimOptions, onProgress?: (progress: number, message: string) => void): AudioTrimResult {
+src/core/audio-processing.ts:91:export type AudioOperation =
+src/core/audio-processing.ts:93:  | { kind: 'merge'; segments: AudioPcmData[]; gap: number; crossfade: number; format: 'wav' | 'wav-compact' | 'mp3' }
+src/core/audio-processing.ts:98:export interface AudioProcessResult extends AudioTrimResult {
+src/core/audio-processing.ts:132:function clonePcm(pcm: AudioPcmData): AudioPcmData { return { sampleRate: pcm.sampleRate, channels: pcm.channels.map((channel) => new Float32Array(channel)) }; }
+src/core/audio-processing.ts:133:function durationOf(pcm: AudioPcmData): number { return (pcm.channels[0]?.length ?? 0) / pcm.sampleRate; }
+src/core/audio-processing.ts:134:function resamplePcm(pcm: AudioPcmData, targetRate: number, onProgress?: (progress: number, message: string) => void, targetLengthOverride?: number): AudioPcmData {
+src/core/audio-processing.ts:172:function speedPitchPcm(pcm: AudioPcmData, speed: number, semitones: number, onProgress?: (progress: number, message: string) => void): AudioPcmData {
+src/core/audio-processing.ts:197:function joinPcm(segments: AudioPcmData[], gap: number, crossfade: number, onProgress?: (progress: number, message: string) => void): AudioPcmData {
+src/core/audio-processing.ts:231:function removeSilence(pcm: AudioPcmData, thresholdDb: number, minimum: number, padding: number, onProgress?: (progress: number, message: string) => void): AudioPcmData {
+src/core/audio-processing.ts:297:export function processAudio(pcm: AudioPcmData, operation: AudioOperation, onProgress?: (progress: number, message: string) => void): AudioProcessResult {
+src/core/audio-processing.ts:300:  let output: AudioPcmData;
+src/core/i18n.ts:54:  'QR Code และบาร์โค้ด': 'QR & Barcodes', 'เสียงและดนตรี': 'Audio & Music', 'แผนที่และภูมิสารสนเทศ': 'Maps & Geospatial', 'ไฟล์และข้อมูลเมตา': 'Files & Metadata', 'ไดอะแกรม': 'Diagrams', 'เกม': 'Games', 'ดูดวง': 'Fortune & Astrology', 'Developer Tools': 'Developer Tools', 'อื่น ๆ': 'Other',
+src/core/i18n.ts:60:  'audio-compressor': { title: 'Audio Resampler (WAV)', description: 'Resample audio to a lower sample rate and export honest WAV size metrics.' },
+src/core/i18n.ts:61:  'audio-merger': { title: 'Audio Merger Studio', description: 'Reorder audio files, add gap or crossfade, and choose the output format.' },
+src/core/i18n.ts:63:  'audio-finisher': { title: 'Audio Finisher', description: 'Polish gain, normalization and fades with peak and clipping protection.' },
+src/core/i18n.ts:64:  'audio-speed-pitch': { title: 'Audio Speed & Pitch', description: 'Preview and export predictable offline speed and pitch changes.' },
+src/core/i18n.ts:65:  'audio-trimmer': { title: 'Audio Trimmer', description: 'Trim, preview and fade audio locally without uploading the file.' },
+src/core/i18n.ts:70:  'audio-chapter-marker': { title: 'Audio Chapter Marker & Cue Sheet', description: 'Mark chapters on a local waveform and export cue sheets for podcasts and lectures.' },
+src/core/processing-client.ts:68:    const { processAudio } = await import('./audio-processing');
+src/core/processing-client.ts:69:    result = processAudio(audioPayload.pcm, audioPayload.operation, options.onProgress);
+src/core/processing-client.ts:153:export const trimAudioAsync = (pcm: ProcessingPayloadMap['audio-trim']['pcm'], trimOptions: ProcessingPayloadMap['audio-trim']['options'], options?: ProcessingJobOptions) => runProcessingJob('audio-trim', { pcm, options: trimOptions }, options);
+src/core/processing-client.ts:154:export const processAudioAsync = (pcm: ProcessingPayloadMap['audio-process']['pcm'], operation: ProcessingPayloadMap['audio-process']['operation'], options?: ProcessingJobOptions) => runProcessingJob('audio-process', { pcm, operation }, options);
+src/core/processing-protocol.ts:1:import type { AudioOperation, AudioPcmData, AudioProcessResult, AudioTrimOptions, AudioTrimResult } from './audio-processing';
+src/core/processing-protocol.ts:39:  'audio-trim': { pcm: AudioPcmData; options: AudioTrimOptions };
+src/core/processing-protocol.ts:40:  'audio-process': { pcm: AudioPcmData; operation: AudioOperation };
+src/core/processing-protocol.ts:52:  'audio-trim': AudioTrimResult;
+src/core/processing-protocol.ts:53:  'audio-process': AudioProcessResult;

@@ -468,3 +468,26 @@ Flowchart Studio ใช้ DSL แบบ `Step A -> Step B` และสร้�
 ข้อจำกัดของรุ่นนี้คือรับ JSON เท่านั้น, parse/render บน main thread, search ยังไม่ใช่ JSONPath เต็มรูปแบบ และ graph จะจำกัดการ render ที่ 360 visible nodes input guard อยู่ที่ 200,000 chars, tree guard 500 nodes/depth 32 และ export PNG ขึ้นกับ browser Canvas capability
 
 ผลทั้งหมดเป็น **local validation** ก่อน commit/push และยังไม่ใช่ GitHub Actions หรือ GitHub Pages deployment evidence ใหม่
+
+
+## 18. v0.14.0 — Group 2 Audio Usability & Security Foundation — 27 สิงหาคม 2026
+
+รอบนี้ปรับ shared audio foundation, Audio Chapter Marker และ Audio Trimmer เป็น implementation slice แรกของแผนพัฒนากลุ่ม 2
+
+| Check | Result |
+|---|---|
+| TypeScript | `npm run typecheck` ผ่าน |
+| Targeted unit/contract | `17/17` ผ่าน จาก audio processing และ tool contract tests |
+| Targeted audio E2E | `51/51` ผ่านบน Desktop Chromium, Android entry และ Android current |
+| Full unit suite | ผ่าน |
+| Production build | `npm run build` ผ่าน |
+| Full Playwright | `285 passed`, `18 skipped` จาก `303` cases |
+| Security regression | hostile filename และ marker text ไม่สร้าง HTML element |
+| Bundle/registry/SVG | ผ่าน |
+| npm audit | `0 vulnerabilities` |
+| Service Worker | `node --check public/sw.js` ผ่าน; namespace `v0.14.0-group2` |
+| Diff hygiene | `git diff --check` ผ่าน |
+
+การเปลี่ยนแปลงสำคัญคือเปลี่ยน dynamic audio file/marker rendering ไปใช้ DOM nodes และ `textContent`, เพิ่ม accessible labels ใน Chapter Marker และแก้ MP3 mapping ของ Audio Merger ให้ตรงกับ `AudioOperation` ที่รองรับ `wav`, `wav-compact` และ `mp3`
+
+ยังไม่ได้อ้างว่า waveform draggable handles, audio presets, A/B preview หรือ guided wizard เสร็จสมบูรณ์ เพราะเป็นงาน roadmap ระยะถัดไป

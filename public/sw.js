@@ -1,5 +1,5 @@
-const SHELL_CACHE = 'utility-hub-shell-v0.13.0-p1-json';
-const TOOL_CACHE = 'utility-hub-tools-v0.13.0-p1-json';
+const SHELL_CACHE = 'utility-hub-shell-v0.14.0-group2';
+const TOOL_CACHE = 'utility-hub-tools-v0.14.0-group2';
 const CACHE_NAMES = [SHELL_CACHE, TOOL_CACHE];
 const APP_SCOPE = self.registration.scope;
 const APP_SHELL_URL = new URL('index.html', APP_SCOPE).href;

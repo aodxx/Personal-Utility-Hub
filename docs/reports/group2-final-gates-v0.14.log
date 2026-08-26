@@ -1,0 +1,158 @@
+
+> personal-utility-hub@0.14.0 typecheck
+> tsc -b --pretty false
+
+
+> personal-utility-hub@0.14.0 test
+> vitest run --run
+
+
+[1m[30m[46m RUN [49m[39m[22m [36mv4.1.11 [39m[90m/home/ubuntu/Personal-Utility-Hub[39m
+
+ [32m✓[39m tests/tool-contract.test.ts [2m([22m[2m6 tests[22m[2m)[22m[33m 430[2mms[22m[39m
+     [33m[2m✓[22m[39m lazy-loads and cleans up the Data Format Converter module [33m 387[2mms[22m[39m
+ [32m✓[39m tests/p0-registry.test.ts [2m([22m[2m2 tests[22m[2m)[22m[33m 517[2mms[22m[39m
+     [33m[2m✓[22m[39m lazy-loads each P0 module with metadata matching its registry entry [33m 511[2mms[22m[39m
+ [32m✓[39m tests/core-tools.test.ts [2m([22m[2m6 tests[22m[2m)[22m[33m 548[2mms[22m[39m
+     [33m[2m✓[22m[39m lazy-loads every Core Tool with metadata matching its Registry entry [33m 521[2mms[22m[39m
+ [32m✓[39m tests/file-tools.test.ts [2m([22m[2m5 tests[22m[2m)[22m[33m 743[2mms[22m[39m
+     [33m[2m✓[22m[39m lazy-loads every File Tool with matching Registry metadata [33m 690[2mms[22m[39m
+ [32m✓[39m tests/svg-asset-studio.test.ts [2m([22m[2m9 tests[22m[2m)[22m[32m 141[2mms[22m[39m
+ [32m✓[39m tests/svg-library-integrity.test.ts [2m([22m[2m1 test[22m[2m)[22m[32m 136[2mms[22m[39m
+ [32m✓[39m tests/audio-processing.test.ts [2m([22m[2m11 tests[22m[2m)[22m[32m 163[2mms[22m[39m
+ [32m✓[39m tests/data-format-converter.test.ts [2m([22m[2m9 tests[22m[2m)[22m[32m 50[2mms[22m[39m
+ [32m✓[39m tests/app-shell.test.ts [2m([22m[2m6 tests[22m[2m)[22m[33m 2228[2mms[22m[39m
+     [33m[2m✓[22m[39m renders the Hub and filters tools by Thai search and category [33m 593[2mms[22m[39m
+     [33m[2m✓[22m[39m persists favorites, records recent tools and clears history [33m 863[2mms[22m[39m
+     [33m[2m✓[22m[39m renders the English Hub and opens the local Settings Center [33m 335[2mms[22m[39m
+     [33m[2m✓[22m[39m orders the catalog by locally recorded usage [33m 310[2mms[22m[39m
+ [32m✓[39m tests/p0-jwt.test.ts [2m([22m[2m6 tests[22m[2m)[22m[32m 34[2mms[22m[39m
+ [32m✓[39m tests/regex-processing-client.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 31[2mms[22m[39m
+ [32m✓[39m tests/performance-offline.test.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 24[2mms[22m[39m
+ [32m✓[39m tests/land-measurement.test.ts [2m([22m[2m6 tests[22m[2m)[22m[32m 33[2mms[22m[39m
+ [32m✓[39m tests/p0-hash.test.ts [2m([22m[2m5 tests[22m[2m)[22m[32m 39[2mms[22m[39m
+ [32m✓[39m tests/privacy-redactor.test.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 5[2mms[22m[39m
+ [32m✓[39m tests/json-visualizer.test.ts [2m([22m[2m6 tests[22m[2m)[22m[32m 35[2mms[22m[39m
+ [32m✓[39m tests/p0-regex.test.ts [2m([22m[2m5 tests[22m[2m)[22m[32m 36[2mms[22m[39m
+ [32m✓[39m tests/visual-assets.test.ts [2m([22m[2m5 tests[22m[2m)[22m[32m 14[2mms[22m[39m
+ [32m✓[39m tests/phase6-trust.test.ts [2m([22m[2m5 tests[22m[2m)[22m[32m 12[2mms[22m[39m
+ [32m✓[39m tests/tool-loader.test.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 11[2mms[22m[39m
+ [32m✓[39m tests/storage.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 9[2mms[22m[39m
+ [32m✓[39m tests/line-sticker-studio.test.ts [2m([22m[2m10 tests[22m[2m)[22m[32m 13[2mms[22m[39m
+ [32m✓[39m tests/expansion-tools.test.ts [2m([22m[2m5 tests[22m[2m)[22m[32m 24[2mms[22m[39m
+ [32m✓[39m tests/p0-color-contrast.test.ts [2m([22m[2m6 tests[22m[2m)[22m[32m 11[2mms[22m[39m
+ [32m✓[39m tests/image-blur.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 6[2mms[22m[39m
+ [32m✓[39m tests/wave1-text-data.test.ts [2m([22m[2m5 tests[22m[2m)[22m[32m 8[2mms[22m[39m
+ [32m✓[39m tests/phase7-home.test.ts [2m([22m[2m6 tests[22m[2m)[22m[32m 8[2mms[22m[39m
+ [32m✓[39m tests/processing-client.test.ts [2m([22m[2m2 tests[22m[2m)[22m[32m 8[2mms[22m[39m
+ [32m✓[39m tests/search.test.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 7[2mms[22m[39m
+ [32m✓[39m tests/p1-reliability.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 7[2mms[22m[39m
+ [32m✓[39m tests/url-query-builder.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 7[2mms[22m[39m
+ [32m✓[39m tests/product-expansion.test.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 6[2mms[22m[39m
+ [32m✓[39m tests/pwa.test.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 6[2mms[22m[39m
+ [32m✓[39m tests/routes.test.ts [2m([22m[2m5 tests[22m[2m)[22m[32m 5[2mms[22m[39m
+ [32m✓[39m tests/accessibility-landmarks.test.ts [2m([22m[2m1 test[22m[2m)[22m[32m 4[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m35 passed[39m[22m[90m (35)[39m
+[2m      Tests [22m [1m[32m171 passed[39m[22m[90m (171)[39m
+[2m   Start at [22m 20:52:49
+[2m   Duration [22m 10.72s[2m (transform 2.69s, setup 0ms, import 3.69s, tests 5.36s, environment 33.37s)[22m
+
+
+> personal-utility-hub@0.14.0 build
+> tsc -b && vite build
+
+vite v8.2.2 building client environment for production...
+transforming...
+[32m✓[0m 502 modules transformed.
+rendering chunks...
+computing gzip size...
+[2mdist/[0m[32mindex.html                                  [0m[1;2m    1.39 kB[0m[2m │ gzip:   0.65 kB[0m
+[2mdist/[0m[2massets/[0m[32mregex.worker-DdTrYJ17.js             [0m[1;2m    1.68 kB[0m
+[2mdist/[0m[2massets/[0m[32mprocessing.worker-DuCCl-Id.js        [0m[1;2m  601.55 kB[0m
+[2mdist/[0m[2massets/[0m[32mpdf.worker.min-CHFwMXne.mjs          [0m[1;2m1,262.39 kB[0m
+[2mdist/[0m[2massets/[0m[35mland-measurement-CMi1a1NO.css        [0m[1;2m    5.15 kB[0m[2m │ gzip:   1.60 kB[0m
+[2mdist/[0m[2massets/[0m[35mleaflet-Ds4Udj8m.css                 [0m[1;2m   15.12 kB[0m[2m │ gzip:   6.36 kB[0m
+[2mdist/[0m[2massets/[0m[35mindex-Cbq1OaW8.css                   [0m[1;2m   84.04 kB[0m[2m │ gzip:  15.71 kB[0m
+[2mdist/[0m[2massets/[0m[36maudio-finisher-CtiJ2I4Q.js           [0m[1;2m    0.44 kB[0m[2m │ gzip:   0.35 kB[0m[2m │ map:     0.70 kB[0m
+[2mdist/[0m[2massets/[0m[36msilence-remover-CIvjlTYY.js          [0m[1;2m    0.47 kB[0m[2m │ gzip:   0.38 kB[0m[2m │ map:     0.74 kB[0m
+[2mdist/[0m[2massets/[0m[36maudio-speed-pitch-CG40RenH.js        [0m[1;2m    0.50 kB[0m[2m │ gzip:   0.38 kB[0m[2m │ map:     0.77 kB[0m
+[2mdist/[0m[2massets/[0m[36maudio-merger-CVBYbKuz.js             [0m[1;2m    0.51 kB[0m[2m │ gzip:   0.40 kB[0m[2m │ map:     0.79 kB[0m
+[2mdist/[0m[2massets/[0m[36maudio-compressor-sINnMUBG.js         [0m[1;2m    0.55 kB[0m[2m │ gzip:   0.40 kB[0m[2m │ map:     0.81 kB[0m
+[2mdist/[0m[2massets/[0m[36mrolldown-runtime-hePW80VL.js         [0m[1;2m    0.71 kB[0m[2m │ gzip:   0.42 kB[0m
+[2mdist/[0m[2massets/[0m[36mtool-ui-DzLvJknu.js                  [0m[1;2m    1.08 kB[0m[2m │ gzip:   0.71 kB[0m[2m │ map:     3.18 kB[0m
+[2mdist/[0m[2massets/[0m[36mfoundation-demo-CX_ZnVhq.js          [0m[1;2m    1.10 kB[0m[2m │ gzip:   0.62 kB[0m[2m │ map:     2.56 kB[0m
+[2mdist/[0m[2massets/[0m[36mfile-processing-BL99V2-U.js          [0m[1;2m    1.85 kB[0m[2m │ gzip:   0.96 kB[0m[2m │ map:     5.16 kB[0m
+[2mdist/[0m[2massets/[0m[36mregex-processing-client-Cx0YWE2R.js  [0m[1;2m    3.30 kB[0m[2m │ gzip:   1.59 kB[0m[2m │ map:    10.57 kB[0m
+[2mdist/[0m[2massets/[0m[36maudio-decoder-DITRqsh2.js            [0m[1;2m    3.67 kB[0m[2m │ gzip:   1.67 kB[0m[2m │ map:     9.09 kB[0m
+[2mdist/[0m[2massets/[0m[36mjson-schema-generator-C5URqVm4.js    [0m[1;2m    3.70 kB[0m[2m │ gzip:   1.67 kB[0m[2m │ map:     7.48 kB[0m
+[2mdist/[0m[2massets/[0m[36mjson-formatter-BZzgrAVB.js           [0m[1;2m    3.72 kB[0m[2m │ gzip:   1.51 kB[0m[2m │ map:     7.22 kB[0m
+[2mdist/[0m[2massets/[0m[36mtext-formatter-tj0sr-tE.js           [0m[1;2m    3.80 kB[0m[2m │ gzip:   1.51 kB[0m[2m │ map:     7.82 kB[0m
+[2mdist/[0m[2massets/[0m[36mpattern-pulse-boF-3gNZ.js            [0m[1;2m    3.80 kB[0m[2m │ gzip:   1.63 kB[0m[2m │ map:     8.00 kB[0m
+[2mdist/[0m[2massets/[0m[36mbase64-C3vseHxN.js                   [0m[1;2m    3.93 kB[0m[2m │ gzip:   1.55 kB[0m[2m │ map:     7.70 kB[0m
+[2mdist/[0m[2massets/[0m[36mpdf-merge-D21LwUWS.js                [0m[1;2m    3.94 kB[0m[2m │ gzip:   1.84 kB[0m[2m │ map:     9.06 kB[0m
+[2mdist/[0m[2massets/[0m[36morbit-catcher-Dv59DpxA.js            [0m[1;2m    4.00 kB[0m[2m │ gzip:   2.00 kB[0m[2m │ map:     9.21 kB[0m
+[2mdist/[0m[2massets/[0m[36mimage-crop-dvqOqgfG.js               [0m[1;2m    4.00 kB[0m[2m │ gzip:   1.79 kB[0m[2m │ map:     7.64 kB[0m
+[2mdist/[0m[2massets/[0m[36mfile-metadata-DqxUr5w4.js            [0m[1;2m    4.09 kB[0m[2m │ gzip:   1.90 kB[0m[2m │ map:     9.28 kB[0m
+[2mdist/[0m[2massets/[0m[36mmarkdown-table-builder-B2oInL5q.js   [0m[1;2m    4.11 kB[0m[2m │ gzip:   1.86 kB[0m[2m │ map:     8.57 kB[0m
+[2mdist/[0m[2massets/[0m[36mimages-to-pdf-BJCm8tFu.js            [0m[1;2m    4.23 kB[0m[2m │ gzip:   1.91 kB[0m[2m │ map:     9.45 kB[0m
+[2mdist/[0m[2massets/[0m[36mfile-diff-DO_9papj.js                [0m[1;2m    4.42 kB[0m[2m │ gzip:   1.97 kB[0m[2m │ map:     8.75 kB[0m
+[2mdist/[0m[2massets/[0m[36mimage-contact-sheet-DVTV95mC.js      [0m[1;2m    4.51 kB[0m[2m │ gzip:   2.02 kB[0m[2m │ map:     9.35 kB[0m
+[2mdist/[0m[2massets/[0m[36mjson-i18n-mapper-iVhDifBf.js         [0m[1;2m    4.54 kB[0m[2m │ gzip:   2.09 kB[0m[2m │ map:    10.87 kB[0m
+[2mdist/[0m[2massets/[0m[36mpdf-split-C0lnReeC.js                [0m[1;2m    4.58 kB[0m[2m │ gzip:   1.98 kB[0m[2m │ map:    10.77 kB[0m
+[2mdist/[0m[2massets/[0m[36mcsv-profiler-Sz4sf8W-.js             [0m[1;2m    4.87 kB[0m[2m │ gzip:   2.26 kB[0m[2m │ map:    10.84 kB[0m
+[2mdist/[0m[2massets/[0m[36mcsv-encoding-repair-DZOcIk93.js      [0m[1;2m    4.98 kB[0m[2m │ gzip:   2.32 kB[0m[2m │ map:    11.78 kB[0m
+[2mdist/[0m[2massets/[0m[36murl-query-builder-CxqSSKkL.js        [0m[1;2m    5.01 kB[0m[2m │ gzip:   2.00 kB[0m[2m │ map:    10.66 kB[0m
+[2mdist/[0m[2massets/[0m[36mpdf-to-image-CLcWs0HL.js             [0m[1;2m    5.02 kB[0m[2m │ gzip:   2.05 kB[0m[2m │ map:     9.93 kB[0m
+[2mdist/[0m[2massets/[0m[36mimage-watermark-Dmnflbsx.js          [0m[1;2m    5.27 kB[0m[2m │ gzip:   2.15 kB[0m[2m │ map:    10.09 kB[0m
+[2mdist/[0m[2massets/[0m[36mflowchart-studio-yDR_O6l_.js         [0m[1;2m    5.48 kB[0m[2m │ gzip:   2.57 kB[0m[2m │ map:    12.90 kB[0m
+[2mdist/[0m[2massets/[0m[36mpdf-organizer-V97Jfn4k.js            [0m[1;2m    5.51 kB[0m[2m │ gzip:   2.23 kB[0m[2m │ map:    11.01 kB[0m
+[2mdist/[0m[2massets/[0m[36mprivacy-redactor-CIMw8CZr.js         [0m[1;2m    5.52 kB[0m[2m │ gzip:   2.42 kB[0m[2m │ map:    10.33 kB[0m
+[2mdist/[0m[2massets/[0m[36mimage-compressor-O2w3hhCF.js         [0m[1;2m    5.59 kB[0m[2m │ gzip:   2.30 kB[0m[2m │ map:    12.01 kB[0m
+[2mdist/[0m[2massets/[0m[36mimage-converter-D88O9Piw.js          [0m[1;2m    5.69 kB[0m[2m │ gzip:   2.34 kB[0m[2m │ map:    12.92 kB[0m
+[2mdist/[0m[2massets/[0m[36mimage-resizer-BwLX8JRv.js            [0m[1;2m    5.89 kB[0m[2m │ gzip:   2.47 kB[0m[2m │ map:    13.88 kB[0m
+[2mdist/[0m[2massets/[0m[36mprocessing-client-nN_7n9EH.js        [0m[1;2m    6.12 kB[0m[2m │ gzip:   2.42 kB[0m[2m │ map:    16.81 kB[0m
+[2mdist/[0m[2massets/[0m[36maudio-chapter-marker-BKgOV014.js     [0m[1;2m    6.14 kB[0m[2m │ gzip:   2.58 kB[0m[2m │ map:    13.21 kB[0m
+[2mdist/[0m[2massets/[0m[36mjson-ld-generator-DxWkRlgS.js        [0m[1;2m    6.23 kB[0m[2m │ gzip:   2.39 kB[0m[2m │ map:    13.08 kB[0m
+[2mdist/[0m[2massets/[0m[36mimage-processing-CAZnEFI3.js         [0m[1;2m    7.65 kB[0m[2m │ gzip:   2.78 kB[0m[2m │ map:    21.87 kB[0m
+[2mdist/[0m[2massets/[0m[36mhash-verifier-Dp9hgVmm.js            [0m[1;2m    8.37 kB[0m[2m │ gzip:   3.08 kB[0m[2m │ map:    17.24 kB[0m
+[2mdist/[0m[2massets/[0m[36maudio-trimmer-CunMbnUP.js            [0m[1;2m    9.49 kB[0m[2m │ gzip:   3.39 kB[0m[2m │ map:    23.12 kB[0m
+[2mdist/[0m[2massets/[0m[36mimage-blur-pJS5usVD.js               [0m[1;2m    9.64 kB[0m[2m │ gzip:   3.43 kB[0m[2m │ map:    23.00 kB[0m
+[2mdist/[0m[2massets/[0m[36mcolor-contrast-Dt_Gy88d.js           [0m[1;2m   10.08 kB[0m[2m │ gzip:   3.48 kB[0m[2m │ map:    20.49 kB[0m
+[2mdist/[0m[2massets/[0m[36mregex-playground-Bmq2_Jk2.js         [0m[1;2m   10.14 kB[0m[2m │ gzip:   3.53 kB[0m[2m │ map:    21.98 kB[0m
+[2mdist/[0m[2massets/[0m[36mjwt-inspector-B35-Dw6U.js            [0m[1;2m   10.46 kB[0m[2m │ gzip:   3.98 kB[0m[2m │ map:    21.31 kB[0m
+[2mdist/[0m[2massets/[0m[36mjson-visualizer-B-8LSs1A.js          [0m[1;2m   13.36 kB[0m[2m │ gzip:   5.13 kB[0m[2m │ map:    35.04 kB[0m
+[2mdist/[0m[2massets/[0m[36maudio-workbench-BiLajg4Y.js          [0m[1;2m   14.19 kB[0m[2m │ gzip:   5.02 kB[0m[2m │ map:    28.37 kB[0m
+[2mdist/[0m[2massets/[0m[36mland-measurement-B8DJ_fYK.js         [0m[1;2m   23.05 kB[0m[2m │ gzip:   7.87 kB[0m[2m │ map:    51.63 kB[0m
+[2mdist/[0m[2massets/[0m[36msvg-asset-studio-sFUYeyHq.js         [0m[1;2m   25.83 kB[0m[2m │ gzip:   8.89 kB[0m[2m │ map:    63.81 kB[0m
+[2mdist/[0m[2massets/[0m[36mcommunity-mapping-DAPuxUqf.js        [0m[1;2m   25.93 kB[0m[2m │ gzip:   7.64 kB[0m[2m │ map:    49.98 kB[0m
+[2mdist/[0m[2massets/[0m[36mqr-generator-C586Lr-l.js             [0m[1;2m   27.03 kB[0m[2m │ gzip:  10.43 kB[0m[2m │ map:   121.65 kB[0m
+[2mdist/[0m[2massets/[0m[36mline-sticker-studio-Bwz8NUxB.js      [0m[1;2m   50.37 kB[0m[2m │ gzip:  15.24 kB[0m[2m │ map:   115.59 kB[0m
+[2mdist/[0m[2massets/[0m[36mqr-reader-DoDmr8rl.js                [0m[1;2m  135.70 kB[0m[2m │ gzip:  50.04 kB[0m[2m │ map:   407.77 kB[0m
+[2mdist/[0m[2massets/[0m[36mleaflet-B-g6lJ6C.js                  [0m[1;2m  148.85 kB[0m[2m │ gzip:  43.43 kB[0m[2m │ map:   655.31 kB[0m
+[2mdist/[0m[2massets/[0m[36maudio-processing-BGFTW048.js         [0m[1;2m  169.90 kB[0m[2m │ gzip:  58.75 kB[0m[2m │ map:   801.44 kB[0m
+[2mdist/[0m[2massets/[0m[36mdata-format-converter-DID9IzSb.js    [0m[1;2m  203.82 kB[0m[2m │ gzip:  64.77 kB[0m[2m │ map:   902.62 kB[0m
+[2mdist/[0m[2massets/[0m[36mindex-BouHp4B0.js                    [0m[1;2m  288.63 kB[0m[2m │ gzip:  61.80 kB[0m[2m │ map:   489.42 kB[0m
+[2mdist/[0m[2massets/[0m[36mpdf-processing-b7TgAYIV.js           [0m[1;2m  423.61 kB[0m[2m │ gzip: 176.94 kB[0m[2m │ map: 1,623.68 kB[0m
+[2mdist/[0m[2massets/[0m[36mpdf-rendering-BtGznngc.js            [0m[1;2m  427.64 kB[0m[2m │ gzip: 127.78 kB[0m[2m │ map: 1,383.11 kB[0m
+
+✓ built in 1.38s
+
+> personal-utility-hub@0.14.0 check:bundle
+> node scripts/check-bundle.mjs
+
+Entry gzip: 60.2 KB
+Largest lazy chunk: pdf.worker.min-CHFwMXne.mjs 366.1 KB
+All JavaScript gzip: 1311.9 KB across 64 chunks
+
+> personal-utility-hub@0.14.0 check:registry
+> node scripts/check-registry.mjs
+
+Registry check passed: 48 metadata modules, unique routes, required fields, and lazy registrations verified.
+
+> personal-utility-hub@0.14.0 check:svg-library
+> node scripts/check-svg-library.mjs
+
+SVG library integrity passed: 120 assets, exact duplicates 0, geometry duplicates 0, near-duplicate warnings 0
+Evidence report: /home/ubuntu/Personal-Utility-Hub/docs/svg-library-integrity-report.json
+found 0 vulnerabilities

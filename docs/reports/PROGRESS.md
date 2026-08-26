@@ -356,3 +356,20 @@ References: [`P1_DATA_FORMAT_CONVERTER_FEASIBILITY.md`](../research/P1_DATA_FORM
 Release นี้ผ่าน local quality gates และพร้อม commit/push โดยยังไม่ถือเป็น CI หรือ production deployment evidence ใหม่ ความเสี่ยงที่ประกาศไว้คือ JSON-only input, main-thread parse/render, semantic search ที่ไม่ใช่ JSONPath เต็มรูปแบบ และ graph truncation เมื่อเกิน 360 visible nodes หาก benchmark ภายหลังพบ UI blocking ใกล้ limits จึงค่อยแยก Worker milestone พร้อม cancellation protocol
 
 References: [`P1_JSON_VISUALIZER_FEASIBILITY.md`](../research/P1_JSON_VISUALIZER_FEASIBILITY.md), [`P1_OVERLAP_AND_IMPLEMENTATION_PLAN.md`](../research/P1_OVERLAP_AND_IMPLEMENTATION_PLAN.md), [`CODE_REVIEW_v0.13.0.md`](../reviews/CODE_REVIEW_v0.13.0.md)
+
+
+## v0.14.0 — Group 2 Audio Usability & Security Foundation — 27 สิงหาคม 2026
+
+รอบนี้เริ่มปรับเครื่องมือกลุ่ม 2 ตามมาตรฐาน usability ใหม่ โดยเลือก shared audio foundation, Audio Chapter Marker และ Audio Trimmer เป็น implementation slice แรก เนื่องจากมี impact ร่วมกับเครื่องมือ audio หลายรายการและมี pain point ด้าน workflow ชัดเจน
+
+| รายการ | ผลลัพธ์ |
+|---|---|
+| Shared audio foundation | เปลี่ยน file-list rendering เป็น DOM/textContent, รักษา filename เป็นข้อมูลข้อความ และแก้ MP3 format mapping ของ Audio Merger ให้ตรงกับ `AudioOperation` |
+| Audio Chapter Marker | เปลี่ยน marker rows เป็น DOM-safe rendering พร้อม accessible labels สำหรับ seek/title/note/remove |
+| Regression coverage | เพิ่ม Playwright tests สำหรับ hostile filename และ marker text ที่ต้องไม่สร้าง HTML element |
+| Privacy/security boundary | ไม่เพิ่ม backend, telemetry หรือ cloud upload; ข้อมูล audio ยังคงประมวลผลใน browser memory และ object URLs ถูก revoke ตาม lifecycle |
+| Validation | TypeScript, Vitest targeted 17/17, audio E2E 51/51 และ full Playwright 285 passed, 18 intentional skips จาก 303 cases |
+
+ข้อจำกัดของ slice นี้คือยังไม่ได้ทำ waveform draggable handles, audio presets, A/B preview, guided wizard หรือ batch UX เต็มรูปแบบตาม roadmap ทั้งหมด งานเหล่านี้อยู่ในลำดับถัดไปและต้องเพิ่ม tests/benchmark ก่อนประกาศว่าเสร็จ
+
+References: [`GROUP2_DEEP_ANALYSIS_AND_GROUP3_ROADMAP_v0.13.md`](GROUP2_DEEP_ANALYSIS_AND_GROUP3_ROADMAP_v0.13.md), [`TOOL_GROUPING_STANDARD_v0.13.0.md`](TOOL_GROUPING_STANDARD_v0.13.0.md)

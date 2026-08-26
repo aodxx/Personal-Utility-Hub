@@ -1,0 +1,473 @@
+
+> personal-utility-hub@0.13.0 typecheck
+> tsc -b --pretty false
+
+
+> personal-utility-hub@0.13.0 test
+> vitest run --run
+
+
+[1m[30m[46m RUN [49m[39m[22m [36mv4.1.11 [39m[90m/home/ubuntu/Personal-Utility-Hub[39m
+
+ [32m✓[39m tests/tool-contract.test.ts [2m([22m[2m6 tests[22m[2m)[22m[33m 476[2mms[22m[39m
+     [33m[2m✓[22m[39m lazy-loads and cleans up the Data Format Converter module [33m 391[2mms[22m[39m
+ [32m✓[39m tests/p0-registry.test.ts [2m([22m[2m2 tests[22m[2m)[22m[33m 521[2mms[22m[39m
+     [33m[2m✓[22m[39m lazy-loads each P0 module with metadata matching its registry entry [33m 515[2mms[22m[39m
+ [32m✓[39m tests/core-tools.test.ts [2m([22m[2m6 tests[22m[2m)[22m[33m 552[2mms[22m[39m
+     [33m[2m✓[22m[39m lazy-loads every Core Tool with metadata matching its Registry entry [33m 525[2mms[22m[39m
+ [32m✓[39m tests/file-tools.test.ts [2m([22m[2m5 tests[22m[2m)[22m[33m 711[2mms[22m[39m
+     [33m[2m✓[22m[39m lazy-loads every File Tool with matching Registry metadata [33m 657[2mms[22m[39m
+ [32m✓[39m tests/svg-library-integrity.test.ts [2m([22m[2m1 test[22m[2m)[22m[32m 77[2mms[22m[39m
+ [32m✓[39m tests/svg-asset-studio.test.ts [2m([22m[2m9 tests[22m[2m)[22m[32m 149[2mms[22m[39m
+ [32m✓[39m tests/audio-processing.test.ts [2m([22m[2m11 tests[22m[2m)[22m[32m 143[2mms[22m[39m
+ [32m✓[39m tests/data-format-converter.test.ts [2m([22m[2m9 tests[22m[2m)[22m[32m 57[2mms[22m[39m
+ [32m✓[39m tests/app-shell.test.ts [2m([22m[2m6 tests[22m[2m)[22m[33m 2037[2mms[22m[39m
+     [33m[2m✓[22m[39m renders the Hub and filters tools by Thai search and category [33m 560[2mms[22m[39m
+     [33m[2m✓[22m[39m persists favorites, records recent tools and clears history [33m 780[2mms[22m[39m
+ [32m✓[39m tests/p0-jwt.test.ts [2m([22m[2m6 tests[22m[2m)[22m[32m 35[2mms[22m[39m
+ [32m✓[39m tests/json-visualizer.test.ts [2m([22m[2m6 tests[22m[2m)[22m[32m 30[2mms[22m[39m
+ [32m✓[39m tests/p0-regex.test.ts [2m([22m[2m5 tests[22m[2m)[22m[32m 31[2mms[22m[39m
+ [32m✓[39m tests/land-measurement.test.ts [2m([22m[2m6 tests[22m[2m)[22m[32m 33[2mms[22m[39m
+ [32m✓[39m tests/regex-processing-client.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 42[2mms[22m[39m
+ [32m✓[39m tests/performance-offline.test.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 39[2mms[22m[39m
+ [32m✓[39m tests/p0-hash.test.ts [2m([22m[2m5 tests[22m[2m)[22m[32m 32[2mms[22m[39m
+ [32m✓[39m tests/visual-assets.test.ts [2m([22m[2m5 tests[22m[2m)[22m[32m 16[2mms[22m[39m
+ [32m✓[39m tests/phase6-trust.test.ts [2m([22m[2m5 tests[22m[2m)[22m[32m 14[2mms[22m[39m
+ [32m✓[39m tests/line-sticker-studio.test.ts [2m([22m[2m10 tests[22m[2m)[22m[32m 12[2mms[22m[39m
+ [32m✓[39m tests/tool-loader.test.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 11[2mms[22m[39m
+ [32m✓[39m tests/wave1-text-data.test.ts [2m([22m[2m5 tests[22m[2m)[22m[32m 8[2mms[22m[39m
+ [32m✓[39m tests/p0-color-contrast.test.ts [2m([22m[2m6 tests[22m[2m)[22m[32m 9[2mms[22m[39m
+ [32m✓[39m tests/storage.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 10[2mms[22m[39m
+ [32m✓[39m tests/expansion-tools.test.ts [2m([22m[2m5 tests[22m[2m)[22m[32m 12[2mms[22m[39m
+ [32m✓[39m tests/processing-client.test.ts [2m([22m[2m2 tests[22m[2m)[22m[32m 8[2mms[22m[39m
+ [32m✓[39m tests/phase7-home.test.ts [2m([22m[2m6 tests[22m[2m)[22m[32m 8[2mms[22m[39m
+ [32m✓[39m tests/search.test.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 7[2mms[22m[39m
+ [32m✓[39m tests/p1-reliability.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 7[2mms[22m[39m
+ [32m✓[39m tests/image-blur.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 8[2mms[22m[39m
+ [32m✓[39m tests/url-query-builder.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 7[2mms[22m[39m
+ [32m✓[39m tests/product-expansion.test.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 6[2mms[22m[39m
+ [32m✓[39m tests/privacy-redactor.test.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 17[2mms[22m[39m
+ [32m✓[39m tests/routes.test.ts [2m([22m[2m5 tests[22m[2m)[22m[32m 5[2mms[22m[39m
+ [32m✓[39m tests/pwa.test.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 6[2mms[22m[39m
+ [32m✓[39m tests/accessibility-landmarks.test.ts [2m([22m[2m1 test[22m[2m)[22m[32m 4[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m35 passed[39m[22m[90m (35)[39m
+[2m      Tests [22m [1m[32m171 passed[39m[22m[90m (171)[39m
+[2m   Start at [22m 20:48:13
+[2m   Duration [22m 10.48s[2m (transform 2.63s, setup 0ms, import 3.61s, tests 5.14s, environment 32.84s)[22m
+
+
+> personal-utility-hub@0.13.0 build
+> tsc -b && vite build
+
+vite v8.2.2 building client environment for production...
+transforming...
+[32m✓[0m 502 modules transformed.
+rendering chunks...
+computing gzip size...
+[2mdist/[0m[32mindex.html                                  [0m[1;2m    1.39 kB[0m[2m │ gzip:   0.65 kB[0m
+[2mdist/[0m[2massets/[0m[32mregex.worker-DdTrYJ17.js             [0m[1;2m    1.68 kB[0m
+[2mdist/[0m[2massets/[0m[32mprocessing.worker-DuCCl-Id.js        [0m[1;2m  601.55 kB[0m
+[2mdist/[0m[2massets/[0m[32mpdf.worker.min-CHFwMXne.mjs          [0m[1;2m1,262.39 kB[0m
+[2mdist/[0m[2massets/[0m[35mland-measurement-CMi1a1NO.css        [0m[1;2m    5.15 kB[0m[2m │ gzip:   1.60 kB[0m
+[2mdist/[0m[2massets/[0m[35mleaflet-Ds4Udj8m.css                 [0m[1;2m   15.12 kB[0m[2m │ gzip:   6.36 kB[0m
+[2mdist/[0m[2massets/[0m[35mindex-Cbq1OaW8.css                   [0m[1;2m   84.04 kB[0m[2m │ gzip:  15.71 kB[0m
+[2mdist/[0m[2massets/[0m[36maudio-finisher-CtiJ2I4Q.js           [0m[1;2m    0.44 kB[0m[2m │ gzip:   0.35 kB[0m[2m │ map:     0.70 kB[0m
+[2mdist/[0m[2massets/[0m[36msilence-remover-CIvjlTYY.js          [0m[1;2m    0.47 kB[0m[2m │ gzip:   0.38 kB[0m[2m │ map:     0.74 kB[0m
+[2mdist/[0m[2massets/[0m[36maudio-speed-pitch-CG40RenH.js        [0m[1;2m    0.50 kB[0m[2m │ gzip:   0.38 kB[0m[2m │ map:     0.77 kB[0m
+[2mdist/[0m[2massets/[0m[36maudio-merger-CVBYbKuz.js             [0m[1;2m    0.51 kB[0m[2m │ gzip:   0.40 kB[0m[2m │ map:     0.79 kB[0m
+[2mdist/[0m[2massets/[0m[36maudio-compressor-sINnMUBG.js         [0m[1;2m    0.55 kB[0m[2m │ gzip:   0.40 kB[0m[2m │ map:     0.81 kB[0m
+[2mdist/[0m[2massets/[0m[36mrolldown-runtime-hePW80VL.js         [0m[1;2m    0.71 kB[0m[2m │ gzip:   0.42 kB[0m
+[2mdist/[0m[2massets/[0m[36mtool-ui-DzLvJknu.js                  [0m[1;2m    1.08 kB[0m[2m │ gzip:   0.71 kB[0m[2m │ map:     3.18 kB[0m
+[2mdist/[0m[2massets/[0m[36mfoundation-demo-CX_ZnVhq.js          [0m[1;2m    1.10 kB[0m[2m │ gzip:   0.62 kB[0m[2m │ map:     2.56 kB[0m
+[2mdist/[0m[2massets/[0m[36mfile-processing-BL99V2-U.js          [0m[1;2m    1.85 kB[0m[2m │ gzip:   0.96 kB[0m[2m │ map:     5.16 kB[0m
+[2mdist/[0m[2massets/[0m[36mregex-processing-client-Cx0YWE2R.js  [0m[1;2m    3.30 kB[0m[2m │ gzip:   1.59 kB[0m[2m │ map:    10.57 kB[0m
+[2mdist/[0m[2massets/[0m[36maudio-decoder-DITRqsh2.js            [0m[1;2m    3.67 kB[0m[2m │ gzip:   1.67 kB[0m[2m │ map:     9.09 kB[0m
+[2mdist/[0m[2massets/[0m[36mjson-schema-generator-C5URqVm4.js    [0m[1;2m    3.70 kB[0m[2m │ gzip:   1.67 kB[0m[2m │ map:     7.48 kB[0m
+[2mdist/[0m[2massets/[0m[36mjson-formatter-BZzgrAVB.js           [0m[1;2m    3.72 kB[0m[2m │ gzip:   1.51 kB[0m[2m │ map:     7.22 kB[0m
+[2mdist/[0m[2massets/[0m[36mtext-formatter-tj0sr-tE.js           [0m[1;2m    3.80 kB[0m[2m │ gzip:   1.51 kB[0m[2m │ map:     7.82 kB[0m
+[2mdist/[0m[2massets/[0m[36mpattern-pulse-boF-3gNZ.js            [0m[1;2m    3.80 kB[0m[2m │ gzip:   1.63 kB[0m[2m │ map:     8.00 kB[0m
+[2mdist/[0m[2massets/[0m[36mbase64-C3vseHxN.js                   [0m[1;2m    3.93 kB[0m[2m │ gzip:   1.55 kB[0m[2m │ map:     7.70 kB[0m
+[2mdist/[0m[2massets/[0m[36mpdf-merge-D21LwUWS.js                [0m[1;2m    3.94 kB[0m[2m │ gzip:   1.84 kB[0m[2m │ map:     9.06 kB[0m
+[2mdist/[0m[2massets/[0m[36morbit-catcher-Dv59DpxA.js            [0m[1;2m    4.00 kB[0m[2m │ gzip:   2.00 kB[0m[2m │ map:     9.21 kB[0m
+[2mdist/[0m[2massets/[0m[36mimage-crop-dvqOqgfG.js               [0m[1;2m    4.00 kB[0m[2m │ gzip:   1.79 kB[0m[2m │ map:     7.64 kB[0m
+[2mdist/[0m[2massets/[0m[36mfile-metadata-DqxUr5w4.js            [0m[1;2m    4.09 kB[0m[2m │ gzip:   1.90 kB[0m[2m │ map:     9.28 kB[0m
+[2mdist/[0m[2massets/[0m[36mmarkdown-table-builder-B2oInL5q.js   [0m[1;2m    4.11 kB[0m[2m │ gzip:   1.86 kB[0m[2m │ map:     8.57 kB[0m
+[2mdist/[0m[2massets/[0m[36mimages-to-pdf-BJCm8tFu.js            [0m[1;2m    4.23 kB[0m[2m │ gzip:   1.91 kB[0m[2m │ map:     9.45 kB[0m
+[2mdist/[0m[2massets/[0m[36mfile-diff-DO_9papj.js                [0m[1;2m    4.42 kB[0m[2m │ gzip:   1.97 kB[0m[2m │ map:     8.75 kB[0m
+[2mdist/[0m[2massets/[0m[36mimage-contact-sheet-DVTV95mC.js      [0m[1;2m    4.51 kB[0m[2m │ gzip:   2.02 kB[0m[2m │ map:     9.35 kB[0m
+[2mdist/[0m[2massets/[0m[36mjson-i18n-mapper-iVhDifBf.js         [0m[1;2m    4.54 kB[0m[2m │ gzip:   2.09 kB[0m[2m │ map:    10.87 kB[0m
+[2mdist/[0m[2massets/[0m[36mpdf-split-C0lnReeC.js                [0m[1;2m    4.58 kB[0m[2m │ gzip:   1.98 kB[0m[2m │ map:    10.77 kB[0m
+[2mdist/[0m[2massets/[0m[36mcsv-profiler-Sz4sf8W-.js             [0m[1;2m    4.87 kB[0m[2m │ gzip:   2.26 kB[0m[2m │ map:    10.84 kB[0m
+[2mdist/[0m[2massets/[0m[36mcsv-encoding-repair-DZOcIk93.js      [0m[1;2m    4.98 kB[0m[2m │ gzip:   2.32 kB[0m[2m │ map:    11.78 kB[0m
+[2mdist/[0m[2massets/[0m[36murl-query-builder-CxqSSKkL.js        [0m[1;2m    5.01 kB[0m[2m │ gzip:   2.00 kB[0m[2m │ map:    10.66 kB[0m
+[2mdist/[0m[2massets/[0m[36mpdf-to-image-CLcWs0HL.js             [0m[1;2m    5.02 kB[0m[2m │ gzip:   2.05 kB[0m[2m │ map:     9.93 kB[0m
+[2mdist/[0m[2massets/[0m[36mimage-watermark-Dmnflbsx.js          [0m[1;2m    5.27 kB[0m[2m │ gzip:   2.15 kB[0m[2m │ map:    10.09 kB[0m
+[2mdist/[0m[2massets/[0m[36mflowchart-studio-yDR_O6l_.js         [0m[1;2m    5.48 kB[0m[2m │ gzip:   2.57 kB[0m[2m │ map:    12.90 kB[0m
+[2mdist/[0m[2massets/[0m[36mpdf-organizer-V97Jfn4k.js            [0m[1;2m    5.51 kB[0m[2m │ gzip:   2.23 kB[0m[2m │ map:    11.01 kB[0m
+[2mdist/[0m[2massets/[0m[36mprivacy-redactor-CIMw8CZr.js         [0m[1;2m    5.52 kB[0m[2m │ gzip:   2.42 kB[0m[2m │ map:    10.33 kB[0m
+[2mdist/[0m[2massets/[0m[36mimage-compressor-O2w3hhCF.js         [0m[1;2m    5.59 kB[0m[2m │ gzip:   2.30 kB[0m[2m │ map:    12.01 kB[0m
+[2mdist/[0m[2massets/[0m[36mimage-converter-D88O9Piw.js          [0m[1;2m    5.69 kB[0m[2m │ gzip:   2.34 kB[0m[2m │ map:    12.92 kB[0m
+[2mdist/[0m[2massets/[0m[36mimage-resizer-BwLX8JRv.js            [0m[1;2m    5.89 kB[0m[2m │ gzip:   2.47 kB[0m[2m │ map:    13.88 kB[0m
+[2mdist/[0m[2massets/[0m[36mprocessing-client-nN_7n9EH.js        [0m[1;2m    6.12 kB[0m[2m │ gzip:   2.42 kB[0m[2m │ map:    16.81 kB[0m
+[2mdist/[0m[2massets/[0m[36maudio-chapter-marker-BKgOV014.js     [0m[1;2m    6.14 kB[0m[2m │ gzip:   2.58 kB[0m[2m │ map:    13.21 kB[0m
+[2mdist/[0m[2massets/[0m[36mjson-ld-generator-DxWkRlgS.js        [0m[1;2m    6.23 kB[0m[2m │ gzip:   2.39 kB[0m[2m │ map:    13.08 kB[0m
+[2mdist/[0m[2massets/[0m[36mimage-processing-CAZnEFI3.js         [0m[1;2m    7.65 kB[0m[2m │ gzip:   2.78 kB[0m[2m │ map:    21.87 kB[0m
+[2mdist/[0m[2massets/[0m[36mhash-verifier-Dp9hgVmm.js            [0m[1;2m    8.37 kB[0m[2m │ gzip:   3.08 kB[0m[2m │ map:    17.24 kB[0m
+[2mdist/[0m[2massets/[0m[36maudio-trimmer-CunMbnUP.js            [0m[1;2m    9.49 kB[0m[2m │ gzip:   3.39 kB[0m[2m │ map:    23.12 kB[0m
+[2mdist/[0m[2massets/[0m[36mimage-blur-pJS5usVD.js               [0m[1;2m    9.64 kB[0m[2m │ gzip:   3.43 kB[0m[2m │ map:    23.00 kB[0m
+[2mdist/[0m[2massets/[0m[36mcolor-contrast-Dt_Gy88d.js           [0m[1;2m   10.08 kB[0m[2m │ gzip:   3.48 kB[0m[2m │ map:    20.49 kB[0m
+[2mdist/[0m[2massets/[0m[36mregex-playground-Bmq2_Jk2.js         [0m[1;2m   10.14 kB[0m[2m │ gzip:   3.53 kB[0m[2m │ map:    21.98 kB[0m
+[2mdist/[0m[2massets/[0m[36mjwt-inspector-B35-Dw6U.js            [0m[1;2m   10.46 kB[0m[2m │ gzip:   3.98 kB[0m[2m │ map:    21.31 kB[0m
+[2mdist/[0m[2massets/[0m[36mjson-visualizer-B-8LSs1A.js          [0m[1;2m   13.36 kB[0m[2m │ gzip:   5.13 kB[0m[2m │ map:    35.04 kB[0m
+[2mdist/[0m[2massets/[0m[36maudio-workbench-BiLajg4Y.js          [0m[1;2m   14.19 kB[0m[2m │ gzip:   5.02 kB[0m[2m │ map:    28.37 kB[0m
+[2mdist/[0m[2massets/[0m[36mland-measurement-B8DJ_fYK.js         [0m[1;2m   23.05 kB[0m[2m │ gzip:   7.87 kB[0m[2m │ map:    51.63 kB[0m
+[2mdist/[0m[2massets/[0m[36msvg-asset-studio-sFUYeyHq.js         [0m[1;2m   25.83 kB[0m[2m │ gzip:   8.89 kB[0m[2m │ map:    63.81 kB[0m
+[2mdist/[0m[2massets/[0m[36mcommunity-mapping-DAPuxUqf.js        [0m[1;2m   25.93 kB[0m[2m │ gzip:   7.64 kB[0m[2m │ map:    49.98 kB[0m
+[2mdist/[0m[2massets/[0m[36mqr-generator-C586Lr-l.js             [0m[1;2m   27.03 kB[0m[2m │ gzip:  10.43 kB[0m[2m │ map:   121.65 kB[0m
+[2mdist/[0m[2massets/[0m[36mline-sticker-studio-Bwz8NUxB.js      [0m[1;2m   50.37 kB[0m[2m │ gzip:  15.24 kB[0m[2m │ map:   115.59 kB[0m
+[2mdist/[0m[2massets/[0m[36mqr-reader-DoDmr8rl.js                [0m[1;2m  135.70 kB[0m[2m │ gzip:  50.04 kB[0m[2m │ map:   407.77 kB[0m
+[2mdist/[0m[2massets/[0m[36mleaflet-B-g6lJ6C.js                  [0m[1;2m  148.85 kB[0m[2m │ gzip:  43.43 kB[0m[2m │ map:   655.31 kB[0m
+[2mdist/[0m[2massets/[0m[36maudio-processing-BGFTW048.js         [0m[1;2m  169.90 kB[0m[2m │ gzip:  58.75 kB[0m[2m │ map:   801.44 kB[0m
+[2mdist/[0m[2massets/[0m[36mdata-format-converter-DID9IzSb.js    [0m[1;2m  203.82 kB[0m[2m │ gzip:  64.77 kB[0m[2m │ map:   902.62 kB[0m
+[2mdist/[0m[2massets/[0m[36mindex-BouHp4B0.js                    [0m[1;2m  288.63 kB[0m[2m │ gzip:  61.80 kB[0m[2m │ map:   489.42 kB[0m
+[2mdist/[0m[2massets/[0m[36mpdf-processing-b7TgAYIV.js           [0m[1;2m  423.61 kB[0m[2m │ gzip: 176.94 kB[0m[2m │ map: 1,623.68 kB[0m
+[2mdist/[0m[2massets/[0m[36mpdf-rendering-BtGznngc.js            [0m[1;2m  427.64 kB[0m[2m │ gzip: 127.78 kB[0m[2m │ map: 1,383.11 kB[0m
+
+✓ built in 1.30s
+
+> personal-utility-hub@0.13.0 check:bundle
+> node scripts/check-bundle.mjs
+
+Entry gzip: 60.2 KB
+Largest lazy chunk: pdf.worker.min-CHFwMXne.mjs 366.1 KB
+All JavaScript gzip: 1311.9 KB across 64 chunks
+
+> personal-utility-hub@0.13.0 check:registry
+> node scripts/check-registry.mjs
+
+Registry check passed: 48 metadata modules, unique routes, required fields, and lazy registrations verified.
+
+> personal-utility-hub@0.13.0 check:svg-library
+> node scripts/check-svg-library.mjs
+
+SVG library integrity passed: 120 assets, exact duplicates 0, geometry duplicates 0, near-duplicate warnings 0
+Evidence report: /home/ubuntu/Personal-Utility-Hub/docs/svg-library-integrity-report.json
+
+> personal-utility-hub@0.13.0 test:e2e
+> playwright test
+
+
+Running 303 tests using 3 workers
+
+[1/303] [desktop-chromium] › tests/e2e/audio-tools.spec.ts:29:3 › Audio processing production contract › Audio Trimmer completes upload, process, result and download, then can process again
+[2/303] [desktop-chromium] › tests/e2e/audio-tools.spec.ts:60:5 › Audio processing production contract › Audio Resampler (WAV) completes the shared audio processing contract
+[3/303] [desktop-chromium] › tests/e2e/audio-tools.spec.ts:60:5 › Audio processing production contract › Audio Merger Studio completes the shared audio processing contract
+[4/303] [desktop-chromium] › tests/e2e/audio-tools.spec.ts:60:5 › Audio processing production contract › Silence Remover completes the shared audio processing contract
+[5/303] [desktop-chromium] › tests/e2e/audio-tools.spec.ts:60:5 › Audio processing production contract › Audio Finisher completes the shared audio processing contract
+[6/303] [desktop-chromium] › tests/e2e/audio-tools.spec.ts:60:5 › Audio processing production contract › Audio Speed & Pitch completes the shared audio processing contract
+[7/303] [desktop-chromium] › tests/e2e/audio-tools.spec.ts:77:3 › Audio processing production contract › Audio Chapter Marker uploads audio, adds a marker and exports a cue sheet
+[8/303] [desktop-chromium] › tests/e2e/audio-tools.spec.ts:102:5 › Phase 8 real media corpus › Audio Trimmer real mono-44k.wav decode and process
+[9/303] [desktop-chromium] › tests/e2e/audio-tools.spec.ts:102:5 › Phase 8 real media corpus › Audio Trimmer real speech.mp3 decode and process
+[10/303] [desktop-chromium] › tests/e2e/audio-tools.spec.ts:102:5 › Phase 8 real media corpus › Audio Trimmer real voice.m4a decode and process
+[11/303] [desktop-chromium] › tests/e2e/audio-tools.spec.ts:102:5 › Phase 8 real media corpus › Audio Trimmer real speech.ogg decode and process
+[12/303] [desktop-chromium] › tests/e2e/audio-tools.spec.ts:102:5 › Phase 8 real media corpus › Audio Trimmer real voice.webm decode and process
+[13/303] [desktop-chromium] › tests/e2e/audio-tools.spec.ts:127:3 › Phase 8 real media corpus › Audio Merger real stereo/sample-rate files crossfade and outputs playable WAV
+[14/303] [desktop-chromium] › tests/e2e/audio-tools.spec.ts:141:3 › Phase 8 real media corpus › Audio Merger exports an MP3 locally with an MP3 filename
+[15/303] [desktop-chromium] › tests/e2e/audio-tools.spec.ts:160:1 › Audio Trimmer reports a useful codec/decode error for malformed media
+[16/303] [desktop-chromium] › tests/e2e/audio-tools.spec.ts:167:1 › shared audio workbench renders hostile filenames as text
+[17/303] [desktop-chromium] › tests/e2e/audio-tools.spec.ts:175:1 › Audio Chapter Marker renders hostile marker text as text
+[18/303] [desktop-chromium] › tests/e2e/community-mapping.spec.ts:3:1 › opens Community Mapping Privacy Canvas without default tile requests
+[19/303] [desktop-chromium] › tests/e2e/community-mapping.spec.ts:14:1 › draws a Point and Polygon locally, updates stats, and exports GeoJSON
+[20/303] [desktop-chromium] › tests/e2e/community-mapping.spec.ts:38:1 › shows Layers and Custom Schema Builder controls
+[21/303] [desktop-chromium] › tests/e2e/community-mapping.spec.ts:47:1 › uses map-first fieldwork shell with local filters and commands
+[22/303] [desktop-chromium] › tests/e2e/community-mapping.spec.ts:60:1 › keeps Community Mapping inside a 360px viewport
+[23/303] [desktop-chromium] › tests/e2e/core-tools.spec.ts:9:1 › formats JSON, round-trips Thai Base64 and cleans text
+[24/303] [desktop-chromium] › tests/e2e/core-tools.spec.ts:32:1 › generates and reads a QR image fully client-side
+[25/303] [desktop-chromium] › tests/e2e/core-tools.spec.ts:47:1 › resizes and converts an image without uploading it
+[26/303] [desktop-chromium] › tests/e2e/data-format-converter.spec.ts:4:3 › Data Format Converter › converts JSON to YAML, shows conversion notes, and supports swap
+[27/303] [desktop-chromium] › tests/e2e/data-format-converter.spec.ts:23:3 › Data Format Converter › keeps the converter usable without horizontal overflow on mobile
+[28/303] [desktop-chromium] › tests/e2e/expansion-tools-functional.spec.ts:12:1 › organizes PDF pages locally and downloads a result
+[29/303] [desktop-chromium] › tests/e2e/expansion-tools-functional.spec.ts:27:1 › repairs CSV encoding and exports UTF-8 BOM
+[30/303] [desktop-chromium] › tests/e2e/expansion-tools-functional.spec.ts:37:1 › maps i18n JSON keys and creates a skeleton
+[31/303] [desktop-chromium] › tests/e2e/expansion-tools-functional.spec.ts:47:1 › watermarks an image and downloads the result
+[32/303] [desktop-chromium] › tests/e2e/expansion-tools-functional.spec.ts:58:1 › generates JSON-LD and provides JSON output
+[33/303] [desktop-chromium] › tests/e2e/expansion-tools-functional.spec.ts:79:1 › creates a circle crop and downloads transparent PNG
+[34/303] [desktop-chromium] › tests/e2e/expansion-tools-functional.spec.ts:69:1 › renders and exports a flowchart
+[35/303] [desktop-chromium] › tests/e2e/expansion-tools.spec.ts:14:3 › loads pdf-organizer route and local notice
+[36/303] [desktop-chromium] › tests/e2e/expansion-tools.spec.ts:14:3 › loads csv-encoding-repair route and local notice
+[37/303] [desktop-chromium] › tests/e2e/expansion-tools.spec.ts:14:3 › loads json-i18n-mapper route and local notice
+[38/303] [desktop-chromium] › tests/e2e/expansion-tools.spec.ts:14:3 › loads image-watermark route and local notice
+[39/303] [desktop-chromium] › tests/e2e/expansion-tools.spec.ts:14:3 › loads json-ld-generator route and local notice
+[40/303] [desktop-chromium] › tests/e2e/expansion-tools.spec.ts:14:3 › loads flowchart-studio route and local notice
+[41/303] [desktop-chromium] › tests/e2e/expansion-tools.spec.ts:14:3 › loads image-crop route and local notice
+[42/303] [desktop-chromium] › tests/e2e/file-tools.spec.ts:32:1 › trims an audio clip locally with preview and WAV output
+[43/303] [desktop-chromium] › tests/e2e/file-tools.spec.ts:45:1 › runs all five new audio workbenches with real output
+[44/303] [desktop-chromium] › tests/e2e/file-tools.spec.ts:73:1 › keeps stereo and non-default sample rates through Preview and Export
+[45/303] [desktop-chromium] › tests/e2e/file-tools.spec.ts:89:1 › handles silence input and invalid audio without crashing the workbench
+[46/303] [desktop-chromium] › tests/e2e/file-tools.spec.ts:104:1 › compresses an image and combines images into PDF locally
+[47/303] [desktop-chromium] › tests/e2e/file-tools.spec.ts:122:1 › merges and splits PDF pages without uploading documents
+[48/303] [desktop-chromium] › tests/e2e/file-tools.spec.ts:142:1 › renders a PDF page to PNG and inspects file metadata
+[49/303] [desktop-chromium] › tests/e2e/image-blur.spec.ts:8:1 › selects an image area, pixelates it locally, and exposes a downloadable result
+[50/303] [desktop-chromium] › tests/e2e/json-visualizer.spec.ts:4:3 › JSON Visualizer / Graph Viewer › loads sample, explores tree and graph, then exports SVG
+[51/303] [desktop-chromium] › tests/e2e/json-visualizer.spec.ts:34:3 › JSON Visualizer / Graph Viewer › shows actionable errors and stays within the mobile viewport
+[52/303] [desktop-chromium] › tests/e2e/land-measurement.spec.ts:4:3 › Land Measurement production contract › renders map-first distance and area workflow with local exports
+[53/303] [desktop-chromium] › tests/e2e/land-measurement.spec.ts:31:3 › Land Measurement production contract › keeps the measurement workspace usable at 360px
+[54/303] [desktop-chromium] › tests/e2e/land-measurement.spec.ts:40:3 › shows visible Phatthalung offline streets when online map tiles are blocked
+[55/303] [desktop-chromium] › tests/e2e/line-sticker-studio.spec.ts:12:3 › LINE Sticker Studio production contract › static sheet split, edit, inspect, prompt and ZIP export verify real outputs
+[56/303] [desktop-chromium] › tests/e2e/line-sticker-studio.spec.ts:52:3 › LINE Sticker Studio production contract › prompt handoff copies locally, opens external ChatGPT, and never sends prompt to an internal endpoint
+[57/303] [desktop-chromium] › tests/e2e/line-sticker-studio.spec.ts:71:3 › LINE Sticker Studio production contract › suggested grid and numbered split preview are visible for a sheet
+[58/303] [desktop-chromium] › tests/e2e/line-sticker-studio.spec.ts:84:3 › LINE Sticker Studio production contract › proves 4×4 source-cell identity, preview parity and non-strip outputs with pixel signatures
+[59/303] [desktop-chromium] › tests/e2e/line-sticker-studio.spec.ts:103:3 › LINE Sticker Studio production contract › resets stale outputs when source or grid changes and re-splits deterministically
+[60/303] [desktop-chromium] › tests/e2e/line-sticker-studio.spec.ts:121:3 › LINE Sticker Studio production contract › runs realistic 4×4 sheet through split, batch finish, review and export
+[61/303] [desktop-chromium] › tests/e2e/line-sticker-studio.spec.ts:142:3 › LINE Sticker Studio production contract › keeps the recovery workflow within a 360px viewport
+[62/303] [desktop-chromium] › tests/e2e/line-sticker-studio.spec.ts:149:3 › LINE Sticker Studio production contract › animated mode prepares frames and reports APNG as partial without fake export
+[63/303] [desktop-chromium] › tests/e2e/p0-tools.spec.ts:10:3 › P0 tools desktop workflows › JWT Inspector decodes header, payload and claims locally
+[64/303] [desktop-chromium] › tests/e2e/p0-tools.spec.ts:25:3 › P0 tools desktop workflows › Hash Verifier calculates text and compares expected digest
+[65/303] [desktop-chromium] › tests/e2e/p0-tools.spec.ts:36:3 › P0 tools desktop workflows › Hash Verifier supports a local file input
+[66/303] [desktop-chromium] › tests/e2e/p0-tools.spec.ts:46:3 › P0 tools desktop workflows › Regex Playground shows matches, captures and highlighted preview
+[67/303] [desktop-chromium] › tests/e2e/p0-tools.spec.ts:58:3 › P0 tools desktop workflows › Color Contrast Checker reports WCAG decisions and preview
+[68/303] [desktop-chromium] › tests/e2e/p0-tools.spec.ts:81:5 › P0 tools mobile routes › loads jwt-inspector on mobile without overflow
+[69/303] [desktop-chromium] › tests/e2e/p0-tools.spec.ts:81:5 › P0 tools mobile routes › loads hash-verifier on mobile without overflow
+[70/303] [desktop-chromium] › tests/e2e/p0-tools.spec.ts:81:5 › P0 tools mobile routes › loads regex-playground on mobile without overflow
+[71/303] [desktop-chromium] › tests/e2e/p0-tools.spec.ts:81:5 › P0 tools mobile routes › loads color-contrast on mobile without overflow
+[72/303] [desktop-chromium] › tests/e2e/performance-offline.spec.ts:8:1 › prepares one tool for offline use and reopens it without a network
+[73/303] [desktop-chromium] › tests/e2e/performance-offline.spec.ts:52:1 › keeps the initial Hub entry small and lazy-loads the processing worker
+[74/303] [desktop-chromium] › tests/e2e/phase71-carousel.spec.ts:9:1 › renders centered real visual assets and consistent quick-launch structure for every Most Used card
+[75/303] [desktop-chromium] › tests/e2e/phase71-carousel.spec.ts:30:1 › keeps Community Mapping and URL Query artwork centered inside the mobile visual frame
+[76/303] [desktop-chromium] › tests/e2e/phase71-carousel.spec.ts:70:1 › uses real local usage ranking and allows frequently used beta tools to enter Most Used
+[77/303] [desktop-chromium] › tests/e2e/phase71-carousel.spec.ts:86:1 › uses native snap behavior and updates dots/arrows when navigating
+[78/303] [desktop-chromium] › tests/e2e/phase71-carousel.spec.ts:112:1 › keeps mobile cards peekable and hides desktop arrows without page overflow
+[79/303] [desktop-chromium] › tests/e2e/phase71-carousel.spec.ts:132:1 › respects reduced motion while preserving snap and controls
+[80/303] [desktop-chromium] › tests/e2e/product-expansion.spec.ts:9:1 › switches the Hub between Thai and English
+[81/303] [desktop-chromium] › tests/e2e/product-expansion.spec.ts:20:1 › orders tools by local usage while preserving full-card navigation
+[82/303] [desktop-chromium] › tests/e2e/product-expansion.spec.ts:33:1 › reports browser compatibility without a backend
+[83/303] [desktop-chromium] › tests/e2e/product-expansion.spec.ts:42:1 › exports and imports versioned local settings
+[84/303] [desktop-chromium] › tests/e2e/smoke.spec.ts:4:1 › searches, filters and saves a favorite
+[85/303] [desktop-chromium] › tests/e2e/smoke.spec.ts:24:1 › keeps mobile tool cards compact with clear touch feedback
+[86/303] [desktop-chromium] › tests/e2e/smoke.spec.ts:67:1 › opens an active tool, records history and toggles theme
+[87/303] [desktop-chromium] › tests/e2e/smoke.spec.ts:77:1 › opens the lazy-loaded lifecycle demo
+[88/303] [desktop-chromium] › tests/e2e/smoke.spec.ts:84:1 › opens both playable games and starts their sessions
+[89/303] [desktop-chromium] › tests/e2e/smoke.spec.ts:97:1 › opens a not-found route
+[90/303] [desktop-chromium] › tests/e2e/smoke.spec.ts:103:1 › explains privacy and opens the shared bilingual tool guide
+[91/303] [desktop-chromium] › tests/e2e/smoke.spec.ts:120:1 › supports first-use dismissal and safe sample data
+[92/303] [desktop-chromium] › tests/e2e/smoke.spec.ts:134:1 › keeps the guide usable on 360px mobile
+[93/303] [desktop-chromium] › tests/e2e/smoke.spec.ts:147:1 › shows tool-specific guide content across representative categories
+[94/303] [desktop-chromium] › tests/e2e/smoke.spec.ts:167:1 › renders compact trust chips and a five-tool Most Used fallback
+[95/303] [desktop-chromium] › tests/e2e/smoke.spec.ts:178:1 › updates Most Used from local usage and resets to fallback without losing favorites
+[96/303] [desktop-chromium] › tests/e2e/svg-asset-studio.spec.ts:6:3 › SVG Asset Studio production contract › searches, inspects, edits, optimizes, exports and builds a pack
+[97/303] [desktop-chromium] › tests/e2e/svg-asset-studio.spec.ts:48:3 › SVG Asset Studio production contract › sanitizes uploaded SVG and keeps the page inside mobile viewport
+[98/303] [desktop-chromium] › tests/e2e/url-query-builder.spec.ts:4:3 › URL Query String Builder production contract › parses and rebuilds Unicode query parameters with repeated keys and hash
+[99/303] [desktop-chromium] › tests/e2e/url-query-builder.spec.ts:17:3 › URL Query String Builder production contract › keeps the text/data workflow within a 360px viewport
+[100/303] [desktop-chromium] › tests/e2e/wave1-text-data.spec.ts:4:3 › Wave 1 Text/Data tools › generates JSON Schema from Thai JSON and handles invalid input
+[101/303] [desktop-chromium] › tests/e2e/wave1-text-data.spec.ts:16:3 › Wave 1 Text/Data tools › builds Markdown table from CSV and escapes pipe cells without overflow
+[102/303] [android-entry] › tests/e2e/audio-tools.spec.ts:29:3 › Audio processing production contract › Audio Trimmer completes upload, process, result and download, then can process again
+[103/303] [android-entry] › tests/e2e/audio-tools.spec.ts:60:5 › Audio processing production contract › Audio Resampler (WAV) completes the shared audio processing contract
+[104/303] [android-entry] › tests/e2e/audio-tools.spec.ts:60:5 › Audio processing production contract › Audio Merger Studio completes the shared audio processing contract
+[105/303] [android-entry] › tests/e2e/audio-tools.spec.ts:60:5 › Audio processing production contract › Silence Remover completes the shared audio processing contract
+[106/303] [android-entry] › tests/e2e/audio-tools.spec.ts:60:5 › Audio processing production contract › Audio Finisher completes the shared audio processing contract
+[107/303] [android-entry] › tests/e2e/audio-tools.spec.ts:60:5 › Audio processing production contract › Audio Speed & Pitch completes the shared audio processing contract
+[108/303] [android-entry] › tests/e2e/audio-tools.spec.ts:77:3 › Audio processing production contract › Audio Chapter Marker uploads audio, adds a marker and exports a cue sheet
+[109/303] [android-entry] › tests/e2e/audio-tools.spec.ts:102:5 › Phase 8 real media corpus › Audio Trimmer real mono-44k.wav decode and process
+[110/303] [android-entry] › tests/e2e/audio-tools.spec.ts:102:5 › Phase 8 real media corpus › Audio Trimmer real speech.mp3 decode and process
+[111/303] [android-entry] › tests/e2e/audio-tools.spec.ts:102:5 › Phase 8 real media corpus › Audio Trimmer real voice.m4a decode and process
+[112/303] [android-entry] › tests/e2e/audio-tools.spec.ts:102:5 › Phase 8 real media corpus › Audio Trimmer real speech.ogg decode and process
+[113/303] [android-entry] › tests/e2e/audio-tools.spec.ts:127:3 › Phase 8 real media corpus › Audio Merger real stereo/sample-rate files crossfade and outputs playable WAV
+[114/303] [android-entry] › tests/e2e/audio-tools.spec.ts:102:5 › Phase 8 real media corpus › Audio Trimmer real voice.webm decode and process
+[115/303] [android-entry] › tests/e2e/audio-tools.spec.ts:141:3 › Phase 8 real media corpus › Audio Merger exports an MP3 locally with an MP3 filename
+[116/303] [android-entry] › tests/e2e/audio-tools.spec.ts:160:1 › Audio Trimmer reports a useful codec/decode error for malformed media
+[117/303] [android-entry] › tests/e2e/audio-tools.spec.ts:167:1 › shared audio workbench renders hostile filenames as text
+[118/303] [android-entry] › tests/e2e/audio-tools.spec.ts:175:1 › Audio Chapter Marker renders hostile marker text as text
+[119/303] [android-entry] › tests/e2e/community-mapping.spec.ts:3:1 › opens Community Mapping Privacy Canvas without default tile requests
+[120/303] [android-entry] › tests/e2e/community-mapping.spec.ts:14:1 › draws a Point and Polygon locally, updates stats, and exports GeoJSON
+[121/303] [android-entry] › tests/e2e/community-mapping.spec.ts:38:1 › shows Layers and Custom Schema Builder controls
+[122/303] [android-entry] › tests/e2e/community-mapping.spec.ts:47:1 › uses map-first fieldwork shell with local filters and commands
+[123/303] [android-entry] › tests/e2e/community-mapping.spec.ts:60:1 › keeps Community Mapping inside a 360px viewport
+[124/303] [android-entry] › tests/e2e/core-tools.spec.ts:9:1 › formats JSON, round-trips Thai Base64 and cleans text
+[125/303] [android-entry] › tests/e2e/core-tools.spec.ts:32:1 › generates and reads a QR image fully client-side
+[126/303] [android-entry] › tests/e2e/core-tools.spec.ts:47:1 › resizes and converts an image without uploading it
+[127/303] [android-entry] › tests/e2e/data-format-converter.spec.ts:4:3 › Data Format Converter › converts JSON to YAML, shows conversion notes, and supports swap
+[128/303] [android-entry] › tests/e2e/data-format-converter.spec.ts:23:3 › Data Format Converter › keeps the converter usable without horizontal overflow on mobile
+[129/303] [android-entry] › tests/e2e/expansion-tools-functional.spec.ts:12:1 › organizes PDF pages locally and downloads a result
+[130/303] [android-entry] › tests/e2e/expansion-tools-functional.spec.ts:27:1 › repairs CSV encoding and exports UTF-8 BOM
+[131/303] [android-entry] › tests/e2e/expansion-tools-functional.spec.ts:37:1 › maps i18n JSON keys and creates a skeleton
+[132/303] [android-entry] › tests/e2e/expansion-tools-functional.spec.ts:47:1 › watermarks an image and downloads the result
+[133/303] [android-entry] › tests/e2e/expansion-tools-functional.spec.ts:58:1 › generates JSON-LD and provides JSON output
+[134/303] [android-entry] › tests/e2e/expansion-tools-functional.spec.ts:69:1 › renders and exports a flowchart
+[135/303] [android-entry] › tests/e2e/expansion-tools-functional.spec.ts:79:1 › creates a circle crop and downloads transparent PNG
+[136/303] [android-entry] › tests/e2e/expansion-tools.spec.ts:14:3 › loads pdf-organizer route and local notice
+[137/303] [android-entry] › tests/e2e/expansion-tools.spec.ts:14:3 › loads csv-encoding-repair route and local notice
+[138/303] [android-entry] › tests/e2e/expansion-tools.spec.ts:14:3 › loads json-i18n-mapper route and local notice
+[139/303] [android-entry] › tests/e2e/expansion-tools.spec.ts:14:3 › loads image-watermark route and local notice
+[140/303] [android-entry] › tests/e2e/expansion-tools.spec.ts:14:3 › loads json-ld-generator route and local notice
+[141/303] [android-entry] › tests/e2e/expansion-tools.spec.ts:14:3 › loads flowchart-studio route and local notice
+[142/303] [android-entry] › tests/e2e/expansion-tools.spec.ts:14:3 › loads image-crop route and local notice
+[143/303] [android-entry] › tests/e2e/file-tools.spec.ts:32:1 › trims an audio clip locally with preview and WAV output
+[144/303] [android-entry] › tests/e2e/file-tools.spec.ts:45:1 › runs all five new audio workbenches with real output
+[145/303] [android-entry] › tests/e2e/file-tools.spec.ts:73:1 › keeps stereo and non-default sample rates through Preview and Export
+[146/303] [android-entry] › tests/e2e/file-tools.spec.ts:89:1 › handles silence input and invalid audio without crashing the workbench
+[147/303] [android-entry] › tests/e2e/file-tools.spec.ts:104:1 › compresses an image and combines images into PDF locally
+[148/303] [android-entry] › tests/e2e/file-tools.spec.ts:122:1 › merges and splits PDF pages without uploading documents
+[149/303] [android-entry] › tests/e2e/file-tools.spec.ts:142:1 › renders a PDF page to PNG and inspects file metadata
+[150/303] [android-entry] › tests/e2e/image-blur.spec.ts:8:1 › selects an image area, pixelates it locally, and exposes a downloadable result
+[151/303] [android-entry] › tests/e2e/json-visualizer.spec.ts:4:3 › JSON Visualizer / Graph Viewer › loads sample, explores tree and graph, then exports SVG
+[152/303] [android-entry] › tests/e2e/json-visualizer.spec.ts:34:3 › JSON Visualizer / Graph Viewer › shows actionable errors and stays within the mobile viewport
+[153/303] [android-entry] › tests/e2e/land-measurement.spec.ts:4:3 › Land Measurement production contract › renders map-first distance and area workflow with local exports
+[154/303] [android-entry] › tests/e2e/land-measurement.spec.ts:31:3 › Land Measurement production contract › keeps the measurement workspace usable at 360px
+[155/303] [android-entry] › tests/e2e/land-measurement.spec.ts:40:3 › shows visible Phatthalung offline streets when online map tiles are blocked
+[156/303] [android-entry] › tests/e2e/line-sticker-studio.spec.ts:12:3 › LINE Sticker Studio production contract › static sheet split, edit, inspect, prompt and ZIP export verify real outputs
+[157/303] [android-entry] › tests/e2e/line-sticker-studio.spec.ts:52:3 › LINE Sticker Studio production contract › prompt handoff copies locally, opens external ChatGPT, and never sends prompt to an internal endpoint
+[158/303] [android-entry] › tests/e2e/line-sticker-studio.spec.ts:71:3 › LINE Sticker Studio production contract › suggested grid and numbered split preview are visible for a sheet
+[159/303] [android-entry] › tests/e2e/line-sticker-studio.spec.ts:84:3 › LINE Sticker Studio production contract › proves 4×4 source-cell identity, preview parity and non-strip outputs with pixel signatures
+[160/303] [android-entry] › tests/e2e/line-sticker-studio.spec.ts:103:3 › LINE Sticker Studio production contract › resets stale outputs when source or grid changes and re-splits deterministically
+[161/303] [android-entry] › tests/e2e/line-sticker-studio.spec.ts:121:3 › LINE Sticker Studio production contract › runs realistic 4×4 sheet through split, batch finish, review and export
+[162/303] [android-entry] › tests/e2e/line-sticker-studio.spec.ts:142:3 › LINE Sticker Studio production contract › keeps the recovery workflow within a 360px viewport
+[163/303] [android-entry] › tests/e2e/line-sticker-studio.spec.ts:149:3 › LINE Sticker Studio production contract › animated mode prepares frames and reports APNG as partial without fake export
+[164/303] [android-entry] › tests/e2e/p0-tools.spec.ts:10:3 › P0 tools desktop workflows › JWT Inspector decodes header, payload and claims locally
+[165/303] [android-entry] › tests/e2e/p0-tools.spec.ts:25:3 › P0 tools desktop workflows › Hash Verifier calculates text and compares expected digest
+[166/303] [android-entry] › tests/e2e/p0-tools.spec.ts:36:3 › P0 tools desktop workflows › Hash Verifier supports a local file input
+[167/303] [android-entry] › tests/e2e/p0-tools.spec.ts:46:3 › P0 tools desktop workflows › Regex Playground shows matches, captures and highlighted preview
+[168/303] [android-entry] › tests/e2e/p0-tools.spec.ts:58:3 › P0 tools desktop workflows › Color Contrast Checker reports WCAG decisions and preview
+[169/303] [android-entry] › tests/e2e/p0-tools.spec.ts:81:5 › P0 tools mobile routes › loads jwt-inspector on mobile without overflow
+[170/303] [android-entry] › tests/e2e/p0-tools.spec.ts:81:5 › P0 tools mobile routes › loads hash-verifier on mobile without overflow
+[171/303] [android-entry] › tests/e2e/p0-tools.spec.ts:81:5 › P0 tools mobile routes › loads regex-playground on mobile without overflow
+[172/303] [android-entry] › tests/e2e/p0-tools.spec.ts:81:5 › P0 tools mobile routes › loads color-contrast on mobile without overflow
+[173/303] [android-entry] › tests/e2e/performance-offline.spec.ts:8:1 › prepares one tool for offline use and reopens it without a network
+[174/303] [android-entry] › tests/e2e/performance-offline.spec.ts:52:1 › keeps the initial Hub entry small and lazy-loads the processing worker
+[175/303] [android-entry] › tests/e2e/phase71-carousel.spec.ts:9:1 › renders centered real visual assets and consistent quick-launch structure for every Most Used card
+[176/303] [android-entry] › tests/e2e/phase71-carousel.spec.ts:30:1 › keeps Community Mapping and URL Query artwork centered inside the mobile visual frame
+[177/303] [android-entry] › tests/e2e/phase71-carousel.spec.ts:70:1 › uses real local usage ranking and allows frequently used beta tools to enter Most Used
+[178/303] [android-entry] › tests/e2e/phase71-carousel.spec.ts:86:1 › uses native snap behavior and updates dots/arrows when navigating
+[179/303] [android-entry] › tests/e2e/phase71-carousel.spec.ts:112:1 › keeps mobile cards peekable and hides desktop arrows without page overflow
+[180/303] [android-entry] › tests/e2e/phase71-carousel.spec.ts:132:1 › respects reduced motion while preserving snap and controls
+[181/303] [android-entry] › tests/e2e/product-expansion.spec.ts:9:1 › switches the Hub between Thai and English
+[182/303] [android-entry] › tests/e2e/product-expansion.spec.ts:20:1 › orders tools by local usage while preserving full-card navigation
+[183/303] [android-entry] › tests/e2e/product-expansion.spec.ts:33:1 › reports browser compatibility without a backend
+[184/303] [android-entry] › tests/e2e/product-expansion.spec.ts:42:1 › exports and imports versioned local settings
+[185/303] [android-entry] › tests/e2e/smoke.spec.ts:4:1 › searches, filters and saves a favorite
+[186/303] [android-entry] › tests/e2e/smoke.spec.ts:24:1 › keeps mobile tool cards compact with clear touch feedback
+[187/303] [android-entry] › tests/e2e/smoke.spec.ts:67:1 › opens an active tool, records history and toggles theme
+[188/303] [android-entry] › tests/e2e/smoke.spec.ts:77:1 › opens the lazy-loaded lifecycle demo
+[189/303] [android-entry] › tests/e2e/smoke.spec.ts:84:1 › opens both playable games and starts their sessions
+[190/303] [android-entry] › tests/e2e/smoke.spec.ts:97:1 › opens a not-found route
+[191/303] [android-entry] › tests/e2e/smoke.spec.ts:103:1 › explains privacy and opens the shared bilingual tool guide
+[192/303] [android-entry] › tests/e2e/smoke.spec.ts:120:1 › supports first-use dismissal and safe sample data
+[193/303] [android-entry] › tests/e2e/smoke.spec.ts:134:1 › keeps the guide usable on 360px mobile
+[194/303] [android-entry] › tests/e2e/smoke.spec.ts:147:1 › shows tool-specific guide content across representative categories
+[195/303] [android-entry] › tests/e2e/smoke.spec.ts:167:1 › renders compact trust chips and a five-tool Most Used fallback
+[196/303] [android-entry] › tests/e2e/smoke.spec.ts:178:1 › updates Most Used from local usage and resets to fallback without losing favorites
+[197/303] [android-entry] › tests/e2e/svg-asset-studio.spec.ts:6:3 › SVG Asset Studio production contract › searches, inspects, edits, optimizes, exports and builds a pack
+[198/303] [android-entry] › tests/e2e/svg-asset-studio.spec.ts:48:3 › SVG Asset Studio production contract › sanitizes uploaded SVG and keeps the page inside mobile viewport
+[199/303] [android-entry] › tests/e2e/url-query-builder.spec.ts:4:3 › URL Query String Builder production contract › parses and rebuilds Unicode query parameters with repeated keys and hash
+[200/303] [android-entry] › tests/e2e/url-query-builder.spec.ts:17:3 › URL Query String Builder production contract › keeps the text/data workflow within a 360px viewport
+[201/303] [android-entry] › tests/e2e/wave1-text-data.spec.ts:4:3 › Wave 1 Text/Data tools › generates JSON Schema from Thai JSON and handles invalid input
+[202/303] [android-entry] › tests/e2e/wave1-text-data.spec.ts:16:3 › Wave 1 Text/Data tools › builds Markdown table from CSV and escapes pipe cells without overflow
+[203/303] [android-current] › tests/e2e/audio-tools.spec.ts:29:3 › Audio processing production contract › Audio Trimmer completes upload, process, result and download, then can process again
+[204/303] [android-current] › tests/e2e/audio-tools.spec.ts:60:5 › Audio processing production contract › Audio Resampler (WAV) completes the shared audio processing contract
+[205/303] [android-current] › tests/e2e/audio-tools.spec.ts:60:5 › Audio processing production contract › Audio Merger Studio completes the shared audio processing contract
+[206/303] [android-current] › tests/e2e/audio-tools.spec.ts:60:5 › Audio processing production contract › Silence Remover completes the shared audio processing contract
+[207/303] [android-current] › tests/e2e/audio-tools.spec.ts:60:5 › Audio processing production contract › Audio Finisher completes the shared audio processing contract
+[208/303] [android-current] › tests/e2e/audio-tools.spec.ts:60:5 › Audio processing production contract › Audio Speed & Pitch completes the shared audio processing contract
+[209/303] [android-current] › tests/e2e/audio-tools.spec.ts:77:3 › Audio processing production contract › Audio Chapter Marker uploads audio, adds a marker and exports a cue sheet
+[210/303] [android-current] › tests/e2e/audio-tools.spec.ts:102:5 › Phase 8 real media corpus › Audio Trimmer real mono-44k.wav decode and process
+[211/303] [android-current] › tests/e2e/audio-tools.spec.ts:102:5 › Phase 8 real media corpus › Audio Trimmer real speech.mp3 decode and process
+[212/303] [android-current] › tests/e2e/audio-tools.spec.ts:102:5 › Phase 8 real media corpus › Audio Trimmer real voice.m4a decode and process
+[213/303] [android-current] › tests/e2e/audio-tools.spec.ts:102:5 › Phase 8 real media corpus › Audio Trimmer real speech.ogg decode and process
+[214/303] [android-current] › tests/e2e/audio-tools.spec.ts:102:5 › Phase 8 real media corpus › Audio Trimmer real voice.webm decode and process
+[215/303] [android-current] › tests/e2e/audio-tools.spec.ts:127:3 › Phase 8 real media corpus › Audio Merger real stereo/sample-rate files crossfade and outputs playable WAV
+[216/303] [android-current] › tests/e2e/audio-tools.spec.ts:141:3 › Phase 8 real media corpus › Audio Merger exports an MP3 locally with an MP3 filename
+[217/303] [android-current] › tests/e2e/audio-tools.spec.ts:160:1 › Audio Trimmer reports a useful codec/decode error for malformed media
+[218/303] [android-current] › tests/e2e/audio-tools.spec.ts:167:1 › shared audio workbench renders hostile filenames as text
+[219/303] [android-current] › tests/e2e/audio-tools.spec.ts:175:1 › Audio Chapter Marker renders hostile marker text as text
+[220/303] [android-current] › tests/e2e/community-mapping.spec.ts:3:1 › opens Community Mapping Privacy Canvas without default tile requests
+[221/303] [android-current] › tests/e2e/community-mapping.spec.ts:14:1 › draws a Point and Polygon locally, updates stats, and exports GeoJSON
+[222/303] [android-current] › tests/e2e/community-mapping.spec.ts:38:1 › shows Layers and Custom Schema Builder controls
+[223/303] [android-current] › tests/e2e/community-mapping.spec.ts:47:1 › uses map-first fieldwork shell with local filters and commands
+[224/303] [android-current] › tests/e2e/community-mapping.spec.ts:60:1 › keeps Community Mapping inside a 360px viewport
+[225/303] [android-current] › tests/e2e/core-tools.spec.ts:9:1 › formats JSON, round-trips Thai Base64 and cleans text
+[226/303] [android-current] › tests/e2e/core-tools.spec.ts:47:1 › resizes and converts an image without uploading it
+[227/303] [android-current] › tests/e2e/core-tools.spec.ts:32:1 › generates and reads a QR image fully client-side
+[228/303] [android-current] › tests/e2e/data-format-converter.spec.ts:4:3 › Data Format Converter › converts JSON to YAML, shows conversion notes, and supports swap
+[229/303] [android-current] › tests/e2e/data-format-converter.spec.ts:23:3 › Data Format Converter › keeps the converter usable without horizontal overflow on mobile
+[230/303] [android-current] › tests/e2e/expansion-tools-functional.spec.ts:12:1 › organizes PDF pages locally and downloads a result
+[231/303] [android-current] › tests/e2e/expansion-tools-functional.spec.ts:27:1 › repairs CSV encoding and exports UTF-8 BOM
+[232/303] [android-current] › tests/e2e/expansion-tools-functional.spec.ts:37:1 › maps i18n JSON keys and creates a skeleton
+[233/303] [android-current] › tests/e2e/expansion-tools-functional.spec.ts:47:1 › watermarks an image and downloads the result
+[234/303] [android-current] › tests/e2e/expansion-tools-functional.spec.ts:58:1 › generates JSON-LD and provides JSON output
+[235/303] [android-current] › tests/e2e/expansion-tools-functional.spec.ts:69:1 › renders and exports a flowchart
+[236/303] [android-current] › tests/e2e/expansion-tools-functional.spec.ts:79:1 › creates a circle crop and downloads transparent PNG
+[237/303] [android-current] › tests/e2e/expansion-tools.spec.ts:14:3 › loads pdf-organizer route and local notice
+[238/303] [android-current] › tests/e2e/expansion-tools.spec.ts:14:3 › loads csv-encoding-repair route and local notice
+[239/303] [android-current] › tests/e2e/expansion-tools.spec.ts:14:3 › loads json-i18n-mapper route and local notice
+[240/303] [android-current] › tests/e2e/expansion-tools.spec.ts:14:3 › loads image-watermark route and local notice
+[241/303] [android-current] › tests/e2e/expansion-tools.spec.ts:14:3 › loads json-ld-generator route and local notice
+[242/303] [android-current] › tests/e2e/expansion-tools.spec.ts:14:3 › loads flowchart-studio route and local notice
+[243/303] [android-current] › tests/e2e/expansion-tools.spec.ts:14:3 › loads image-crop route and local notice
+[244/303] [android-current] › tests/e2e/file-tools.spec.ts:32:1 › trims an audio clip locally with preview and WAV output
+[245/303] [android-current] › tests/e2e/file-tools.spec.ts:45:1 › runs all five new audio workbenches with real output
+[246/303] [android-current] › tests/e2e/file-tools.spec.ts:73:1 › keeps stereo and non-default sample rates through Preview and Export
+[247/303] [android-current] › tests/e2e/file-tools.spec.ts:89:1 › handles silence input and invalid audio without crashing the workbench
+[248/303] [android-current] › tests/e2e/file-tools.spec.ts:104:1 › compresses an image and combines images into PDF locally
+[249/303] [android-current] › tests/e2e/file-tools.spec.ts:122:1 › merges and splits PDF pages without uploading documents
+[250/303] [android-current] › tests/e2e/file-tools.spec.ts:142:1 › renders a PDF page to PNG and inspects file metadata
+[251/303] [android-current] › tests/e2e/image-blur.spec.ts:8:1 › selects an image area, pixelates it locally, and exposes a downloadable result
+[252/303] [android-current] › tests/e2e/json-visualizer.spec.ts:4:3 › JSON Visualizer / Graph Viewer › loads sample, explores tree and graph, then exports SVG
+[253/303] [android-current] › tests/e2e/json-visualizer.spec.ts:34:3 › JSON Visualizer / Graph Viewer › shows actionable errors and stays within the mobile viewport
+[254/303] [android-current] › tests/e2e/land-measurement.spec.ts:4:3 › Land Measurement production contract › renders map-first distance and area workflow with local exports
+[255/303] [android-current] › tests/e2e/land-measurement.spec.ts:31:3 › Land Measurement production contract › keeps the measurement workspace usable at 360px
+[256/303] [android-current] › tests/e2e/land-measurement.spec.ts:40:3 › shows visible Phatthalung offline streets when online map tiles are blocked
+[257/303] [android-current] › tests/e2e/line-sticker-studio.spec.ts:12:3 › LINE Sticker Studio production contract › static sheet split, edit, inspect, prompt and ZIP export verify real outputs
+[258/303] [android-current] › tests/e2e/line-sticker-studio.spec.ts:52:3 › LINE Sticker Studio production contract › prompt handoff copies locally, opens external ChatGPT, and never sends prompt to an internal endpoint
+[259/303] [android-current] › tests/e2e/line-sticker-studio.spec.ts:71:3 › LINE Sticker Studio production contract › suggested grid and numbered split preview are visible for a sheet
+[260/303] [android-current] › tests/e2e/line-sticker-studio.spec.ts:84:3 › LINE Sticker Studio production contract › proves 4×4 source-cell identity, preview parity and non-strip outputs with pixel signatures
+[261/303] [android-current] › tests/e2e/line-sticker-studio.spec.ts:103:3 › LINE Sticker Studio production contract › resets stale outputs when source or grid changes and re-splits deterministically
+[262/303] [android-current] › tests/e2e/line-sticker-studio.spec.ts:121:3 › LINE Sticker Studio production contract › runs realistic 4×4 sheet through split, batch finish, review and export
+[263/303] [android-current] › tests/e2e/line-sticker-studio.spec.ts:142:3 › LINE Sticker Studio production contract › keeps the recovery workflow within a 360px viewport
+[264/303] [android-current] › tests/e2e/line-sticker-studio.spec.ts:149:3 › LINE Sticker Studio production contract › animated mode prepares frames and reports APNG as partial without fake export
+[265/303] [android-current] › tests/e2e/p0-tools.spec.ts:10:3 › P0 tools desktop workflows › JWT Inspector decodes header, payload and claims locally
+[266/303] [android-current] › tests/e2e/p0-tools.spec.ts:25:3 › P0 tools desktop workflows › Hash Verifier calculates text and compares expected digest
+[267/303] [android-current] › tests/e2e/p0-tools.spec.ts:36:3 › P0 tools desktop workflows › Hash Verifier supports a local file input
+[268/303] [android-current] › tests/e2e/p0-tools.spec.ts:46:3 › P0 tools desktop workflows › Regex Playground shows matches, captures and highlighted preview
+[269/303] [android-current] › tests/e2e/p0-tools.spec.ts:58:3 › P0 tools desktop workflows › Color Contrast Checker reports WCAG decisions and preview
+[270/303] [android-current] › tests/e2e/p0-tools.spec.ts:81:5 › P0 tools mobile routes › loads jwt-inspector on mobile without overflow
+[271/303] [android-current] › tests/e2e/p0-tools.spec.ts:81:5 › P0 tools mobile routes › loads hash-verifier on mobile without overflow
+[272/303] [android-current] › tests/e2e/p0-tools.spec.ts:81:5 › P0 tools mobile routes › loads regex-playground on mobile without overflow
+[273/303] [android-current] › tests/e2e/p0-tools.spec.ts:81:5 › P0 tools mobile routes › loads color-contrast on mobile without overflow
+[274/303] [android-current] › tests/e2e/performance-offline.spec.ts:8:1 › prepares one tool for offline use and reopens it without a network
+[275/303] [android-current] › tests/e2e/performance-offline.spec.ts:52:1 › keeps the initial Hub entry small and lazy-loads the processing worker
+[276/303] [android-current] › tests/e2e/phase71-carousel.spec.ts:9:1 › renders centered real visual assets and consistent quick-launch structure for every Most Used card
+[277/303] [android-current] › tests/e2e/phase71-carousel.spec.ts:30:1 › keeps Community Mapping and URL Query artwork centered inside the mobile visual frame
+[278/303] [android-current] › tests/e2e/phase71-carousel.spec.ts:70:1 › uses real local usage ranking and allows frequently used beta tools to enter Most Used
+[279/303] [android-current] › tests/e2e/phase71-carousel.spec.ts:86:1 › uses native snap behavior and updates dots/arrows when navigating
+[280/303] [android-current] › tests/e2e/phase71-carousel.spec.ts:112:1 › keeps mobile cards peekable and hides desktop arrows without page overflow
+[281/303] [android-current] › tests/e2e/phase71-carousel.spec.ts:132:1 › respects reduced motion while preserving snap and controls
+[282/303] [android-current] › tests/e2e/product-expansion.spec.ts:9:1 › switches the Hub between Thai and English
+[283/303] [android-current] › tests/e2e/product-expansion.spec.ts:20:1 › orders tools by local usage while preserving full-card navigation
+[284/303] [android-current] › tests/e2e/product-expansion.spec.ts:33:1 › reports browser compatibility without a backend
+[285/303] [android-current] › tests/e2e/product-expansion.spec.ts:42:1 › exports and imports versioned local settings
+[286/303] [android-current] › tests/e2e/smoke.spec.ts:4:1 › searches, filters and saves a favorite
+[287/303] [android-current] › tests/e2e/smoke.spec.ts:24:1 › keeps mobile tool cards compact with clear touch feedback
+[288/303] [android-current] › tests/e2e/smoke.spec.ts:67:1 › opens an active tool, records history and toggles theme
+[289/303] [android-current] › tests/e2e/smoke.spec.ts:77:1 › opens the lazy-loaded lifecycle demo
+[290/303] [android-current] › tests/e2e/smoke.spec.ts:84:1 › opens both playable games and starts their sessions
+[291/303] [android-current] › tests/e2e/smoke.spec.ts:97:1 › opens a not-found route
+[292/303] [android-current] › tests/e2e/smoke.spec.ts:103:1 › explains privacy and opens the shared bilingual tool guide
+[293/303] [android-current] › tests/e2e/smoke.spec.ts:120:1 › supports first-use dismissal and safe sample data
+[294/303] [android-current] › tests/e2e/smoke.spec.ts:134:1 › keeps the guide usable on 360px mobile
+[295/303] [android-current] › tests/e2e/smoke.spec.ts:147:1 › shows tool-specific guide content across representative categories
+[296/303] [android-current] › tests/e2e/smoke.spec.ts:167:1 › renders compact trust chips and a five-tool Most Used fallback
+[297/303] [android-current] › tests/e2e/smoke.spec.ts:178:1 › updates Most Used from local usage and resets to fallback without losing favorites
+[298/303] [android-current] › tests/e2e/svg-asset-studio.spec.ts:6:3 › SVG Asset Studio production contract › searches, inspects, edits, optimizes, exports and builds a pack
+[299/303] [android-current] › tests/e2e/svg-asset-studio.spec.ts:48:3 › SVG Asset Studio production contract › sanitizes uploaded SVG and keeps the page inside mobile viewport
+[300/303] [android-current] › tests/e2e/url-query-builder.spec.ts:4:3 › URL Query String Builder production contract › parses and rebuilds Unicode query parameters with repeated keys and hash
+[301/303] [android-current] › tests/e2e/url-query-builder.spec.ts:17:3 › URL Query String Builder production contract › keeps the text/data workflow within a 360px viewport
+[302/303] [android-current] › tests/e2e/wave1-text-data.spec.ts:4:3 › Wave 1 Text/Data tools › generates JSON Schema from Thai JSON and handles invalid input
+[303/303] [android-current] › tests/e2e/wave1-text-data.spec.ts:16:3 › Wave 1 Text/Data tools › builds Markdown table from CSV and escapes pipe cells without overflow
+  18 skipped
+  285 passed (1.5m)
+
+To open last HTML report run:
+[36m[39m
+[36m  npx playwright show-report[39m
+[36m[39m
+found 0 vulnerabilities

@@ -1,0 +1,54 @@
+
+=== audio-chapter-marker ===
+lines=31
+controls=data-chapter-action="add" data-chapter-action="clear" data-chapter-action="export-csv" data-chapter-action="export-json" data-chapter-action="export-txt" data-chapter-action="remove" data-chapter-action="seek" data-index="${index}" data-marker-field="note" data-marker-field="title" id="chapter-audio" id="chapter-file" id="chapter-list" id="chapter-name" id="chapter-scrubber" id="chapter-status" id="chapter-time" type="file" type="range"
+actions=data-chapter-action="add" data-chapter-action="clear" data-chapter-action="export-csv" data-chapter-action="export-json" data-chapter-action="export-txt" data-chapter-action="remove" data-chapter-action="seek"
+capabilities=createObjectURL downloadUrl preview unmount
+
+=== audio-compressor ===
+lines=5
+controls=
+actions=
+capabilities=unmount
+
+=== audio-finisher ===
+lines=5
+controls=
+actions=
+capabilities=unmount
+
+=== audio-merger ===
+lines=5
+controls=
+actions=
+capabilities=unmount
+
+=== audio-speed-pitch ===
+lines=5
+controls=
+actions=
+capabilities=unmount
+
+=== audio-trimmer ===
+lines=274
+controls=data-trim-action="cancel" data-trim-action="download" data-trim-action="preview" id="trim-editor" id="trim-end" id="trim-end-value" id="trim-fade-in" id="trim-fade-out" id="trim-file" id="trim-file-meta" id="trim-form" id="trim-output-preview" id="trim-preview" id="trim-result" id="trim-result-meta" id="trim-start" id="trim-start-value" id="trim-status" id="trim-submit" id="trim-waveform" type="file" type="number" type="range"
+actions=data-trim-action="cancel" data-trim-action="download" data-trim-action="preview"
+capabilities=abort cancel canvas createObjectURL downloadUrl preview progress unmount
+
+=== community-mapping ===
+lines=152
+controls=data-action="backup" data-action="cancel" data-action="clear" data-action="csv" data-action="encrypted" data-action="finish" data-action="geojson" data-action="import-trigger" data-action="kml" data-action="locate" data-action="new-project" data-action="online" data-action="radius" data-action="toggle-labels" data-draw="LineString" data-draw="Point" data-draw="Polygon" data-form="field" data-form="layer" data-panel="Add" data-panel="Analyze" data-panel="Layers" data-panel="Map" data-panel="Records" data-tab="${tab}" data-tab="Analyze" data-tab="Map" id="community-map-title" type="file" type="number"
+actions=
+capabilities=cancel canvas unmount
+
+=== land-measurement ===
+lines=163
+controls=data-action="capture" data-action="clear" data-action="copy" data-action="fit" data-action="layer" data-action="locate" data-action="undo" data-delete="${point.id}" data-export="csv" data-export="geojson" data-export="kml" data-mode="area" data-mode="distance" data-mode="gps" data-recapture="${point.id}" id="land-map" id="land-points" id="land-results-title" id="land-status" id="land-summary" id="land-title"
+actions=
+capabilities=createObjectURL downloadUrl unmount
+
+=== line-sticker-studio ===
+lines=217
+controls=data-line-section="${currentStep}" data-line-section="edit" data-line-section="export" data-line-section="handoff" data-line-section="prompt" data-line-section="review" data-line-section="split" data-line-section="upload" data-line-step="edit" data-line-step="export" data-line-step="handoff" data-line-step="prompt" data-line-step="review" data-line-step="upload" id="line-advanced-grid" id="line-animated-controls" id="line-animated-summary" id="line-apply-style" id="line-autofit" id="line-autofit-all" id="line-batch-status" id="line-border-all" id="line-canvas" id="line-clean" id="line-clean-all" id="line-columns" id="line-delete" id="line-down" id="line-download-current" id="line-duplicate" id="line-equalize" id="line-export-summary" id="line-export-zip" id="line-feather" id="line-file" id="line-finish-all" id="line-fit" id="line-fix-next" id="line-flip" id="line-grid-overlay" id="line-grid-warning" id="line-handoff-copy" id="line-inspector" id="line-key-color" id="line-loops" id="line-mode" id="line-new-set" id="line-play" id="line-preset-grid" id="line-prompt-background" id="line-prompt-character" id="line-prompt-copy" id="line-prompt-count" id="line-prompt-en" id="line-prompt-expressions" id="line-prompt-generate" id="line-prompt-handoff" id="line-prompt-language" id="line-prompt-open" id="line-prompt-outfit" id="line-prompt-phrases" id="line-prompt-style" id="line-prompt-th" id="line-quick-split" id="line-reset-current" id="line-review-refresh" id="line-review-report" id="line-rotate" id="line-rows" id="line-safe-margin" id="line-scope" id="line-selected-title" id="line-source-meta" id="line-source-preview" id="line-split" id="line-split-summary" id="line-static-controls" id="line-status" id="line-stop" id="line-stroke-color" id="line-stroke-width" id="line-thumbnails" id="line-thumbnails-side" id="line-tolerance" id="line-undo" id="line-up" id="line-validate-animation" id="line-zoom" type="checkbox" type="file" type="number" type="range"
+actions=
+capabilities=canvas createObjectURL downloadUrl preview unmount

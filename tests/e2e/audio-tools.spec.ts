@@ -163,3 +163,22 @@ test('Audio Trimmer reports a useful codec/decode error for malformed media', as
   await page.locator('#trim-file').setInputFiles({ name: 'broken.m4a', mimeType: 'audio/mp4', buffer: Buffer.from('not-audio') });
   await expect(page.locator('#trim-status')).toContainText(/WAV|MP3|เปิดไฟล์|decode/i, { timeout: 15_000 });
 });
+
+test('shared audio workbench renders hostile filenames as text', async ({ page }) => {
+  await page.goto('./#/tools/audio-merger');
+  await page.locator('#audio-file').setInputFiles({ name: '<img src=x onerror=alert(1)>.wav', mimeType: 'audio/wav', buffer: createWavFixture() });
+  await expect(page.locator('#audio-editor')).toBeVisible({ timeout: 15_000 });
+  await expect(page.locator('#audio-file-list')).toContainText('<img src=x onerror=alert(1)>.wav');
+  await expect(page.locator('#audio-file-list img')).toHaveCount(0);
+});
+
+test('Audio Chapter Marker renders hostile marker text as text', async ({ page }) => {
+  await page.goto('./#/tools/audio-chapter-marker');
+  await page.locator('#chapter-file').setInputFiles({ name: 'chapter-tone.wav', mimeType: 'audio/wav', buffer: createWavFixture() });
+  await expect(page.locator('#chapter-status')).toContainText('Audio ready');
+  await page.getByRole('button', { name: /เพิ่ม marker/ }).click();
+  await page.locator('[data-marker-field="title"]').fill('<img src=x onerror=alert(1)>');
+  await page.getByRole('button', { name: /เพิ่ม marker/ }).click();
+  await expect(page.locator('[data-marker-field="title"]').first()).toHaveValue('<img src=x onerror=alert(1)>');
+  await expect(page.locator('#chapter-list img')).toHaveCount(0);
+});

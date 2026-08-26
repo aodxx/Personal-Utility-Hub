@@ -7,7 +7,27 @@ interface Marker { time: number; title: string; note: string; }
 let panel: HTMLElement | undefined; let audioUrl = ''; let markers: Marker[] = []; let audio: HTMLAudioElement | undefined; let decodeRequest = 0;
 
 function formatTime(value: number): string { return `${String(Math.floor(value / 60)).padStart(2, '0')}:${(value % 60).toFixed(2).padStart(5, '0')}`; }
-function renderMarkers(): void { const list = panel?.querySelector<HTMLElement>('#chapter-list'); if (!list) return; list.innerHTML = markers.map((marker, index) => `<li><button class="text-button" type="button" data-chapter-action="seek" data-index="${index}">${formatTime(marker.time)}</button><label><span class="visually-hidden">Title</span><input data-marker-field="title" data-index="${index}" value="${marker.title.replace(/"/g, '&quot;')}" /></label><label><span class="visually-hidden">Note</span><input data-marker-field="note" data-index="${index}" value="${marker.note.replace(/"/g, '&quot;')}" placeholder="Note / หมายเหตุ" /></label><button class="text-button" type="button" data-chapter-action="remove" data-index="${index}">ลบ / Remove</button></li>`).join(''); }
+function renderMarkers(): void {
+  const list = panel?.querySelector<HTMLElement>('#chapter-list');
+  if (!list) return;
+  list.replaceChildren();
+  markers.forEach((marker, index) => {
+    const row = document.createElement('li');
+    const seek = document.createElement('button');
+    seek.className = 'text-button'; seek.type = 'button'; seek.dataset.chapterAction = 'seek'; seek.dataset.index = String(index); seek.textContent = formatTime(marker.time); seek.setAttribute('aria-label', `ไปยัง marker ${formatTime(marker.time)}`);
+    const titleLabel = document.createElement('label');
+    const titleText = document.createElement('span'); titleText.className = 'visually-hidden'; titleText.textContent = 'Title';
+    const titleInput = document.createElement('input'); titleInput.dataset.markerField = 'title'; titleInput.dataset.index = String(index); titleInput.value = marker.title; titleInput.setAttribute('aria-label', `ชื่อ marker ${index + 1}`);
+    titleLabel.append(titleText, titleInput);
+    const noteLabel = document.createElement('label');
+    const noteText = document.createElement('span'); noteText.className = 'visually-hidden'; noteText.textContent = 'Note';
+    const noteInput = document.createElement('input'); noteInput.dataset.markerField = 'note'; noteInput.dataset.index = String(index); noteInput.value = marker.note; noteInput.placeholder = 'Note / หมายเหตุ'; noteInput.setAttribute('aria-label', `หมายเหตุ marker ${index + 1}`);
+    noteLabel.append(noteText, noteInput);
+    const remove = document.createElement('button'); remove.className = 'text-button'; remove.type = 'button'; remove.dataset.chapterAction = 'remove'; remove.dataset.index = String(index); remove.textContent = 'ลบ / Remove'; remove.setAttribute('aria-label', `ลบ marker ${index + 1}`);
+    row.append(seek, titleLabel, noteLabel, remove);
+    list.append(row);
+  });
+}
 function downloadCue(format: 'json' | 'csv' | 'txt'): void { const name = (panel?.querySelector<HTMLInputElement>('#chapter-name')?.value || 'audio-chapters').trim(); let content = ''; let type = 'text/plain'; if (format === 'json') { content = JSON.stringify({ title: name, markers }, null, 2); type = 'application/json'; } else if (format === 'csv') { content = ['time,title,note', ...markers.map((marker) => `${marker.time.toFixed(3)},"${marker.title.replace(/"/g, '""')}","${marker.note.replace(/"/g, '""')}"`)].join('\n'); type = 'text/csv'; } else content = markers.map((marker) => `${formatTime(marker.time)}\t${marker.title}${marker.note ? `\t${marker.note}` : ''}`).join('\n'); const url = URL.createObjectURL(new Blob([content], { type })); downloadUrl(url, `${name.replace(/\s+/g, '-').toLowerCase()}.${format}`); setTimeout(() => URL.revokeObjectURL(url), 0); }
 
 const tool: ToolModule = {
