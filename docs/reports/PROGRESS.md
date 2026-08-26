@@ -78,12 +78,14 @@ Audio output ส่วนใหญ่ยังอยู่ใน WAV family; Aud
 
 - [`README.md`](../../README.md) — ภาพรวม source-aligned และ release contract
 - [`TEST_REPORT.md`](TEST_REPORT.md) — test matrix และ production verification record
-- [`CODE_REVIEW_v0.10.0.md`](../reviews/CODE_REVIEW_v0.10.0.md) — initial code review และ P0 validation evidence
+- [`CODE_REVIEW_v0.11.0.md`](../reviews/CODE_REVIEW_v0.11.0.md) — SVG P1 optimization review และ validation evidence
+- [`CODE_REVIEW_v0.10.0.md`](../reviews/CODE_REVIEW_v0.10.0.md) — historical P0 code review และ validation evidence
 - [`SECURITY_PERFORMANCE_REVIEW_P0_v0.10.0.md`](../reviews/SECURITY_PERFORMANCE_REVIEW_P0_v0.10.0.md) — supplemental security/performance findings และ mitigations
 - [`ADDING_A_TOOL.md`](../ADDING_A_TOOL.md) — developer guide และ processing-heavy patterns
 - [`PRIVACY_AND_DEPENDENCIES.md`](../PRIVACY_AND_DEPENDENCIES.md) — privacy/dependency policy
 - [`VISUAL_SYSTEM.md`](../VISUAL_SYSTEM.md) — visual asset system
 - [`audio-tools-verification.md`](../audio-tools-verification.md) — audio behavior และ limitations
+- [`P1_OVERLAP_AND_IMPLEMENTATION_PLAN.md`](../research/P1_OVERLAP_AND_IMPLEMENTATION_PLAN.md) — P1 overlap decisions และ implementation order
 
 
 ## Phase 6 — Trust & Usability (complete)
@@ -297,3 +299,21 @@ Static checks passed: TypeScript typecheck, Vitest unit suite, production build,
 ตามแนวทาง D เพิ่ม road-only GeoJSON จาก HOT/HDX OpenStreetMap export สำหรับ bounding box จังหวัดพัทลุง (14,608 road features, 9.1 MB) เป็น offline street layer. ระบบโหลด asset เฉพาะเมื่อ OSM/Esri online tiles ล้มเหลว จึงไม่เพิ่ม network/parse cost ให้ผู้ใช้ที่ออนไลน์ตามปกติ. ใน offline mode แผนที่จะโฟกัสพัทลุงโดยอัตโนมัติและแสดงถนนหลัก/ถนนรองเป็นเส้นจริง พร้อม attribution OpenStreetMap Contributors และ HOT/HDX.
 
 ขอบเขต coverage ใช้ bounding box ครอบคลุมจังหวัดพัทลุง ไม่ใช่ cadastral/parcel data และ road extract ไม่มีการรับรองความครบถ้วนหรือความสดของถนนทุกเส้น. Typecheck, Land Measurement unit 6/6, build, bundle check 50.0 KB และ targeted E2E 9/9 ผ่าน.
+
+
+## v0.11.0 — SVG Asset Studio P1 optimization upgrade — 27 สิงหาคม 2026
+
+อัปเกรด `svg-asset-studio` เดิมโดยไม่สร้าง route ซ้ำ เพิ่ม optimizer comparison สำหรับ raw bytes และ gzip เมื่อ browser รองรับ `CompressionStream`, deterministic change summary, restore previous SVG ก่อน export, selected optimizer preset ระหว่าง render และ escaping ของ inspector values ที่มาจากไฟล์ผู้ใช้ การอัปเกรดยังคง local-only, ไม่เพิ่ม SVGO dependency เข้า bundle และไม่เปลี่ยน Portable Settings หรือ IndexedDB schema
+
+| งาน | ผลล่าสุด |
+|---|---|
+| Package/cache release | package `0.11.0`; shell/tool/offline cache `0.11.0-p1-svg`; sprite query `v=0.11.0-p1-svg` |
+| SVG metadata | `svg-asset-studio` version `0.2.0-beta.1`, route เดิมและ `supportsOffline: true` |
+| Optimizer core | raw before/after bytes, savings bytes/percent, change summary และ optional gzip measurement |
+| UI workflow | Before/after panel, gzip availability state, details ของ changes และ Restore previous SVG |
+| Regression tests | SVG unit 9/9, full Vitest 154/154 จาก 33 files, targeted SVG E2E 6/6 |
+| Full browser regression | Playwright 271 passed, 14 intentional skips จาก 285 cases ด้วย single worker |
+| Bundle | Entry 58.1 KB gzip; largest lazy 366.1 KB; total JavaScript 1,241.7 KB จาก 62 chunks |
+| Integrity/security | Registry 46 modules ผ่าน, SVG 120 assets ผ่าน, npm audit 0 vulnerabilities, Service Worker syntax และ diff check ผ่าน |
+
+Release นี้ผ่าน local quality gates แล้ว แต่ยังไม่ถือว่าเป็น production deployment หรือ CI-verified จนกว่าจะ push commit และตรวจ remote/Pages evidence ใหม่ การ optimize โดยเฉพาะ Balanced/Aggressive อาจเปลี่ยน visual semantics จึงยังต้องตรวจ preview ก่อน export; gzip comparison อาจไม่พร้อมใน browser บางรุ่น

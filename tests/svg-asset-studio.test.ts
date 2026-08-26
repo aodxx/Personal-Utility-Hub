@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { svgAssetManifest } from '../src/data/svg-assets/manifest';
-import { buildCssPack, buildLicensesTxt, buildManifestJson, buildSprite, convertToCurrentColor, createZip, inspectSvgMarkup, optimizeSvgMarkup, sanitizeSvgMarkup, svgToDataUri, cssMaskSnippet, jsxSnippet } from '../src/tools/svg-asset-studio/logic';
+import { buildCssPack, buildLicensesTxt, buildManifestJson, buildSprite, convertToCurrentColor, createZip, inspectSvgMarkup, optimizeSvgMarkup, sanitizeSvgMarkup, svgToDataUri, cssMaskSnippet, jsxSnippet, measureGzipBytes } from '../src/tools/svg-asset-studio/logic';
 
 const validSvg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><title>Home</title><path fill="none" stroke="#111" d="M4 12 12 4l8 8v8H4z"/></svg>';
 
@@ -50,6 +50,23 @@ describe('SVG Asset Studio logic', () => {
     expect(svgToDataUri(result.svg)).toMatch(/^data:image\/svg\+xml/);
     expect(cssMaskSnippet(result.svg, '.icon-home')).toContain('currentColor');
     expect(jsxSnippet(result.svg)).not.toContain('stroke-width=');
+  });
+
+  it('reports raw savings and a deterministic change summary for optimization', () => {
+    const noisySvg = `${validSvg.replace('</svg>', '  </svg>')}<!-- trailing comment -->`;
+    const result = optimizeSvgMarkup(noisySvg, 'safe');
+    expect(result.beforeBytes).toBe(new TextEncoder().encode(noisySvg).byteLength);
+    expect(result.afterBytes).toBe(new TextEncoder().encode(result.svg).byteLength);
+    expect(result.rawSavingsBytes).toBe(result.beforeBytes - result.afterBytes);
+    expect(result.rawSavingsPercent).toBe(Math.round((result.rawSavingsBytes / result.beforeBytes) * 1000) / 10);
+    expect(new Set(result.changes).size).toBe(result.changes.length);
+  });
+
+  it('measures gzip savings when CompressionStream is available', async () => {
+    const before = await measureGzipBytes(`${validSvg}<!-- repeated -->`);
+    const after = await measureGzipBytes(optimizeSvgMarkup(`${validSvg}<!-- repeated -->`, 'safe').svg);
+    if (before === undefined || after === undefined) return;
+    expect(before).toBeGreaterThanOrEqual(after);
   });
 
   it('builds sprite, css, manifest, licenses and a ZIP signature', () => {

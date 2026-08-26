@@ -70,7 +70,7 @@ export function isVisualAssetId(value: string | undefined): value is VisualAsset
 
 export function assetIcon(id: VisualAssetId, className = ''): string {
   const classes = ['asset-icon', className].filter(Boolean).join(' ');
-  const spriteUrl = `${import.meta.env.BASE_URL}icons/utility-3d-icons.svg?v=0.10.0-p0-tools#${id}`;
+  const spriteUrl = `${import.meta.env.BASE_URL}icons/utility-3d-icons.svg?v=0.11.0-p1-svg#${id}`;
 
   return `<svg class="${classes}" aria-hidden="true" focusable="false"><use href="${spriteUrl}"></use></svg>`;
 }

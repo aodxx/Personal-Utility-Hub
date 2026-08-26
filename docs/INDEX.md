@@ -10,9 +10,9 @@
 | เพิ่มหรือแก้เครื่องมือ | [`ADDING_A_TOOL.md`](ADDING_A_TOOL.md) | [`../skills/privacy-first-utility-expansion/SKILL.md`](../skills/privacy-first-utility-expansion/SKILL.md) |
 | เข้าใจกฎ privacy/dependency | [`PRIVACY_AND_DEPENDENCIES.md`](PRIVACY_AND_DEPENDENCIES.md) | source ใน `src/core`, `src/tools` และ `src/workers` |
 | ตรวจ UI/UX และ visual system | [`design/P0_TOOLS_UIUX_DESIGN.md`](design/P0_TOOLS_UIUX_DESIGN.md) และ [`VISUAL_SYSTEM.md`](VISUAL_SYSTEM.md) | component/style files ใน `src/components` และ `src/styles` |
-| ตรวจ release/testing | [`reports/TEST_REPORT.md`](reports/TEST_REPORT.md) และ [`reports/PROGRESS.md`](reports/PROGRESS.md) | [`reviews/CODE_REVIEW_v0.10.0.md`](reviews/CODE_REVIEW_v0.10.0.md) |
+| ตรวจ release/testing | [`reports/TEST_REPORT.md`](reports/TEST_REPORT.md) และ [`reports/PROGRESS.md`](reports/PROGRESS.md) | [`reviews/CODE_REVIEW_v0.11.0.md`](reviews/CODE_REVIEW_v0.11.0.md) และ historical P0 review |
 | ตรวจ security/performance P0 | [`reviews/SECURITY_PERFORMANCE_REVIEW_P0_v0.10.0.md`](reviews/SECURITY_PERFORMANCE_REVIEW_P0_v0.10.0.md) | P0 core, Worker และ regression tests |
-| อ่านเหตุผลของการเลือกเครื่องมือ | [`research/EXTERNAL_TOOLS_RESEARCH_v0.10.md`](research/EXTERNAL_TOOLS_RESEARCH_v0.10.md) | [`research/external-tools-evaluation-v0.10.md`](research/external-tools-evaluation-v0.10.md) |
+| อ่านเหตุผลของการเลือกเครื่องมือ | [`research/EXTERNAL_TOOLS_RESEARCH_v0.10.md`](research/EXTERNAL_TOOLS_RESEARCH_v0.10.md) | [`research/external-tools-evaluation-v0.10.md`](research/external-tools-evaluation-v0.10.md) และ [`research/P1_OVERLAP_AND_IMPLEMENTATION_PLAN.md`](research/P1_OVERLAP_AND_IMPLEMENTATION_PLAN.md) |
 | เข้าใจ product requirements | [`product/PRD.md`](product/PRD.md) | [`V0.9_TOOL_ROADMAP.md`](V0.9_TOOL_ROADMAP.md) |
 
 ## โครงสร้างเอกสาร

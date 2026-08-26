@@ -21,6 +21,13 @@ test.describe('SVG Asset Studio production contract', () => {
     await page.getByRole('button', { name: 'Fix SVG' }).click();
     await page.getByRole('button', { name: 'Optimize' }).click();
     await expect(page.locator('#svg-status')).toContainText('Optimized');
+    await expect(page.locator('#svg-optimization-result')).toBeVisible();
+    await expect(page.locator('#svg-optimization-result')).toContainText('Before raw');
+    await expect(page.locator('#svg-optimization-result')).toContainText('After raw');
+    await expect(page.locator('#svg-optimization-result')).toContainText('Raw savings');
+    await page.getByRole('button', { name: 'Restore previous SVG' }).click();
+    await expect(page.locator('#svg-optimization-result')).toHaveCount(0);
+    await expect(page.locator('#svg-status')).toContainText('Restored previous SVG');
 
     const svgDownload = page.waitForEvent('download');
     await page.getByRole('button', { name: 'Download SVG' }).click();

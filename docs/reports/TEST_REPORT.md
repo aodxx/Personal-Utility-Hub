@@ -1,9 +1,9 @@
-# Test and Release Validation Report — v0.10.0
+# Test and Release Validation Report — v0.11.0
 
-**อัปเดต:** 26 สิงหาคม 2026
+**อัปเดต:** 27 สิงหาคม 2026
 **Repository:** `aodxx/Personal-Utility-Hub`
-**Release baseline:** `0.10.0` (local feature baseline)
-**Release scope:** เพิ่ม JWT Inspector, Hash & Checksum Verifier, Regex Playground และ Color Contrast Checker จากแหล่งภายนอก พร้อม bilingual guides, unique visual assets, local-only processing, Hash/Regex Worker paths และ mobile E2E; รอบนี้มี supplemental security/performance hardening
+**Release baseline:** `0.11.0` (SVG Asset Studio P1 local feature baseline)
+**Release scope:** v0.10.0 เพิ่ม P0 utilities และ v0.11.0 อัปเกรด SVG Asset Studio ด้วย raw/gzip comparison, change summary, restore workflow และ cache namespace ใหม่ พร้อม bilingual guide, local-only processing และ mobile E2E
 
 ## 1. ขอบเขตของ baseline
 
@@ -393,3 +393,27 @@ Flowchart Studio ใช้ DSL แบบ `Step A -> Step B` และสร้�
 ผล bundle ล่าสุดยังอยู่ใน budget เดิม: entry gzip **57.9 KB**, largest lazy chunk **366.1 KB** และ JavaScript รวม **1,240.8 KB จาก 62 chunks**; registry ตรวจพบ **46 metadata modules**, SVG library มี **120 assets** และ `npm audit --audit-level=high` รายงาน **0 vulnerabilities**
 
 ชุดทดสอบนี้เป็น unit/integration baseline; browser workflows ของ P0 ทั้ง 4 ตัวยังคงอยู่ใน `tests/e2e/p0-tools.spec.ts` สำหรับการตรวจ route, local-only notice, primary action, result rendering และ mobile no-overflow
+
+
+## 15. v0.11.0 — SVG Asset Studio P1 optimization upgrade — 27 สิงหาคม 2026
+
+อัปเกรด `svg-asset-studio` เดิมโดยคง route และ catalog entry เดิม เพิ่ม optimizer comparison สำหรับ raw bytes และ gzip เมื่อ browser รองรับ `CompressionStream`, change summary, restore previous SVG ก่อน export, selected preset persistence ระหว่าง render และ escaping ของ inspector values ที่มาจากไฟล์ผู้ใช้ การทำงานยัง local-only และไม่เพิ่ม dependency ของ SVGO เข้า entry bundle
+
+| Gate | ผลลัพธ์ |
+|---|---|
+| TypeScript | ผ่าน `npm run typecheck` |
+| Full Vitest | ผ่าน 154/154 tests จาก 33 test files |
+| SVG unit suite | ผ่าน 9/9 tests รวม raw savings, change summary และ gzip capability |
+| SVG Playwright targeted | ผ่าน 6/6 tests บน 3 configured profiles |
+| Full Playwright | ผ่าน 271 tests, 14 intentional skips จาก 285 cases ด้วย `--workers=1` |
+| Production build | ผ่าน `npm run build` |
+| Bundle | Entry 58.1 KB gzip; largest lazy chunk 366.1 KB; JavaScript รวม 1,241.7 KB จาก 62 chunks; อยู่ใต้งบ entry 60 KB และ total 1,600 KB |
+| Registry | ผ่าน 46 metadata modules, unique routes และ lazy registrations |
+| SVG integrity | ผ่าน 120 assets, exact duplicates 0, geometry duplicates 0, near-duplicate warnings 0 |
+| Dependency audit | `npm audit --audit-level=high` พบ 0 vulnerabilities |
+| Service Worker | `node --check public/sw.js` ผ่าน; cache namespace ใหม่ `v0.11.0-p1-svg` |
+| Diff quality | `git diff --check` ผ่าน |
+
+ข้อจำกัดที่ยังคงประกาศตาม implementation คือ gzip comparison อาจไม่พร้อมใน browser บางรุ่น และ raw/gzip savings ไม่ใช่การรับรองว่า visual semantics จะเหมือนเดิม โดยเฉพาะ Balanced/Aggressive preset ผู้ใช้ต้องตรวจ preview ก่อน export และสามารถกู้คืน SVG ก่อน optimize ได้จากปุ่ม Restore previous SVG
+
+การตรวจรอบนี้เป็น local validation ยังไม่ได้ใช้ GitHub Actions หรือ GitHub Pages deployment เป็นหลักฐานใหม่จนกว่าจะมีการ push commit นี้และตรวจผล remote จริง

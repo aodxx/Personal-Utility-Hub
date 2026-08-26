@@ -1,7 +1,7 @@
 import { assertToolModule, type ToolRegistryEntry } from './tool-contract';
 import { OfflineToolStore } from './offline-store';
 
-export const OFFLINE_CACHE_VERSION = '0.10.0-p0-hardening';
+export const OFFLINE_CACHE_VERSION = '0.11.0-p1-svg';
 
 interface CacheWorkerResponse {
   ok: boolean;

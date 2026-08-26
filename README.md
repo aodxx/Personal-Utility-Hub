@@ -2,7 +2,7 @@
 
 ศูนย์รวม **privacy-first utility tools** แบบ Static PWA ที่ประมวลผลไฟล์และข้อมูลภายในเบราว์เซอร์เป็นหลัก โดยใช้ Modular Tool Registry, Lazy Loading, Dedicated Web Worker และ Offline/PWA support เมื่อความสามารถของเบราว์เซอร์รองรับ
 
-**สถานะปัจจุบัน:** `v0.10.0` — เพิ่มเครื่องมือ P0 จากแหล่งภายนอกอีก 4 รายการ ได้แก่ JWT Inspector, Hash & Checksum Verifier, Regex Playground และ Color Contrast Checker; รวม 46 tools (45 public tools) มี bilingual tool-specific guides, Regex Worker timeout, Hash memory guards และทำงานแบบ client-side โดยไม่เพิ่ม backend, accounts หรือ cloud storage
+**สถานะปัจจุบัน:** `v0.11.0` — เพิ่ม P0 utilities และอัปเกรด SVG Asset Studio เป็น P1 ด้วย optimizer comparison สำหรับ raw/gzip, change summary และ restore ก่อน export; รวม 46 tools (45 public tools) มี bilingual tool-specific guides, Regex Worker timeout, Hash memory guards และทำงานแบบ client-side โดยไม่เพิ่ม backend, accounts หรือ cloud storage
 
 ## เครื่องมือที่มีอยู่ใน main
 
@@ -115,9 +115,9 @@ IndexedDB ใช้เก็บเฉพาะสถานะว่า tool vers
 
 ## Version และ release contract
 
-Release baseline ปัจจุบันคือ `0.10.0` โดย supplemental hardening ใช้ identifiers `v0.10.0-p0-hardening` ใน Service Worker และ Offline Tool Manager การเปลี่ยน release/cache version จะ invalidate shell/tool cache รุ่นเก่า แต่ไม่เปลี่ยน schema ข้อมูลผู้ใช้โดยอัตโนมัติ
+Release baseline ปัจจุบันคือ `0.11.0` โดย SVG P1 ใช้ identifiers `v0.11.0-p1-svg` ใน Service Worker และ Offline Tool Manager การเปลี่ยน release/cache version จะ invalidate shell/tool cache รุ่นเก่า แต่ไม่เปลี่ยน schema ข้อมูลผู้ใช้โดยอัตโนมัติ
 
-PWA manifest ไม่มี version field แยกต่างหาก จึงใช้ package version และ versioned cache identifiers เป็น release source ที่ตรวจสอบได้ สำหรับ Hash Verifier มี SHA-256/SHA-384/SHA-512 worker path, 40 MB file guard และ 4 MB text guard; Regex Playground ใช้ dedicated Worker พร้อม timeout; JWT Inspector จำกัด token และ decode เท่านั้น ไม่ verify ลายเซ็น ดูรายละเอียด milestone และข้อจำกัดได้ใน [`docs/reports/PROGRESS.md`](docs/reports/PROGRESS.md), ผล validation ใน [`docs/reports/TEST_REPORT.md`](docs/reports/TEST_REPORT.md) และ supplemental security/performance review ใน [`docs/reviews/SECURITY_PERFORMANCE_REVIEW_P0_v0.10.0.md`](docs/reviews/SECURITY_PERFORMANCE_REVIEW_P0_v0.10.0.md)
+PWA manifest ไม่มี version field แยกต่างหาก จึงใช้ package version และ versioned cache identifiers เป็น release source ที่ตรวจสอบได้ สำหรับ Hash Verifier มี SHA-256/SHA-384/SHA-512 worker path, 40 MB file guard และ 4 MB text guard; Regex Playground ใช้ dedicated Worker พร้อม timeout; JWT Inspector จำกัด token และ decode เท่านั้น ไม่ verify ลายเซ็น; SVG Asset Studio แสดง raw/gzip before-after metrics และกู้คืน SVG ก่อน optimize ได้ ดูรายละเอียด milestone และข้อจำกัดได้ใน [`docs/reports/PROGRESS.md`](docs/reports/PROGRESS.md), ผล validation ใน [`docs/reports/TEST_REPORT.md`](docs/reports/TEST_REPORT.md) และ supplemental security/performance review ใน [`docs/reviews/SECURITY_PERFORMANCE_REVIEW_P0_v0.10.0.md`](docs/reviews/SECURITY_PERFORMANCE_REVIEW_P0_v0.10.0.md)
 
 ## เริ่มพัฒนา
 
@@ -163,8 +163,10 @@ Playwright ตั้งค่าไว้ 3 projects ได้แก่ Desktop 
 |---|---|
 | [`docs/reports/PROGRESS.md`](docs/reports/PROGRESS.md) | Milestones, release status และ known limitations |
 | [`docs/reports/TEST_REPORT.md`](docs/reports/TEST_REPORT.md) | Automated validation, browser matrix และ production evidence |
-| [`docs/reviews/CODE_REVIEW_v0.10.0.md`](docs/reviews/CODE_REVIEW_v0.10.0.md) | Code review, privacy/security findings และ P0 validation evidence |
+| [`docs/reviews/CODE_REVIEW_v0.11.0.md`](docs/reviews/CODE_REVIEW_v0.11.0.md) | SVG P1 optimization review, privacy/security findings และ validation evidence |
+| [`docs/reviews/CODE_REVIEW_v0.10.0.md`](docs/reviews/CODE_REVIEW_v0.10.0.md) | Historical P0 code review และ validation evidence |
 | [`docs/reviews/SECURITY_PERFORMANCE_REVIEW_P0_v0.10.0.md`](docs/reviews/SECURITY_PERFORMANCE_REVIEW_P0_v0.10.0.md) | Supplemental security/performance review, mitigations และ residual risks |
+| [`docs/research/P1_OVERLAP_AND_IMPLEMENTATION_PLAN.md`](docs/research/P1_OVERLAP_AND_IMPLEMENTATION_PLAN.md) | P1 overlap decisions, implementation order และ Definition of Done |
 | [`docs/ADDING_A_TOOL.md`](docs/ADDING_A_TOOL.md) | Tool contract, registry, taxonomy และ processing-heavy guidance |
 | [`docs/PRIVACY_AND_DEPENDENCIES.md`](docs/PRIVACY_AND_DEPENDENCIES.md) | Privacy baseline และ dependency policy |
 | [`docs/VISUAL_SYSTEM.md`](docs/VISUAL_SYSTEM.md) | Asset และ UI visual system |

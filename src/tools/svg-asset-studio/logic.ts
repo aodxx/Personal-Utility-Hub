@@ -45,7 +45,27 @@ export interface SvgEditOptions {
 }
 
 export interface ExportFile { name: string; bytes: Uint8Array; }
+export interface SvgOptimizationResult {
+  svg: string;
+  beforeBytes: number;
+  afterBytes: number;
+  rawSavingsBytes: number;
+  rawSavingsPercent: number;
+  beforeGzipBytes?: number;
+  afterGzipBytes?: number;
+  gzipSavingsBytes?: number;
+  gzipSavingsPercent?: number;
+  changes: string[];
+}
 export const SVG_LIMITS = { maxBytes: 2 * 1024 * 1024, maxNodes: 4000, maxPaths: 1000, maxPathData: 400_000, maxBatch: 40, maxPackBytes: 8 * 1024 * 1024, maxPngSide: 2048, maxPngPixels: 16_000_000 } as const;
+
+export async function measureGzipBytes(markup: string): Promise<number | undefined> {
+  if (typeof CompressionStream !== 'function' || typeof Response !== 'function') return undefined;
+  const blob = new Blob([markup]);
+  if (typeof blob.stream !== 'function') return undefined;
+  const compressed = blob.stream().pipeThrough(new CompressionStream('gzip'));
+  return (await new Response(compressed).arrayBuffer()).byteLength;
+}
 
 const unsafeTagPattern = /<(script|iframe|object|embed|applet|foreignObject)\b[\s\S]*?<\/\1\s*>/gi;
 const unsafeUrlPattern = /(javascript:|vbscript:|data:text\/html)/i;
@@ -149,17 +169,21 @@ export function applySvgEdits(markup: string, options: SvgEditOptions): string {
   return serialize(root);
 }
 
-export function optimizeSvgMarkup(markup: string, preset: OptimizePreset = 'safe'): { svg: string; beforeBytes: number; afterBytes: number; changes: string[] } {
-  const safe = sanitizeSvgMarkup(markup).svg;
-  const beforeBytes = new TextEncoder().encode(safe).byteLength;
+export function optimizeSvgMarkup(markup: string, preset: OptimizePreset = 'safe'): SvgOptimizationResult {
+  const sanitized = sanitizeSvgMarkup(markup);
+  const safe = sanitized.svg;
+  const beforeBytes = new TextEncoder().encode(markup).byteLength;
   const root = parseSvg(safe);
-  const changes: string[] = [];
+  const changes: string[] = sanitized.removed.map((item) => `Removed ${item}`);
   root.querySelectorAll('comment, metadata, desc[id]').forEach((node) => { node.remove(); changes.push('Removed redundant metadata/comment nodes'); });
   if (preset !== 'safe') root.querySelectorAll('[id]').forEach((node) => { node.removeAttribute('id'); changes.push('Removed unnecessary IDs'); });
   if (preset === 'aggressive') { root.removeAttribute('width'); root.removeAttribute('height'); changes.push('Removed fixed dimensions'); }
   const svg = serialize(root).replace(/>\s+</g, '><').replace(/\s{2,}/g, ' ').trim();
   const afterBytes = new TextEncoder().encode(svg).byteLength;
-  return { svg, beforeBytes, afterBytes, changes: [...new Set(changes.concat(afterBytes < beforeBytes ? ['Normalized whitespace'] : []))] };
+  const rawSavingsBytes = beforeBytes - afterBytes;
+  const rawSavingsPercent = beforeBytes ? Math.round((rawSavingsBytes / beforeBytes) * 1000) / 10 : 0;
+  if (afterBytes < beforeBytes) changes.push('Normalized whitespace');
+  return { svg, beforeBytes, afterBytes, rawSavingsBytes, rawSavingsPercent, changes: [...new Set(changes)] };
 }
 
 export function svgToDataUri(svg: string): string { return `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`; }
