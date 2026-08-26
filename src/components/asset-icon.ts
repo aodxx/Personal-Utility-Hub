@@ -31,6 +31,7 @@ export const visualAssetIds = [
   'tool-file-inspector',
   'tool-foundation-demo',
   'tool-data-format-converter',
+  'tool-json-visualizer',
   'tool-json-schema-generator',
   'tool-markdown-table-builder',
   'tool-url-query-builder',

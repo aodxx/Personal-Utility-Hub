@@ -2,7 +2,7 @@
 
 ศูนย์รวม **privacy-first utility tools** แบบ Static PWA ที่ประมวลผลไฟล์และข้อมูลภายในเบราว์เซอร์เป็นหลัก โดยใช้ Modular Tool Registry, Lazy Loading, Dedicated Web Worker และ Offline/PWA support เมื่อความสามารถของเบราว์เซอร์รองรับ
 
-**สถานะปัจจุบัน:** `v0.12.0` — เพิ่ม P0 utilities, อัปเกรด SVG Asset Studio เป็น P1 และเพิ่ม Data Format Converter สำหรับ JSON/YAML/TOML/XML พร้อม validation diagnostics และ conversion notes; รวม 47 tools (46 public tools) มี bilingual tool-specific guides, Regex Worker timeout, Hash memory guards และทำงานแบบ client-side โดยไม่เพิ่ม backend, accounts หรือ cloud storage
+**สถานะปัจจุบัน:** `v0.13.0` — เพิ่ม JSON Visualizer / Graph Viewer เป็น P1 ต่อจาก Data Format Converter, อัปเกรด SVG Asset Studio และ P0 utilities; รวม 48 tools (47 public tools) มี bilingual tool-specific guides, deterministic tree/graph SVG rendering, local SVG/PNG export, Regex Worker timeout, Hash memory guards และทำงานแบบ client-side โดยไม่เพิ่ม backend, accounts หรือ cloud storage
 
 ## เครื่องมือที่มีอยู่ใน main
 
@@ -10,6 +10,7 @@
 
 - JSON Formatter / Validator
 - Data Format Converter — แปลง JSON, YAML, TOML และ XML พร้อม validation notes
+- JSON Visualizer / Graph Viewer — สำรวจ JSON เป็น tree/graph ค้นหา และ export SVG/PNG
 - Base64 Encoder / Decoder
 - Text Formatter
 - Privacy Redactor Studio
@@ -116,9 +117,9 @@ IndexedDB ใช้เก็บเฉพาะสถานะว่า tool vers
 
 ## Version และ release contract
 
-Release baseline ปัจจุบันคือ `0.12.0` โดย Data Format Converter P1 ใช้ identifiers `v0.12.0-p1-data` ใน Service Worker และ Offline Tool Manager การเปลี่ยน release/cache version จะ invalidate shell/tool cache รุ่นเก่า แต่ไม่เปลี่ยน schema ข้อมูลผู้ใช้โดยอัตโนมัติ
+Release baseline ปัจจุบันคือ `0.13.0` โดย JSON Visualizer P1 ใช้ identifiers `v0.13.0-p1-json` ใน Service Worker และ Offline Tool Manager การเปลี่ยน release/cache version จะ invalidate shell/tool cache รุ่นเก่า แต่ไม่เปลี่ยน schema ข้อมูลผู้ใช้โดยอัตโนมัติ
 
-PWA manifest ไม่มี version field แยกต่างหาก จึงใช้ package version และ versioned cache identifiers เป็น release source ที่ตรวจสอบได้ สำหรับ Hash Verifier มี SHA-256/SHA-384/SHA-512 worker path, 40 MB file guard และ 4 MB text guard; Regex Playground ใช้ dedicated Worker พร้อม timeout; JWT Inspector จำกัด token และ decode เท่านั้น ไม่ verify ลายเซ็น; SVG Asset Studio แสดง raw/gzip before-after metrics และกู้คืน SVG ก่อน optimize ได้; Data Format Converter ใช้ lazy parser chunks, input/output guards, line/column diagnostics เมื่อ parser ให้ข้อมูล และเตือน lossy conversion semantics ดูรายละเอียด milestone และข้อจำกัดได้ใน [`docs/reports/PROGRESS.md`](docs/reports/PROGRESS.md), ผล validation ใน [`docs/reports/TEST_REPORT.md`](docs/reports/TEST_REPORT.md) และ supplemental security/performance review ใน [`docs/reviews/SECURITY_PERFORMANCE_REVIEW_P0_v0.10.0.md`](docs/reviews/SECURITY_PERFORMANCE_REVIEW_P0_v0.10.0.md)
+PWA manifest ไม่มี version field แยกต่างหาก จึงใช้ package version และ versioned cache identifiers เป็น release source ที่ตรวจสอบได้ สำหรับ Hash Verifier มี SHA-256/SHA-384/SHA-512 worker path, 40 MB file guard และ 4 MB text guard; Regex Playground ใช้ dedicated Worker พร้อม timeout; JWT Inspector จำกัด token และ decode เท่านั้น ไม่ verify ลายเซ็น; SVG Asset Studio แสดง raw/gzip before-after metrics และกู้คืน SVG ก่อน optimize ได้; Data Format Converter ใช้ lazy parser chunks, input/output guards, line/column diagnostics เมื่อ parser ให้ข้อมูล และเตือน lossy conversion semantics; JSON Visualizer ใช้ JSON-only tree model, node/depth limits, deterministic parent-child SVG และสร้างไฟล์ export ใน browser โดยไม่ persist input ดูรายละเอียด milestone และข้อจำกัดได้ใน [`docs/reports/PROGRESS.md`](docs/reports/PROGRESS.md), ผล validation ใน [`docs/reports/TEST_REPORT.md`](docs/reports/TEST_REPORT.md) และ supplemental security/performance review ใน [`docs/reviews/SECURITY_PERFORMANCE_REVIEW_P0_v0.10.0.md`](docs/reviews/SECURITY_PERFORMANCE_REVIEW_P0_v0.10.0.md)
 
 ## เริ่มพัฒนา
 
@@ -164,6 +165,7 @@ Playwright ตั้งค่าไว้ 3 projects ได้แก่ Desktop 
 |---|---|
 | [`docs/reports/PROGRESS.md`](docs/reports/PROGRESS.md) | Milestones, release status และ known limitations |
 | [`docs/reports/TEST_REPORT.md`](docs/reports/TEST_REPORT.md) | Automated validation, browser matrix และ production evidence |
+| [`docs/reviews/CODE_REVIEW_v0.13.0.md`](docs/reviews/CODE_REVIEW_v0.13.0.md) | JSON Visualizer P1 review, tree/graph design, privacy/security findings และ validation evidence |
 | [`docs/reviews/CODE_REVIEW_v0.12.0.md`](docs/reviews/CODE_REVIEW_v0.12.0.md) | Data Format Converter P1 review, parser choices, privacy/security findings และ validation evidence |
 | [`docs/reviews/CODE_REVIEW_v0.11.0.md`](docs/reviews/CODE_REVIEW_v0.11.0.md) | SVG P1 optimization review, privacy/security findings และ validation evidence |
 | [`docs/reviews/CODE_REVIEW_v0.10.0.md`](docs/reviews/CODE_REVIEW_v0.10.0.md) | Historical P0 code review และ validation evidence |

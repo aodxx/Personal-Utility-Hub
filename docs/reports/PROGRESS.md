@@ -337,3 +337,22 @@ Release นี้ผ่าน local quality gates แล้ว แต่ยั�
 Release นี้ผ่าน local quality gates และพร้อม commit/push โดยยังไม่ถือเป็น CI หรือ production deployment evidence ใหม่ ความเสี่ยงที่ประกาศไว้คือ YAML comments/anchors/tags, TOML date/time semantics และ XML comments/namespaces/mixed content อาจไม่ round-trip เหมือนต้นฉบับ หาก benchmark ภายหลังพบว่า parser ทำให้ UI ค้างใกล้ input limit จึงค่อยแยก Worker milestone พร้อม cancellation protocol
 
 References: [`P1_DATA_FORMAT_CONVERTER_FEASIBILITY.md`](../research/P1_DATA_FORMAT_CONVERTER_FEASIBILITY.md), [`CODE_REVIEW_v0.12.0.md`](../reviews/CODE_REVIEW_v0.12.0.md)
+
+
+## v0.13.0 — JSON Visualizer / Graph Viewer P1 — 27 สิงหาคม 2026
+
+เพิ่ม `json-visualizer` เป็นเครื่องมือใหม่ในหมวดข้อความและข้อมูล โดยแยกภารกิจจาก JSON Formatter เดิมอย่างชัดเจน รองรับ JSON tree model, deterministic parent-child graph, path/key/value search, collapse/expand, tree summary copy และ SVG/PNG export ทั้งหมดทำงานใน browser memory และใช้ lazy-loaded module
+
+| งาน | ผลล่าสุด |
+|---|---|
+| Package/cache release | package `0.13.0`; shell/tool/offline cache `v0.13.0-p1-json` |
+| Input/output boundary | input ไม่เกิน 200,000 chars; tree ไม่เกิน 500 nodes/depth 32; graph render ไม่เกิน 360 visible nodes |
+| Core/UI | deterministic paths และ SVG; user-controlled labels/values escaped; object URL ถูก revoke; unmount cleanup ผ่าน |
+| Regression tests | JSON Visualizer unit 6/6; full Vitest 171/171 จาก 35 files; module contract ผ่าน |
+| Browser regression | targeted JSON Visualizer 4 passed/2 intentional skips จาก 6; full Playwright 279 passed/18 intentional skips จาก 297 บน 3 profiles |
+| Bundle | Entry 60.2 KB gzip; budget ใหม่ 64 KB; largest lazy 366.1 KB; total JavaScript 1,311.7 KB จาก 64 chunks; visualizer lazy chunk 13.36 KB raw / 5.13 KB gzip |
+| Integrity/security | Registry 48 modules ผ่าน, SVG 120 assets ผ่าน, npm audit 0 vulnerabilities, Service Worker syntax และ diff check ผ่าน |
+
+Release นี้ผ่าน local quality gates และพร้อม commit/push โดยยังไม่ถือเป็น CI หรือ production deployment evidence ใหม่ ความเสี่ยงที่ประกาศไว้คือ JSON-only input, main-thread parse/render, semantic search ที่ไม่ใช่ JSONPath เต็มรูปแบบ และ graph truncation เมื่อเกิน 360 visible nodes หาก benchmark ภายหลังพบ UI blocking ใกล้ limits จึงค่อยแยก Worker milestone พร้อม cancellation protocol
+
+References: [`P1_JSON_VISUALIZER_FEASIBILITY.md`](../research/P1_JSON_VISUALIZER_FEASIBILITY.md), [`P1_OVERLAP_AND_IMPLEMENTATION_PLAN.md`](../research/P1_OVERLAP_AND_IMPLEMENTATION_PLAN.md), [`CODE_REVIEW_v0.13.0.md`](../reviews/CODE_REVIEW_v0.13.0.md)

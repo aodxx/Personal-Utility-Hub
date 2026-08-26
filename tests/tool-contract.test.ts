@@ -38,6 +38,26 @@ describe('tool contract', () => {
     expect(result.value).toBe('');
   });
 
+  it('lazy-loads and cleans up the JSON Visualizer module', async () => {
+    const entry = toolRegistry.find(({ metadata: entryMetadata }) => entryMetadata.id === 'json-visualizer');
+    expect(entry?.metadata).toMatchObject({ id: 'json-visualizer', route: '/tools/json-visualizer', supportsOffline: true });
+    if (!entry) throw new Error('missing json-visualizer registry entry');
+    const module = await entry.load();
+    const root = document.createElement('div');
+    module.mount(root);
+    const input = root.querySelector<HTMLTextAreaElement>('#json-visualizer-input');
+    const visualize = root.querySelector<HTMLButtonElement>('[data-json-visualizer-action="render"]');
+    const graph = root.querySelector<HTMLElement>('#json-visualizer-graph');
+    expect(input).not.toBeNull();
+    expect(visualize).not.toBeNull();
+    expect(graph).not.toBeNull();
+    if (!input || !visualize || !graph) throw new Error('missing JSON visualizer controls');
+    input.value = '{"name":"before-unmount"}';
+    module.unmount?.();
+    visualize.click();
+    expect(graph.innerHTML).toBe('');
+  });
+
   it('prepares all SVG library assets for offline caching', async () => {
     const entry = toolRegistry.find(({ metadata: entryMetadata }) => entryMetadata.id === 'svg-asset-studio');
     expect(entry?.metadata.supportsOffline).toBe(true);

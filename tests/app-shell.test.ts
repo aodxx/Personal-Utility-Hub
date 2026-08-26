@@ -47,7 +47,7 @@ describe('AppShell integration', () => {
     search.value = '';
     search.dispatchEvent(new InputEvent('input', { bubbles: true }));
     root.querySelector<HTMLButtonElement>('[data-category="ข้อความและข้อมูล"]')?.click();
-    expect(root.querySelectorAll('#tool-grid .tool-card')).toHaveLength(10);
+    expect(root.querySelectorAll('#tool-grid .tool-card')).toHaveLength(11);
   });
 
   it('persists favorites, records recent tools and clears history', async () => {

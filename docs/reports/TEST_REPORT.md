@@ -441,3 +441,30 @@ Flowchart Studio ใช้ DSL แบบ `Step A -> Step B` และสร้�
 ข้อจำกัดของรุ่นนี้คือ conversion เป็น JSON-centered และไม่รับประกัน round-trip fidelity ของ YAML comments/anchors/tags, TOML date/time semantics หรือ XML comments, namespaces และ mixed content ordering XML output ใช้ generated `<root>` wrapper และ TOML output ต้องมี root table หาก parser ไม่ให้ตำแหน่ง error ระบบจะแสดงข้อความโดยไม่เดา line/column
 
 ผลทั้งหมดเป็น **local validation** ก่อน commit/push และยังไม่ใช่ GitHub Actions หรือ GitHub Pages deployment evidence ใหม่
+
+
+## 17. v0.13.0 — JSON Visualizer / Graph Viewer P1 — 27 สิงหาคม 2026
+
+เพิ่ม `json-visualizer` เป็น beta tool สำหรับสำรวจ JSON แบบ tree และ deterministic graph พร้อม search, collapse/expand, tree summary copy และ SVG/PNG export โดย input และ output อยู่ใน browser memory เท่านั้น
+
+| Gate | ผลลัพธ์ |
+|---|---|
+| TypeScript | ผ่าน `npm run typecheck` |
+| Full Vitest | ผ่าน 171/171 tests จาก 35 test files |
+| JSON Visualizer unit suite | ผ่าน 6/6 tests ครอบคลุม tree model, paths/kinds, limits, search, collapse state, graph count และ SVG escaping |
+| Module contract | ผ่าน metadata, route, lazy load, mount controls และ unmount event cleanup assertions |
+| JSON Visualizer targeted E2E | ผ่าน 4 tests, 2 intentional skips จาก 6 cases บน configured profiles |
+| Full Playwright | ผ่าน 279 tests, 18 intentional skips จาก 297 cases บน 3 configured profiles |
+| Production build | ผ่าน `npm run build` |
+| Bundle | Entry 60.2 KB gzip; budget 64 KB gzip; largest lazy chunk 366.1 KB; JavaScript รวม 1,311.7 KB จาก 64 chunks; visualizer lazy chunk 13.36 KB raw / 5.13 KB gzip |
+| Registry | ผ่าน 48 metadata modules, unique routes และ lazy registrations |
+| SVG integrity | ผ่าน 120 assets, exact duplicates 0, geometry duplicates 0, near-duplicate warnings 0 |
+| Dependency audit | `npm audit --audit-level=high` พบ 0 vulnerabilities |
+| Service Worker | `node --check public/sw.js` ผ่าน; cache namespace ใหม่ `v0.13.0-p1-json` |
+| Diff quality | `git diff --check` ผ่าน |
+
+การปรับ bundle budget จาก 60 เป็น 64 KB gzip ถูกบันทึกใน `scripts/check-bundle.mjs` เนื่องจาก static bilingual metadata/guide catalog เพิ่มขึ้นใน P1 release; measured entry อยู่ที่ 60.2 KB และ implementation ของ JSON Visualizer ยังคง lazy-loaded ส่วน total JavaScript ceiling 1,600 KB ไม่เปลี่ยน
+
+ข้อจำกัดของรุ่นนี้คือรับ JSON เท่านั้น, parse/render บน main thread, search ยังไม่ใช่ JSONPath เต็มรูปแบบ และ graph จะจำกัดการ render ที่ 360 visible nodes input guard อยู่ที่ 200,000 chars, tree guard 500 nodes/depth 32 และ export PNG ขึ้นกับ browser Canvas capability
+
+ผลทั้งหมดเป็น **local validation** ก่อน commit/push และยังไม่ใช่ GitHub Actions หรือ GitHub Pages deployment evidence ใหม่

@@ -23,6 +23,7 @@ import { metadata as imageConverterMetadata } from '../tools/image-converter/met
 import { metadata as imageResizerMetadata } from '../tools/image-resizer/metadata';
 import { metadata as jsonFormatterMetadata } from '../tools/json-formatter/metadata';
 import { metadata as dataFormatConverterMetadata } from '../tools/data-format-converter/metadata';
+import { metadata as jsonVisualizerMetadata } from '../tools/json-visualizer/metadata';
 import { metadata as qrGeneratorMetadata } from '../tools/qr-generator/metadata';
 import { metadata as qrReaderMetadata } from '../tools/qr-reader/metadata';
 import { metadata as textFormatterMetadata } from '../tools/text-formatter/metadata';
@@ -72,6 +73,10 @@ export const toolRegistry = [
   {
     metadata: dataFormatConverterMetadata,
     load: () => import('../tools/data-format-converter'),
+  },
+  {
+    metadata: jsonVisualizerMetadata,
+    load: () => import('../tools/json-visualizer'),
   },
   {
     metadata: base64Metadata,
