@@ -29,8 +29,8 @@ describe('PWA assets', () => {
 
   it('supports versioned shell and per-tool offline caches', () => {
     const serviceWorker = readFileSync(resolve(publicDir, 'sw.js'), 'utf8');
-    expect(serviceWorker).toContain('utility-hub-shell-v0.10.0-p0-tools');
-    expect(serviceWorker).toContain('utility-hub-tools-v0.10.0-p0-tools');
+    expect(serviceWorker).toContain('utility-hub-shell-v0.10.0-p0-hardening');
+    expect(serviceWorker).toContain('utility-hub-tools-v0.10.0-p0-hardening');
     expect(serviceWorker).toContain("event.data?.type !== 'CACHE_TOOL'");
     expect(serviceWorker).toContain('cache.addAll(urls)');
     expect(serviceWorker).toContain("const APP_SHELL_URL = new URL('index.html', APP_SCOPE).href");

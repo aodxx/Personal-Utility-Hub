@@ -1,18 +1,29 @@
-import { regexLiteral, replaceRegex, runRegex, type RegexMatch, type RegexRunResult } from '../../core/regex';
+import { regexLiteral, type RegexMatch, type RegexRunResult } from '../../core/regex';
+import { replaceRegexAsync, runRegexAsync } from '../../core/regex-processing-client';
 import type { ToolModule } from '../../core/tool-contract';
-import { copyText, getErrorMessage, requiredElement, setToolStatus } from '../../core/tool-ui';
+import { copyText, getErrorMessage, isAbortError, requiredElement, setToolStatus } from '../../core/tool-ui';
 import { metadata } from './metadata';
 
 let panel: HTMLElement | undefined;
 let liveTimer: number | undefined;
+let activeRun: AbortController | undefined;
+let activeReplacement: AbortController | undefined;
+let runRequest = 0;
+let replacementRequest = 0;
 let latestResult: RegexRunResult | undefined;
 
+const MAX_HIGHLIGHT_MATCHES = 1_000;
 const SAMPLE_PATTERN = String.raw`(?<name>[A-Za-zก-๙]+)@(?<domain>[A-Za-z0-9.-]+)`;
 const SAMPLE_INPUT = 'ติดต่อ team@example.com หรือ hello@utility-hub.local';
 
 function flags(): string {
   if (!panel) return 'g';
   return ['g', 'i', 'm', 's', 'u', 'y'].filter((flag) => requiredElement<HTMLInputElement>(panel!, `#regex-flag-${flag}`).checked).join('');
+}
+
+function updateLiteral(): void {
+  if (!panel) return;
+  requiredElement<HTMLElement>(panel, '#regex-literal').textContent = regexLiteral(requiredElement<HTMLInputElement>(panel, '#regex-pattern').value || 'pattern', flags());
 }
 
 function renderHighlighted(input: string, matches: RegexMatch[]): void {
@@ -24,7 +35,8 @@ function renderHighlighted(input: string, matches: RegexMatch[]): void {
     return;
   }
   let cursor = 0;
-  matches.forEach((match) => {
+  const visibleMatches = matches.slice(0, MAX_HIGHLIGHT_MATCHES);
+  visibleMatches.forEach((match) => {
     if (match.index > cursor) target.append(document.createTextNode(input.slice(cursor, match.index)));
     const mark = document.createElement('mark');
     mark.textContent = input.slice(match.index, match.end);
@@ -33,6 +45,7 @@ function renderHighlighted(input: string, matches: RegexMatch[]): void {
     cursor = match.end;
   });
   if (cursor < input.length) target.append(document.createTextNode(input.slice(cursor)));
+  if (visibleMatches.length < matches.length) target.append(document.createTextNode(`\n… แสดง highlight ${MAX_HIGHLIGHT_MATCHES.toLocaleString()} จาก ${matches.length.toLocaleString()} matches / Highlight capped for performance`));
 }
 
 function renderMatches(result: RegexRunResult, input: string): void {
@@ -67,29 +80,69 @@ function renderMatches(result: RegexRunResult, input: string): void {
   }
   renderHighlighted(input, result.matches);
   requiredElement<HTMLElement>(panel, '#regex-result').hidden = false;
-  const replacement = requiredElement<HTMLTextAreaElement>(panel, '#regex-replacement').value;
-  if (replacement) requiredElement<HTMLTextAreaElement>(panel, '#regex-replace-output').value = replaceRegex(requiredElement<HTMLInputElement>(panel, '#regex-pattern').value, flags(), input, replacement);
 }
 
-function runCurrent(): void {
+async function updateReplacement(): Promise<void> {
+  if (!panel || !latestResult) return;
+  const replacement = requiredElement<HTMLTextAreaElement>(panel, '#regex-replacement').value;
+  const output = requiredElement<HTMLTextAreaElement>(panel, '#regex-replace-output');
+  if (!replacement) {
+    replacementRequest += 1;
+    activeReplacement?.abort();
+    output.value = '';
+    return;
+  }
+
+  const request = ++replacementRequest;
+  activeReplacement?.abort();
+  const controller = new AbortController();
+  activeReplacement = controller;
+  try {
+    const pattern = requiredElement<HTMLInputElement>(panel, '#regex-pattern').value;
+    const input = requiredElement<HTMLTextAreaElement>(panel, '#regex-input').value;
+    const result = await replaceRegexAsync(pattern, flags(), input, replacement, controller.signal);
+    if (panel && request === replacementRequest) output.value = result;
+  } catch (error) {
+    if (!panel || request !== replacementRequest || isAbortError(error)) return;
+    output.value = '';
+    setToolStatus(requiredElement<HTMLOutputElement>(panel, '#regex-status'), getErrorMessage(error), 'error');
+  } finally {
+    if (activeReplacement === controller) activeReplacement = undefined;
+  }
+}
+
+async function runCurrent(): Promise<void> {
   if (!panel) return;
+  const request = ++runRequest;
+  activeRun?.abort();
+  const controller = new AbortController();
+  activeRun = controller;
   const pattern = requiredElement<HTMLInputElement>(panel, '#regex-pattern').value;
   const input = requiredElement<HTMLTextAreaElement>(panel, '#regex-input').value;
-  const result = runRegex(pattern, flags(), input);
-  renderMatches(result, input);
+  try {
+    const result = await runRegexAsync(pattern, flags(), input, controller.signal);
+    if (!panel || request !== runRequest) return;
+    renderMatches(result, input);
+    await updateReplacement();
+  } finally {
+    if (activeRun === controller) activeRun = undefined;
+  }
 }
 
 const handleInput = (): void => {
-  if (!panel || !requiredElement<HTMLInputElement>(panel, '#regex-auto').checked) return;
+  if (!panel) return;
+  updateLiteral();
+  if (!requiredElement<HTMLInputElement>(panel, '#regex-auto').checked) return;
   if (liveTimer !== undefined) window.clearTimeout(liveTimer);
   liveTimer = window.setTimeout(() => {
     liveTimer = undefined;
-    try {
-      runCurrent();
-      setToolStatus(requiredElement<HTMLOutputElement>(panel!, '#regex-status'), 'อัปเดตผลแบบ live / Live result updated', 'success');
-    } catch (error) {
-      setToolStatus(requiredElement<HTMLOutputElement>(panel!, '#regex-status'), getErrorMessage(error), 'error');
-    }
+    void runCurrent()
+      .then(() => {
+        if (panel) setToolStatus(requiredElement<HTMLOutputElement>(panel, '#regex-status'), 'อัปเดตผลแบบ live / Live result updated', 'success');
+      })
+      .catch((error: unknown) => {
+        if (panel && !isAbortError(error)) setToolStatus(requiredElement<HTMLOutputElement>(panel, '#regex-status'), getErrorMessage(error), 'error');
+      });
   }, 160);
 };
 
@@ -100,14 +153,15 @@ const handleAction = async (event: Event): Promise<void> => {
   try {
     switch (button.dataset.regexAction) {
       case 'run':
-        runCurrent();
+        await runCurrent();
         setToolStatus(status, 'ทดสอบ Pattern ในเครื่องสำเร็จ / Pattern tested locally', 'success');
         break;
       case 'sample':
         requiredElement<HTMLInputElement>(panel, '#regex-pattern').value = SAMPLE_PATTERN;
         requiredElement<HTMLTextAreaElement>(panel, '#regex-input').value = SAMPLE_INPUT;
         requiredElement<HTMLInputElement>(panel, '#regex-flag-g').checked = true;
-        runCurrent();
+        updateLiteral();
+        await runCurrent();
         setToolStatus(status, 'ใส่ข้อมูลตัวอย่างแล้ว / Sample loaded', 'success');
         break;
       case 'toggle-replace': {
@@ -121,12 +175,17 @@ const handleAction = async (event: Event): Promise<void> => {
         setToolStatus(status, 'คัดลอกผลลัพธ์ Replace แล้ว / Replacement copied', 'success');
         break;
       case 'clear':
+        activeRun?.abort();
+        activeReplacement?.abort();
+        runRequest += 1;
+        replacementRequest += 1;
         requiredElement<HTMLInputElement>(panel, '#regex-pattern').value = '';
         requiredElement<HTMLTextAreaElement>(panel, '#regex-input').value = '';
         requiredElement<HTMLTextAreaElement>(panel, '#regex-replacement').value = '';
         requiredElement<HTMLTextAreaElement>(panel, '#regex-replace-output').value = '';
         requiredElement<HTMLElement>(panel, '#regex-result').hidden = true;
         latestResult = undefined;
+        updateLiteral();
         setToolStatus(status, 'ล้างข้อมูลแล้ว / Cleared');
         requiredElement<HTMLInputElement>(panel, '#regex-pattern').focus();
         break;
@@ -134,7 +193,7 @@ const handleAction = async (event: Event): Promise<void> => {
         break;
     }
   } catch (error) {
-    setToolStatus(status, getErrorMessage(error), 'error');
+    if (!isAbortError(error)) setToolStatus(status, getErrorMessage(error), 'error');
   }
 };
 
@@ -153,10 +212,7 @@ const handlePanelClick = (event: Event): void => {
 };
 
 const handleReplaceInput = (): void => {
-  if (!panel || !latestResult) return;
-  const replacement = requiredElement<HTMLTextAreaElement>(panel, '#regex-replacement').value;
-  const input = requiredElement<HTMLTextAreaElement>(panel, '#regex-input').value;
-  requiredElement<HTMLTextAreaElement>(panel, '#regex-replace-output').value = replaceRegex(requiredElement<HTMLInputElement>(panel, '#regex-pattern').value, flags(), input, replacement);
+  void updateReplacement();
 };
 
 const tool: ToolModule = {
@@ -172,14 +228,16 @@ const tool: ToolModule = {
       <output id="regex-status" class="tool-status" aria-live="polite">วาง Pattern และข้อความเพื่อเริ่ม / Paste a pattern and text to begin</output>`;
     panel.addEventListener('click', handlePanelClick);
     panel.querySelectorAll<HTMLInputElement>('#regex-pattern, #regex-input, #regex-flag-g, #regex-flag-i, #regex-flag-m, #regex-flag-s, #regex-flag-u, #regex-flag-y').forEach((element) => element.addEventListener('input', handleInput));
-    requiredElement<HTMLInputElement>(panel, '#regex-replacement').addEventListener('input', handleReplaceInput);
-    requiredElement<HTMLInputElement>(panel, '#regex-pattern').addEventListener('input', () => {
-      requiredElement<HTMLElement>(panel!, '#regex-literal').textContent = regexLiteral(requiredElement<HTMLInputElement>(panel!, '#regex-pattern').value || 'pattern', flags());
-    });
+    requiredElement<HTMLTextAreaElement>(panel, '#regex-replacement').addEventListener('input', handleReplaceInput);
+    updateLiteral();
     container.append(panel);
   },
   unmount() {
     if (liveTimer !== undefined) window.clearTimeout(liveTimer);
+    activeRun?.abort();
+    activeReplacement?.abort();
+    runRequest += 1;
+    replacementRequest += 1;
     panel?.removeEventListener('click', handlePanelClick);
     panel?.querySelectorAll<HTMLInputElement>('#regex-pattern, #regex-input, #regex-flag-g, #regex-flag-i, #regex-flag-m, #regex-flag-s, #regex-flag-u, #regex-flag-y').forEach((element) => element.removeEventListener('input', handleInput));
     panel?.querySelector<HTMLTextAreaElement>('#regex-replacement')?.removeEventListener('input', handleReplaceInput);

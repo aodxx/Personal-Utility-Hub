@@ -3,7 +3,7 @@
 **อัปเดต:** 26 สิงหาคม 2026
 **Repository:** `aodxx/Personal-Utility-Hub`
 **Release baseline:** `0.10.0` (local feature baseline)
-**Release scope:** เพิ่ม JWT Inspector, Hash & Checksum Verifier, Regex Playground และ Color Contrast Checker จากแหล่งภายนอก พร้อม bilingual guides, unique visual assets, local-only processing, Hash worker path และ mobile E2E
+**Release scope:** เพิ่ม JWT Inspector, Hash & Checksum Verifier, Regex Playground และ Color Contrast Checker จากแหล่งภายนอก พร้อม bilingual guides, unique visual assets, local-only processing, Hash/Regex Worker paths และ mobile E2E; รอบนี้มี supplemental security/performance hardening
 
 ## 1. ขอบเขตของ baseline
 
@@ -34,9 +34,9 @@ git diff --check
 | Check | Result |
 |---|---:|
 | TypeScript strict typecheck | ผ่าน |
-| Vitest unit/integration | 128/128 tests ผ่าน จาก 28 test files |
+| Vitest unit/integration | 132/132 tests ผ่าน จาก 29 test files |
 | Production build | ผ่าน |
-| Bundle budget | ผ่านหลังปรับ entry gate เป็น 60 KB gzip |
+| Bundle budget | ผ่าน; entry 57.9 KB gzip, largest lazy 366.1 KB, total 1,240.8 KB จาก 62 chunks และ gate 60 KB gzip |
 | Playwright P0 | 27 passed จาก 27 cases บน 3 profiles |
 | Playwright full suite | 271 passed, 14 intentional skips จาก 285 cases |
 | Visual asset validation | ผ่าน |
@@ -53,7 +53,7 @@ Playwright ใช้ 3 profiles ได้แก่ Desktop Chromium, Android ent
 | Audio Tools | 21 dedicated E2E cases ครอบคลุม Audio Trimmer และ shared workbench/Chapter Marker tools ตั้งแต่ upload, processing, result metrics และ WAV/cue-sheet download รวมถึง repeated processing ของ Trimmer |
 | App Shell | 45 public cards, category/search filter, TH/EN, Settings Center, usage ordering และ full-card navigation |
 | Mobile UX | Compact cards, icon/footer separation, touch feedback, accessible pressed states และ 360px layout assertions |
-| PWA | Manifest assets, Service Worker syntax, versioned shell/tool caches, offline preparation และ runtime cache behavior |
+| PWA | Manifest assets, Service Worker syntax, versioned shell/tool caches, Hash/Regex Worker offline preparation และ runtime cache behavior |
 | Privacy | No backend/runtime upload claims, local storage boundaries และ no user-data schema migration |
 
 ## 5. v0.10 version and cache contract
@@ -61,9 +61,9 @@ Playwright ใช้ 3 profiles ได้แก่ Desktop Chromium, Android ent
 | Contract | Expected value |
 |---|---|
 | `package.json` version | `0.10.0` |
-| Shell cache | `utility-hub-shell-v0.10.0-p0-tools` |
-| Tool cache | `utility-hub-tools-v0.10.0-p0-tools` |
-| Offline cache version | `0.10.0-p0-tools` |
+| Shell cache | `utility-hub-shell-v0.10.0-p0-hardening` |
+| Tool cache | `utility-hub-tools-v0.10.0-p0-hardening` |
+| Offline cache version | `0.10.0-p0-hardening` |
 | Portable Settings schema | `1`, unchanged for backward compatibility |
 | IndexedDB store schema | `1`, unchanged |
 
@@ -71,9 +71,13 @@ Playwright ใช้ 3 profiles ได้แก่ Desktop Chromium, Android ent
 
 ## 6. Bundle budget
 
-เกณฑ์ repository ปัจจุบันคือ Entry gzip ไม่เกิน 60 KB, lazy chunk ไม่เกิน 900 KB และ JavaScript รวม gzip ไม่เกิน 1,600 KB ผล v0.10.0 คือ Entry gzip 57.7 KB, lazy chunk ใหญ่สุด 366.1 KB และ JavaScript รวม gzip 1,238.3 KB จาก 61 chunks — ผ่านทั้งหมด
+เกณฑ์ repository ปัจจุบันคือ Entry gzip ไม่เกิน 60 KB, lazy chunk ไม่เกิน 900 KB และ JavaScript รวม gzip ไม่เกิน 1,600 KB ผล supplemental review คือ Entry gzip 57.9 KB, lazy chunk ใหญ่สุด 366.1 KB และ JavaScript รวม gzip 1,240.8 KB จาก 62 chunks — ผ่านทั้งหมด
 
 หาก build หลัง patch ให้ตัวเลขต่างจาก record นี้ ต้องแทนค่าด้วย output จาก `npm run check:bundle` ก่อนประกาศ release
+
+## 6.1 Supplemental security/performance review
+
+รายละเอียดการตรวจเพิ่มเติมของ P0 อยู่ใน [`SECURITY_PERFORMANCE_REVIEW_P0_v0.10.0.md`](../reviews/SECURITY_PERFORMANCE_REVIEW_P0_v0.10.0.md) ครอบคลุม ReDoS mitigation ด้วย dedicated Regex Worker และ timeout, Hash text/file memory guards, JWT input bound และ malformed UTF-8 handling, Hash async race fix, DOM highlight cap, static local-only scan และ residual limitations
 
 ## 7. GitHub Actions requirements
 
@@ -91,11 +95,11 @@ npm audit --audit-level=high
 node --check public/sw.js
 ```
 
-Local regression suite ล่าสุดผ่าน 86 cases และมี 4 intentional skips จาก 90 cases. Final HEAD `c4238a226a5098dc4fb7db99b4c481066ee8303b` ผ่าน [CI run 31994517569](https://github.com/aodxx/Personal-Utility-Hub/actions/runs/31994517569) และ [GitHub Pages deploy run 31994517551](https://github.com/aodxx/Personal-Utility-Hub/actions/runs/31994517551) โดยทั้งสอง run จบด้วย success
+รอบ supplemental review นี้ใช้ local validation เป็นหลัก และไม่ได้ใช้งาน GitHub Actions หรือ deployment smoke เป็นหลักฐานใหม่ จึงไม่อ้างผล CI/deploy เก่ามายืนยัน commit ปัจจุบัน
 
 ## 8. Production GitHub Pages smoke test
 
-Production URL ที่ต้องตรวจคือ [https://aodxx.github.io/Personal-Utility-Hub/](https://aodxx.github.io/Personal-Utility-Hub/) และหลักฐานการตรวจบันทึกไว้ที่ [`docs/v0.8-production-smoke-notes.md`](docs/v0.8-production-smoke-notes.md)
+Production URL ที่ต้องตรวจคือ [https://aodxx.github.io/Personal-Utility-Hub/](https://aodxx.github.io/Personal-Utility-Hub/) และหลักฐานการตรวจบันทึกไว้ที่ [`v0.8-production-smoke-notes.md`](../v0.8-production-smoke-notes.md)
 
 ### Hub and navigation checklist
 
@@ -134,11 +138,11 @@ Production URL ที่ต้องตรวจคือ [https://aodxx.github.
 
 Audio Compressor ใช้ target size แบบประมาณการสำหรับ WAV; Audio Finisher เป็น peak normalization และ clipping protection ไม่ใช่ LUFS mastering; Audio Speed & Pitch เป็น resampling ที่ทำให้ speed และ pitch สัมพันธ์กัน ไม่ใช่ independent time-stretch; และยังไม่มี MP3 export ใน implementation ปัจจุบัน
 
-GitHub Actions และ dependency audit หลัง `npm ci` ผ่านแล้วบน final HEAD ก่อน Audio regression; Production smoke notes บันทึกผล Hub, search/category, Settings, English localization, Service Worker/cache และ Audio contract ครบ 7 tools ไว้ใน [`docs/v0.8-production-smoke-notes.md`](docs/v0.8-production-smoke-notes.md) หลังเพิ่ม one-retry recovery ใน AppShell และ dedicated Audio E2E coverage
+GitHub Actions และ dependency audit หลัง `npm ci` ผ่านแล้วบน final HEAD ก่อน Audio regression; Production smoke notes บันทึกผล Hub, search/category, Settings, English localization, Service Worker/cache และ Audio contract ครบ 7 tools ไว้ใน [`v0.8-production-smoke-notes.md`](../v0.8-production-smoke-notes.md) หลังเพิ่ม one-retry recovery ใน AppShell และ dedicated Audio E2E coverage
 
 ## 10. Release notes
 
-รายละเอียดการ review ของ P0 อยู่ใน [`CODE_REVIEW_v0.10.0.md`](CODE_REVIEW_v0.10.0.md) ครอบคลุม privacy, JWT decode boundary, hash memory guard, regex safety, color semantics, lifecycle และ bundle impact
+รายละเอียดการ review ของ P0 อยู่ใน [`CODE_REVIEW_v0.10.0.md`](../reviews/CODE_REVIEW_v0.10.0.md) ครอบคลุม privacy, JWT decode boundary, hash memory guard, regex safety, color semantics, lifecycle และ bundle impact
 
 v0.10.0 จะถือว่า **Production Baseline Ready** เมื่อเอกสาร release ตรงกับ source, local quality gate ผ่าน, GitHub Actions บน HEAD ผ่าน, GitHub Pages smoke test ของ P0 ผ่านบน desktop และ mobile และ PWA/offline behavior ยืนยันด้วย cache version ใหม่โดยไม่มีข้อมูลผู้ใช้เดิมเสียหาย
 
@@ -226,11 +230,11 @@ Phase 7.1 E2E เพิ่ม 6 passed และ 6 intentional skips ตาม v
 
 Bundle metrics หลัง Phase 7.1 คือ **34.5 KB entry gzip**, **366.1 KB largest lazy chunk** และ **978.2 KB JavaScript gzip across 36 chunks**; `npm audit --audit-level=high` รายงาน **0 vulnerabilities**
 
-Production visual capture ใช้ `node scripts/phase71-production-visual.mjs` บน real GitHub Pages URL และผ่าน **13/13 checks** ครอบคลุม initial state, visual asset, mobile scroll/peek, dots, desktop arrows, indicator change และ previous behavior ที่ 360 × 740, 412 × 915 และ 1280 × 900. Screenshot review แบบ section-focused ผ่านตาม notes ใน [`docs/phase71-visual-findings.md`](docs/phase71-visual-findings.md)
+Production visual capture ใช้ `node scripts/phase71-production-visual.mjs` บน real GitHub Pages URL และผ่าน **13/13 checks** ครอบคลุม initial state, visual asset, mobile scroll/peek, dots, desktop arrows, indicator change และ previous behavior ที่ 360 × 740, 412 × 915 และ 1280 × 900. Screenshot review แบบ section-focused ผ่านตาม notes ใน [`phase71-visual-findings.md`](../phase71-visual-findings.md)
 
 Implementation HEAD คือ `0475f82f9fba7dd05abb2297a561926bb6e63a7d`. CI [31998196555](https://github.com/aodxx/Personal-Utility-Hub/actions/runs/31998196555) และ Pages deploy [31998196579](https://github.com/aodxx/Personal-Utility-Hub/actions/runs/31998196579) ผ่าน
 
-Visual evidence อยู่ใน [`docs/phase71-production-evidence.md`](docs/phase71-production-evidence.md) และ screenshots อยู่ใน [`docs/phase71-screenshots/`](docs/phase71-screenshots/)
+Visual evidence อยู่ใน [`phase71-production-evidence.md`](../phase71-production-evidence.md) และ screenshots อยู่ใน [`phase71-screenshots/`](../phase71-screenshots/)
 
 
 ## Approved Reliability and Wave 0/1 milestone — 19 สิงหาคม 2026

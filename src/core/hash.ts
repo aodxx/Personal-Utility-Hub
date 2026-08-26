@@ -1,4 +1,7 @@
 export const HASH_ALGORITHMS = ['SHA-256', 'SHA-384', 'SHA-512'] as const;
+export const MAX_HASH_FILE_BYTES = 40 * 1024 * 1024;
+export const MAX_EXPECTED_DIGEST_CHARS = 256;
+export const MAX_HASH_TEXT_BYTES = 4 * 1024 * 1024;
 export type HashAlgorithm = (typeof HASH_ALGORITHMS)[number];
 
 export interface HashResult {
@@ -20,10 +23,11 @@ export function expectedDigestLength(algorithm: HashAlgorithm): number {
   return algorithm === 'SHA-256' ? 64 : 128;
 }
 
-export function compareDigest(actual: string, expected: string): 'match' | 'mismatch' | 'invalid-expected' | 'empty-expected' {
+export function compareDigest(actual: string, expected: string, algorithm: HashAlgorithm): 'match' | 'mismatch' | 'invalid-expected' | 'empty-expected' {
+  if (expected.length > MAX_EXPECTED_DIGEST_CHARS) return 'invalid-expected';
   const normalizedExpected = normalizeDigest(expected);
   if (!normalizedExpected) return 'empty-expected';
-  if (!isHexDigest(normalizedExpected)) return 'invalid-expected';
+  if (!isHexDigest(normalizedExpected) || normalizedExpected.length !== expectedDigestLength(algorithm)) return 'invalid-expected';
   return normalizeDigest(actual) === normalizedExpected ? 'match' : 'mismatch';
 }
 
@@ -38,11 +42,19 @@ export async function hashBytes(data: BufferSource, algorithm: HashAlgorithm): P
 }
 
 export async function hashText(text: string, algorithm: HashAlgorithm): Promise<HashResult> {
+  if (text.length > MAX_HASH_TEXT_BYTES) throw new Error('ข้อความยาวเกิน 4 MB / Text exceeds 4 MB');
   const bytes = new TextEncoder().encode(text);
+  if (bytes.byteLength > MAX_HASH_TEXT_BYTES) throw new Error('ข้อความ UTF-8 ยาวเกิน 4 MB / UTF-8 text exceeds 4 MB');
   return { algorithm, value: await hashBytes(bytes, algorithm), byteLength: bytes.byteLength };
 }
 
+export function assertHashFile(file: Blob): void {
+  if (file.size <= 0) throw new Error('ไม่รองรับไฟล์ว่างเปล่า / Empty files are not supported');
+  if (file.size > MAX_HASH_FILE_BYTES) throw new Error('ไฟล์ต้องมีขนาดไม่เกิน 40 MB / File must be 40 MB or smaller');
+}
+
 export async function hashFile(file: Blob, algorithm: HashAlgorithm): Promise<HashResult> {
+  assertHashFile(file);
   const bytes = await file.arrayBuffer();
   return { algorithm, value: await hashBytes(bytes, algorithm), byteLength: bytes.byteLength };
 }

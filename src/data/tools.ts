@@ -54,6 +54,11 @@ const processingWorkerAssets = async (): Promise<readonly string[]> => {
   return [PROCESSING_WORKER_URL];
 };
 
+const regexWorkerAssets = async (): Promise<readonly string[]> => {
+  const { REGEX_WORKER_URL } = await import('../core/regex-processing-client');
+  return [REGEX_WORKER_URL];
+};
+
 export const toolRegistry = [
   {
     metadata: foundationDemoMetadata,
@@ -175,7 +180,7 @@ export const toolRegistry = [
   { metadata: imageCropMetadata, load: () => import('../tools/image-crop') },
   { metadata: jwtInspectorMetadata, load: () => import('../tools/jwt-inspector') },
   { metadata: hashVerifierMetadata, load: () => import('../tools/hash-verifier'), prepareOffline: processingWorkerAssets },
-  { metadata: regexPlaygroundMetadata, load: () => import('../tools/regex-playground') },
+  { metadata: regexPlaygroundMetadata, load: () => import('../tools/regex-playground'), prepareOffline: regexWorkerAssets },
   { metadata: colorContrastMetadata, load: () => import('../tools/color-contrast') },
   { metadata: jsonI18nMapperMetadata, load: () => import('../tools/json-i18n-mapper') },
   { metadata: jsonLdGeneratorMetadata, load: () => import('../tools/json-ld-generator') },

@@ -1,4 +1,5 @@
 import { trimPcm } from './audio-processing';
+import { assertHashFile, hashBytes } from './hash';
 import type { HashAlgorithm } from './hash';
 import type {
   ImageProcessOptions,
@@ -56,8 +57,8 @@ async function runFallback<K extends ProcessingJobKind>(
     result = { value: Array.from(new Uint8Array(hash), (byte) => byte.toString(16).padStart(2, '0')).join('') };
   } else if (kind === 'hash') {
     const hashPayload = payload as ProcessingPayloadMap['hash'];
+    assertHashFile(hashPayload.file);
     const bytes = await hashPayload.file.arrayBuffer();
-    const { hashBytes } = await import('./hash');
     result = { value: await hashBytes(bytes, hashPayload.algorithm), algorithm: hashPayload.algorithm, byteLength: bytes.byteLength };
   } else if (kind === 'audio-trim') {
     const audioPayload = payload as ProcessingPayloadMap['audio-trim'];

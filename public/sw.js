@@ -1,5 +1,5 @@
-const SHELL_CACHE = 'utility-hub-shell-v0.10.0-p0-tools';
-const TOOL_CACHE = 'utility-hub-tools-v0.10.0-p0-tools';
+const SHELL_CACHE = 'utility-hub-shell-v0.10.0-p0-hardening';
+const TOOL_CACHE = 'utility-hub-tools-v0.10.0-p0-hardening';
 const CACHE_NAMES = [SHELL_CACHE, TOOL_CACHE];
 const APP_SCOPE = self.registration.scope;
 const APP_SHELL_URL = new URL('index.html', APP_SCOPE).href;

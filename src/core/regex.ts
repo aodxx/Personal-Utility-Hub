@@ -1,5 +1,6 @@
 export const MAX_REGEX_INPUT_CHARS = 1_000_000;
 export const MAX_REGEX_MATCHES = 10_000;
+export const MAX_REGEX_REPLACEMENT_CHARS = 100_000;
 
 export interface RegexMatch {
   index: number;
@@ -68,6 +69,9 @@ export function runRegex(pattern: string, flags: string, input: string): RegexRu
 
 export function replaceRegex(pattern: string, flags: string, input: string, replacement: string): string {
   assertInputSize(input);
+  if (replacement.length > MAX_REGEX_REPLACEMENT_CHARS) {
+    throw new Error(`ข้อความแทนที่ยาวเกิน ${MAX_REGEX_REPLACEMENT_CHARS.toLocaleString()} ตัวอักษร / Replacement exceeds ${MAX_REGEX_REPLACEMENT_CHARS.toLocaleString()} characters`);
+  }
   return input.replace(createRegex(pattern, flags), replacement);
 }
 

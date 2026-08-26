@@ -1,6 +1,6 @@
 import { PDFDocument, type PDFImage } from 'pdf-lib';
 import { processAudio, trimPcm } from '../core/audio-processing';
-import { hashBytes, type HashAlgorithm } from '../core/hash';
+import { assertHashFile, hashBytes, type HashAlgorithm } from '../core/hash';
 import { MAX_IMAGE_BYTES, MAX_IMAGE_DIMENSION, MAX_IMAGE_PIXELS, renderRedaction, SUPPORTED_IMAGE_TYPES } from '../core/image-processing';
 import { MAX_PDF_PAGES, parsePageSelection } from '../core/file-processing';
 import type {
@@ -131,6 +131,7 @@ async function sha256(file: File, jobId: string): Promise<ProcessingResultMap['s
 }
 
 async function hash(file: File, algorithm: HashAlgorithm, jobId: string): Promise<ProcessingResultMap['hash']> {
+  assertHashFile(file);
   report(jobId, 15, `กำลังอ่านข้อมูลสำหรับ ${algorithm}`);
   const bytes = await file.arrayBuffer();
   report(jobId, 45, `กำลังคำนวณ ${algorithm}`);

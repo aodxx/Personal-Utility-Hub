@@ -1,4 +1,4 @@
-import { compareDigest, hashText, normalizeDigest, type HashAlgorithm } from '../../core/hash';
+import { assertHashFile, compareDigest, hashText, MAX_EXPECTED_DIGEST_CHARS, normalizeDigest, type HashAlgorithm } from '../../core/hash';
 import { hashAsync } from '../../core/processing-client';
 import type { ToolModule } from '../../core/tool-contract';
 import { copyText, formatBytes, getErrorMessage, isAbortError, requiredElement, setProgressStatus, setToolStatus } from '../../core/tool-ui';
@@ -8,8 +8,6 @@ let panel: HTMLElement | undefined;
 let activeJob: AbortController | undefined;
 let operationId = 0;
 let selectedFile: File | undefined;
-
-const MAX_HASH_FILE_BYTES = 40 * 1024 * 1024;
 
 function currentAlgorithm(): HashAlgorithm {
   return requiredElement<HTMLSelectElement>(panel!, '#hash-algorithm').value as HashAlgorithm;
@@ -24,21 +22,33 @@ function setRunning(running: boolean): void {
 
 function setMode(mode: 'text' | 'file'): void {
   if (!panel) return;
+  activeJob?.abort();
+  operationId += 1;
+  if (mode === 'text') {
+    selectedFile = undefined;
+    requiredElement<HTMLInputElement>(panel, '#hash-file').value = '';
+    requiredElement<HTMLElement>(panel, '#hash-file-meta').textContent = 'ไฟล์ทั่วไป · ไม่เกิน 40 MB / Any file · up to 40 MB';
+  }
   requiredElement<HTMLElement>(panel, '#hash-text-panel').hidden = mode !== 'text';
   requiredElement<HTMLElement>(panel, '#hash-file-panel').hidden = mode !== 'file';
   panel.querySelectorAll<HTMLButtonElement>('[data-hash-mode]').forEach((button) => button.setAttribute('aria-pressed', String(button.dataset.hashMode === mode)));
 }
 
-function renderResult(algorithm: HashAlgorithm, value: string, byteLength: number, expected: string): void {
+function renderResult(algorithm: HashAlgorithm, value: string, byteLength: number, expected: string, sourceFileName?: string): void {
   if (!panel) return;
   requiredElement<HTMLElement>(panel, '#hash-result').hidden = false;
   requiredElement<HTMLElement>(panel, '#hash-digest').textContent = value;
   requiredElement<HTMLElement>(panel, '#hash-algorithm-result').textContent = algorithm;
-  requiredElement<HTMLElement>(panel, '#hash-input-meta').textContent = selectedFile ? `${selectedFile.name} · ${formatBytes(byteLength)}` : `${byteLength.toLocaleString()} bytes · UTF-8 text`;
+  requiredElement<HTMLElement>(panel, '#hash-input-meta').textContent = sourceFileName ? `${sourceFileName} · ${formatBytes(byteLength)}` : `${byteLength.toLocaleString()} bytes · UTF-8 text`;
   const verdict = requiredElement<HTMLElement>(panel, '#hash-verdict');
   const expectedValue = requiredElement<HTMLElement>(panel, '#hash-expected-result');
-  expectedValue.textContent = expected.trim() ? normalizeDigest(expected) : 'ไม่ได้ระบุ / Not provided';
-  const comparison = compareDigest(value, expected);
+  const normalizedExpected = expected.length > MAX_EXPECTED_DIGEST_CHARS ? '' : normalizeDigest(expected);
+  expectedValue.textContent = expected.length > MAX_EXPECTED_DIGEST_CHARS
+    ? 'ค่าเปรียบเทียบยาวเกินกำหนด / Expected digest too long'
+    : normalizedExpected
+      ? normalizedExpected.length > 160 ? `${normalizedExpected.slice(0, 160)}…` : normalizedExpected
+      : 'ไม่ได้ระบุ / Not provided';
+  const comparison = compareDigest(value, expected, algorithm);
   verdict.dataset.tone = comparison === 'match' ? 'success' : comparison === 'mismatch' || comparison === 'invalid-expected' ? 'warning' : 'neutral';
   verdict.textContent = comparison === 'match'
     ? 'MATCH · ตรงกัน'
@@ -74,12 +84,14 @@ const handleCalculate = async (): Promise<void> => {
     setRunning(true);
     let value: string;
     let byteLength: number;
+    let sourceFileName: string | undefined;
     const mode = panel.querySelector<HTMLButtonElement>('[data-hash-mode][aria-pressed="true"]')?.dataset.hashMode ?? 'text';
     if (mode === 'file') {
-      if (!selectedFile) throw new Error('กรุณาเลือกไฟล์ก่อนคำนวณ / Choose a file before hashing');
-      if (selectedFile.size <= 0) throw new Error('ไม่รองรับไฟล์ว่างเปล่า / Empty files are not supported');
-      if (selectedFile.size > MAX_HASH_FILE_BYTES) throw new Error('ไฟล์ต้องมีขนาดไม่เกิน 40 MB / File must be 40 MB or smaller');
-      const result = await hashAsync(selectedFile, algorithm, { signal: controller.signal, onProgress: (progress, message) => setProgressStatus(status, progress, message) });
+      const file = selectedFile;
+      if (!file) throw new Error('กรุณาเลือกไฟล์ก่อนคำนวณ / Choose a file before hashing');
+      sourceFileName = file.name;
+      assertHashFile(file);
+      const result = await hashAsync(file, algorithm, { signal: controller.signal, onProgress: (progress, message) => setProgressStatus(status, progress, message) });
       value = result.value;
       byteLength = result.byteLength;
     } else {
@@ -91,7 +103,7 @@ const handleCalculate = async (): Promise<void> => {
       byteLength = result.byteLength;
     }
     if (!panel || request !== operationId) return;
-    renderResult(algorithm, value, byteLength, expected);
+    renderResult(algorithm, value, byteLength, expected, sourceFileName);
     setToolStatus(status, 'คำนวณ Hash ในเครื่องสำเร็จ / Hash calculated locally', 'success');
   } catch (error) {
     if (!panel || request !== operationId) return;

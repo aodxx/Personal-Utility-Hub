@@ -3,7 +3,7 @@
 > แหล่งข้อมูลกลางสำหรับสถานะการพัฒนา การทดสอบ การ release และข้อจำกัดของ Personal Utility Hub
 
 **อัปเดตล่าสุด:** 26 สิงหาคม 2026
-**สถานะโครงการ:** Local feature baseline `v0.10.0` — เพิ่มเครื่องมือ P0 จากแหล่งภายนอก 4 รายการ พร้อม bilingual guides, unique visual assets, local-only processing, Hash worker path และ mobile E2E; ยังไม่ได้ push หรือประกาศ deploy
+**สถานะโครงการ:** `v0.10.0` ถูก push ไปยัง `origin/main` แล้ว — เพิ่มเครื่องมือ P0 จากแหล่งภายนอก 4 รายการ พร้อม bilingual guides, unique visual assets, local-only processing, Hash/Regex Worker paths และ mobile E2E; รอบ supplemental security/performance review ผ่าน local gates แล้ว และใช้ hardening cache namespace ใหม่ ยังไม่ได้ประกาศ deploy ใหม่
 **เว็บไซต์:** https://aodxx.github.io/Personal-Utility-Hub/
 
 ## สรุป milestone
@@ -20,7 +20,7 @@
 | v0.8.0 — Audio Tool Suite Baseline | CI/Deploy ผ่าน; production smoke บางส่วนผ่าน | Versioned cache contract, source-aligned docs, CI run `31988106872`, Pages deploy run `31988106901` และ smoke notes |
 | v0.8.1 — Image Blur/Sensor | ผ่าน local quality gates | เลือกกรอบสี่เหลี่ยม, Blur/Pixelate, progress/cancel, Worker/fallback, local-only output และ unique SVG asset |
 | v0.9.0 — ITKB Utility Expansion | ผ่าน local quality gates | PDF Page Organizer, CSV Thai Encoding Repair, JSON i18n Mapper, Batch Image Watermark, JSON-LD Generator, Flowchart Studio และ Circle/Rounded Crop พร้อม 42 metadata modules |
-| v0.10.0 — External P0 Utility Expansion | กำลังตรวจสอบก่อน release | JWT Inspector, Hash & Checksum Verifier, Regex Playground และ Color Contrast Checker พร้อม worker protocol, bilingual guides, 46 metadata modules และ mobile E2E |
+| v0.10.0 — External P0 Utility Expansion | push `origin/main` แล้ว; supplemental review ผ่าน | JWT Inspector, Hash & Checksum Verifier, Regex Playground และ Color Contrast Checker พร้อม Hash/Regex Worker paths, bilingual guides, 46 metadata modules และ mobile E2E |
 
 ## ความสามารถปัจจุบัน
 
@@ -56,17 +56,17 @@ Audio pipeline แชร์ `src/core/audio-processing.ts`, `src/tools/audio-wor
 ## Release contract v0.10.0
 
 - `package.json` ใช้ version `0.10.0`
-- Service Worker ใช้ shell cache `utility-hub-shell-v0.10.0-p0-tools` และ tool cache `utility-hub-tools-v0.10.0-p0-tools`
-- Offline Tool Manager ใช้ `OFFLINE_CACHE_VERSION = 0.10.0-p0-tools`
+- Service Worker ใช้ shell cache `utility-hub-shell-v0.10.0-p0-hardening` และ tool cache `utility-hub-tools-v0.10.0-p0-hardening`
+- Offline Tool Manager ใช้ `OFFLINE_CACHE_VERSION = 0.10.0-p0-hardening`
 - PWA manifest ไม่มี version field แยกต่างหาก จึงไม่ถูกแก้ให้มีข้อมูลซ้ำ
 - Portable Settings และ IndexedDB store ยังคง schema version `1` เพื่อรักษา backward compatibility กับข้อมูลผู้ใช้เดิม
 - Cache รุ่นเก่าจะถูกล้างโดย Service Worker activation ตาม cache allow-list
 
 ## Validation status
 
-ผล local quality gate ระหว่างพัฒนา v0.10.0: TypeScript, Vitest 128 tests, production build, registry 46 metadata modules, SVG integrity และ P0 Playwright 27 cases ผ่านแล้ว; full Playwright, bundle budget, audit, Service Worker syntax และ diff checks จะตรวจซ้ำใน release gate
+ผล supplemental local quality gate ของ v0.10.0: TypeScript, Vitest 132 tests จาก 29 files, production build, bundle 57.9 KB gzip entry, registry 46 metadata modules, SVG integrity, npm audit 0 vulnerabilities, Service Worker syntax, diff check และ P0 Playwright 27/27 ผ่าน; full Playwright 271 ผ่านและ 14 intentional skips จาก 285 cases
 
-Production smoke รอบล่าสุดยืนยัน Hub, search/category, Settings, English localization, v0.8 Service Worker/cache และ Audio contract ครบ 7 tools: Audio Trimmer, Audio Compressor Pro, Audio Merger Studio, Silence Remover, Audio Finisher, Audio Speed & Pitch และ Audio Chapter Marker & Cue Sheet โดยรายละเอียดอยู่ใน `docs/v0.8-production-smoke-notes.md` การเพิ่ม one-retry recovery ใน AppShell ช่วยรับมือ transient lazy-module load state ก่อนแสดง error UI
+Production smoke รอบล่าสุดยืนยัน Hub, search/category, Settings, English localization, v0.8 Service Worker/cache และ Audio contract ครบ 7 tools: Audio Trimmer, Audio Compressor Pro, Audio Merger Studio, Silence Remover, Audio Finisher, Audio Speed & Pitch และ Audio Chapter Marker & Cue Sheet โดยรายละเอียดอยู่ใน `../v0.8-production-smoke-notes.md` การเพิ่ม one-retry recovery ใน AppShell ช่วยรับมือ transient lazy-module load state ก่อนแสดง error UI
 
 ## Known limitations และ roadmap
 
@@ -76,12 +76,14 @@ Audio output ส่วนใหญ่ยังอยู่ใน WAV family; Aud
 
 ## เอกสารอ้างอิงใน repository
 
-- [`README.md`](README.md) — ภาพรวม source-aligned และ release contract
+- [`README.md`](../../README.md) — ภาพรวม source-aligned และ release contract
 - [`TEST_REPORT.md`](TEST_REPORT.md) — test matrix และ production verification record
-- [`docs/ADDING_A_TOOL.md`](docs/ADDING_A_TOOL.md) — developer guide และ processing-heavy patterns
-- [`docs/PRIVACY_AND_DEPENDENCIES.md`](docs/PRIVACY_AND_DEPENDENCIES.md) — privacy/dependency policy
-- [`docs/VISUAL_SYSTEM.md`](docs/VISUAL_SYSTEM.md) — visual asset system
-- [`docs/audio-tools-verification.md`](docs/audio-tools-verification.md) — audio behavior และ limitations
+- [`CODE_REVIEW_v0.10.0.md`](../reviews/CODE_REVIEW_v0.10.0.md) — initial code review และ P0 validation evidence
+- [`SECURITY_PERFORMANCE_REVIEW_P0_v0.10.0.md`](../reviews/SECURITY_PERFORMANCE_REVIEW_P0_v0.10.0.md) — supplemental security/performance findings และ mitigations
+- [`ADDING_A_TOOL.md`](../ADDING_A_TOOL.md) — developer guide และ processing-heavy patterns
+- [`PRIVACY_AND_DEPENDENCIES.md`](../PRIVACY_AND_DEPENDENCIES.md) — privacy/dependency policy
+- [`VISUAL_SYSTEM.md`](../VISUAL_SYSTEM.md) — visual asset system
+- [`audio-tools-verification.md`](../audio-tools-verification.md) — audio behavior และ limitations
 
 
 ## Phase 6 — Trust & Usability (complete)
@@ -90,7 +92,7 @@ Phase 6 เพิ่ม Privacy route ที่ `#/privacy`, shared local-proces
 
 Local validation ล่าสุด: Phase 6 trust tests 12/12 ผ่าน และ Playwright ผ่าน 86 tests พร้อม 4 intentional skips จาก 90 cases บน Desktop Chromium, Android entry และ Android current profiles. Build, bundle, npm audit, Service Worker syntax และ diff checks ผ่าน โดย Entry gzip 32.7 KB, largest lazy chunk 366.1 KB และ JavaScript รวม gzip 976.4 KB. Final application/evidence HEAD `c4238a2` ผ่าน CI run `31994517569` และ Pages deploy run `31994517551`
 
-Production smoke script `scripts/phase6-production-smoke.mjs` ผ่าน 10/10 checks บน GitHub Pages จริงที่ viewport 360 × 740 ครอบคลุม Privacy, guides จาก 5 categories, Audio Trimmer upload/process/download, JSON sample, no-overflow, Escape และ hash back/forward/refresh. Trust-content audit และ sample metadata audit ถูกบันทึกใน `docs/phase6-trust-content-audit.md`; remaining limitations เป็นข้อจำกัดตาม implementation เช่น WAV output, browser codec support และ memory usage ไม่ใช่ unverified trust claims
+Production smoke script `scripts/phase6-production-smoke.mjs` ผ่าน 10/10 checks บน GitHub Pages จริงที่ viewport 360 × 740 ครอบคลุม Privacy, guides จาก 5 categories, Audio Trimmer upload/process/download, JSON sample, no-overflow, Escape และ hash back/forward/refresh. Trust-content audit และ sample metadata audit ถูกบันทึกใน `../phase6-trust-content-audit.md`; remaining limitations เป็นข้อจำกัดตาม implementation เช่น WAV output, browser codec support และ memory usage ไม่ใช่ unverified trust claims
 
 
 ## Phase 6 validation update — 17 สิงหาคม 2026
@@ -127,7 +129,7 @@ Most Used reuse usage counts จาก `utility-hub:usage` ใน LocalStorage �
 | Bundle | Entry gzip 33.7 KB; largest lazy chunk 366.1 KB; JS gzip 977.3 KB |
 | npm audit | 0 vulnerabilities |
 
-Production details are recorded in [`docs/phase7-production-evidence.md`](docs/phase7-production-evidence.md) and are reproducible with `node scripts/phase7-production-smoke.mjs`.
+Production details are recorded in [`phase7-production-evidence.md`](../phase7-production-evidence.md) and are reproducible with `node scripts/phase7-production-smoke.mjs`.
 
 
 ## Phase 7.1 — Most Used Carousel Visual & Motion Polish
@@ -153,7 +155,7 @@ Carousel ใช้ native `overflow-x: auto`, `scroll-snap-type: x mandatory`, `
 | CI | [31998196555](https://github.com/aodxx/Personal-Utility-Hub/actions/runs/31998196555) ผ่าน |
 | Pages deploy | [31998196579](https://github.com/aodxx/Personal-Utility-Hub/actions/runs/31998196579) ผ่าน |
 
-Detailed evidence is in [`docs/phase71-production-evidence.md`](docs/phase71-production-evidence.md), screenshot review notes are in [`docs/phase71-visual-findings.md`](docs/phase71-visual-findings.md), and the reproducible capture command is `node scripts/phase71-production-visual.mjs`.
+Detailed evidence is in [`phase71-production-evidence.md`](../phase71-production-evidence.md), screenshot review notes are in [`phase71-visual-findings.md`](../phase71-visual-findings.md), and the reproducible capture command is `node scripts/phase71-production-visual.mjs`.
 
 ## Approved Reliability and Wave 0/1 milestone — 2026-08-19
 

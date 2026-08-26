@@ -1,3 +1,5 @@
+export const MAX_JWT_CHARS = 256 * 1024;
+
 export type JwtExpiryStatus = 'none' | 'valid' | 'expired' | 'invalid';
 
 export interface JwtClaim {
@@ -31,7 +33,7 @@ function decodeBase64Url(value: string): string {
   }
   const bytes = Uint8Array.from(binary, (character) => character.charCodeAt(0));
   try {
-    return new TextDecoder().decode(bytes);
+    return new TextDecoder('utf-8', { fatal: true }).decode(bytes);
   } catch {
     throw new Error('ไม่สามารถถอดข้อความ JWT ได้ / Unable to decode JWT text');
   }
@@ -42,7 +44,7 @@ function parseJsonObject(segment: string, label: string): Record<string, unknown
   try {
     parsed = JSON.parse(decodeBase64Url(segment));
   } catch (error) {
-    if (error instanceof Error && error.message.includes('JWT มี Base64URL')) throw error;
+    if (error instanceof Error && (error.message.includes('JWT มี Base64URL') || error.message.includes('ไม่สามารถถอดข้อความ JWT'))) throw error;
     throw new Error(`${label} ของ JWT ไม่ใช่ JSON ที่ถูกต้อง / Invalid JWT ${label} JSON`);
   }
   if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) {
@@ -69,6 +71,7 @@ export function formatJwtClaimValue(value: unknown): string {
 export function inspectJwt(token: string, nowSeconds = Math.floor(Date.now() / 1000)): JwtInspection {
   const trimmed = token.trim();
   if (!trimmed) throw new Error('กรุณาวาง JWT ก่อนตรวจสอบ / Paste a JWT to inspect');
+  if (trimmed.length > MAX_JWT_CHARS) throw new Error(`JWT ยาวเกิน ${MAX_JWT_CHARS.toLocaleString()} ตัวอักษร / JWT exceeds ${MAX_JWT_CHARS.toLocaleString()} characters`);
   const segments = trimmed.split('.');
   if (segments.length !== 3 || segments.some((segment) => !segment)) {
     throw new Error('JWT ต้องมี 3 ส่วนคั่นด้วยจุด / JWT must contain 3 dot-separated segments');
