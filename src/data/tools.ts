@@ -42,6 +42,10 @@ import { metadata as imageWatermarkMetadata } from '../tools/image-watermark/met
 import { metadata as jsonLdGeneratorMetadata } from '../tools/json-ld-generator/metadata';
 import { metadata as flowchartStudioMetadata } from '../tools/flowchart-studio/metadata';
 import { metadata as imageCropMetadata } from '../tools/image-crop/metadata';
+import { metadata as jwtInspectorMetadata } from '../tools/jwt-inspector/metadata';
+import { metadata as hashVerifierMetadata } from '../tools/hash-verifier/metadata';
+import { metadata as regexPlaygroundMetadata } from '../tools/regex-playground/metadata';
+import { metadata as colorContrastMetadata } from '../tools/color-contrast/metadata';
 
 const svgLibraryAssets = async (): Promise<readonly string[]> => svgAssetManifest.map(({ assetUrl }) => assetUrl);
 
@@ -169,6 +173,10 @@ export const toolRegistry = [
   { metadata: csvProfilerMetadata, load: () => import('../tools/csv-profiler') },
   { metadata: imageWatermarkMetadata, load: () => import('../tools/image-watermark') },
   { metadata: imageCropMetadata, load: () => import('../tools/image-crop') },
+  { metadata: jwtInspectorMetadata, load: () => import('../tools/jwt-inspector') },
+  { metadata: hashVerifierMetadata, load: () => import('../tools/hash-verifier'), prepareOffline: processingWorkerAssets },
+  { metadata: regexPlaygroundMetadata, load: () => import('../tools/regex-playground') },
+  { metadata: colorContrastMetadata, load: () => import('../tools/color-contrast') },
   { metadata: jsonI18nMapperMetadata, load: () => import('../tools/json-i18n-mapper') },
   { metadata: jsonLdGeneratorMetadata, load: () => import('../tools/json-ld-generator') },
   { metadata: flowchartStudioMetadata, load: () => import('../tools/flowchart-studio') },

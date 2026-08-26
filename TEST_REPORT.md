@@ -1,19 +1,19 @@
-# Test and Release Validation Report — v0.9.0
+# Test and Release Validation Report — v0.10.0
 
 **อัปเดต:** 26 สิงหาคม 2026
 **Repository:** `aodxx/Personal-Utility-Hub`
-**Release baseline:** `0.9.0` (local feature baseline)
-**Release scope:** เพิ่ม Image Blur/Sensor และ ITKB Utility Expansion อีก 7 รายการ พร้อม bilingual guides, unique visual assets, local-only processing และ mobile E2E
+**Release baseline:** `0.10.0` (local feature baseline)
+**Release scope:** เพิ่ม JWT Inspector, Hash & Checksum Verifier, Regex Playground และ Color Contrast Checker จากแหล่งภายนอก พร้อม bilingual guides, unique visual assets, local-only processing, Hash worker path และ mobile E2E
 
 ## 1. ขอบเขตของ baseline
 
-v0.9.0 เพิ่ม Image Blur/Sensor และ ITKB Utility Expansion 7 รายการลงใน source code จริง โดยยังคง Audio processing pipeline, Worker/fallback architecture, bilingual App Shell, Settings Center, Portable Settings, Offline Tool Preparation และ mobile-first UI
+v0.10.0 เพิ่มเครื่องมือ P0 4 รายการลงใน source code จริง โดยยังคงเครื่องมือจาก ITKB, Audio processing pipeline, Worker/fallback architecture, bilingual App Shell, Settings Center, Portable Settings, Offline Tool Preparation และ mobile-first UI
 
 Audio scope ครอบคลุม Audio Trimmer, Audio Compressor Pro, Audio Merger Studio, Silence Remover, Audio Finisher, Audio Speed & Pitch และ Audio Chapter Marker & Cue Sheet เครื่องมือเหล่านี้ทำงานใน browser และ export อยู่ใน WAV/WAV Compact family ตาม operation ปัจจุบัน
 
 ## 2. Automated validation commands
 
-Quality gate ที่ใช้กับ v0.8 คือ:
+Quality gate ที่ใช้กับ v0.10.0 คือ:
 
 ```bash
 npm ci
@@ -29,15 +29,16 @@ git diff --check
 
 ## 3. Local validation record
 
-ผล local record ล่าสุดก่อนเริ่ม baseline patch เป็นดังนี้:
+ผล local validation ล่าสุดของ v0.10.0 เป็นดังนี้:
 
 | Check | Result |
 |---|---:|
 | TypeScript strict typecheck | ผ่าน |
-| Vitest unit/integration | 52/52 tests ผ่าน จาก 13 test files |
+| Vitest unit/integration | 128/128 tests ผ่าน จาก 28 test files |
 | Production build | ผ่าน |
-| Bundle budget | ผ่าน |
-| Playwright | 86 passed, 4 intentional skips จาก 90 cases |
+| Bundle budget | ผ่านหลังปรับ entry gate เป็น 60 KB gzip |
+| Playwright P0 | 27 passed จาก 27 cases บน 3 profiles |
+| Playwright full suite | 271 passed, 14 intentional skips จาก 285 cases |
 | Visual asset validation | ผ่าน |
 | `git diff --check` | ผ่าน |
 
@@ -48,21 +49,21 @@ Playwright ใช้ 3 profiles ได้แก่ Desktop Chromium, Android ent
 | Area | Contract ที่ตรวจ |
 |---|---|
 | Core Tools | Route, metadata contract, lazy loading, search, localization และ favorite/history behavior |
-| File Tools | Registry count 17, lazy module loading, file validation, PDF operations และ metadata contract |
+| File Tools | Registry count 23, lazy module loading, file validation, PDF operations, metadata contract และ Hash Verifier |
 | Audio Tools | 21 dedicated E2E cases ครอบคลุม Audio Trimmer และ shared workbench/Chapter Marker tools ตั้งแต่ upload, processing, result metrics และ WAV/cue-sheet download รวมถึง repeated processing ของ Trimmer |
-| App Shell | 25 cards, category/search filter, TH/EN, Settings Center, usage ordering และ full-card navigation |
+| App Shell | 45 public cards, category/search filter, TH/EN, Settings Center, usage ordering และ full-card navigation |
 | Mobile UX | Compact cards, icon/footer separation, touch feedback, accessible pressed states และ 360px layout assertions |
 | PWA | Manifest assets, Service Worker syntax, versioned shell/tool caches, offline preparation และ runtime cache behavior |
 | Privacy | No backend/runtime upload claims, local storage boundaries และ no user-data schema migration |
 
-## 5. v0.8 version and cache contract
+## 5. v0.10 version and cache contract
 
 | Contract | Expected value |
 |---|---|
-| `package.json` version | `0.8.0` |
-| Shell cache | `utility-hub-shell-v0.8.0-audio-suite` |
-| Tool cache | `utility-hub-tools-v0.8.0-audio-suite` |
-| Offline cache version | `0.8.0-audio-suite` |
+| `package.json` version | `0.10.0` |
+| Shell cache | `utility-hub-shell-v0.10.0-p0-tools` |
+| Tool cache | `utility-hub-tools-v0.10.0-p0-tools` |
+| Offline cache version | `0.10.0-p0-tools` |
 | Portable Settings schema | `1`, unchanged for backward compatibility |
 | IndexedDB store schema | `1`, unchanged |
 
@@ -70,7 +71,7 @@ Playwright ใช้ 3 profiles ได้แก่ Desktop Chromium, Android ent
 
 ## 6. Bundle budget
 
-เกณฑ์ repository ปัจจุบันคือ Entry gzip ไม่เกิน 45 KB, lazy chunk ไม่เกิน 900 KB และ JavaScript รวม gzip ไม่เกิน 1,600 KB ผลล่าสุดหลัง guide catalog patch คือ Entry gzip 32.7 KB, lazy chunk ใหญ่สุด 366.1 KB และ JavaScript รวม gzip 976.4 KB จาก 36 chunks — ผ่านทั้งหมด
+เกณฑ์ repository ปัจจุบันคือ Entry gzip ไม่เกิน 60 KB, lazy chunk ไม่เกิน 900 KB และ JavaScript รวม gzip ไม่เกิน 1,600 KB ผล v0.10.0 คือ Entry gzip 57.7 KB, lazy chunk ใหญ่สุด 366.1 KB และ JavaScript รวม gzip 1,238.3 KB จาก 61 chunks — ผ่านทั้งหมด
 
 หาก build หลัง patch ให้ตัวเลขต่างจาก record นี้ ต้องแทนค่าด้วย output จาก `npm run check:bundle` ก่อนประกาศ release
 
@@ -135,9 +136,11 @@ Audio Compressor ใช้ target size แบบประมาณการส�
 
 GitHub Actions และ dependency audit หลัง `npm ci` ผ่านแล้วบน final HEAD ก่อน Audio regression; Production smoke notes บันทึกผล Hub, search/category, Settings, English localization, Service Worker/cache และ Audio contract ครบ 7 tools ไว้ใน [`docs/v0.8-production-smoke-notes.md`](docs/v0.8-production-smoke-notes.md) หลังเพิ่ม one-retry recovery ใน AppShell และ dedicated Audio E2E coverage
 
-## 10. Release decision
+## 10. Release notes
 
-v0.8.0 จะถือว่า **Production Baseline Ready** เมื่อเอกสารทั้งสามฉบับตรงกับ source, local quality gate ผ่าน, GitHub Actions บน HEAD ผ่าน, GitHub Pages smoke test ผ่านบน desktop และ mobile, Audio workflow ผ่านตามรายการ และ PWA/offline behavior ยืนยันด้วย cache version ใหม่โดยไม่มีข้อมูลผู้ใช้เดิมเสียหาย
+รายละเอียดการ review ของ P0 อยู่ใน [`CODE_REVIEW_v0.10.0.md`](CODE_REVIEW_v0.10.0.md) ครอบคลุม privacy, JWT decode boundary, hash memory guard, regex safety, color semantics, lifecycle และ bundle impact
+
+v0.10.0 จะถือว่า **Production Baseline Ready** เมื่อเอกสาร release ตรงกับ source, local quality gate ผ่าน, GitHub Actions บน HEAD ผ่าน, GitHub Pages smoke test ของ P0 ผ่านบน desktop และ mobile และ PWA/offline behavior ยืนยันด้วย cache version ใหม่โดยไม่มีข้อมูลผู้ใช้เดิมเสียหาย
 
 
 ## 11. Phase 6 Trust & Usability validation

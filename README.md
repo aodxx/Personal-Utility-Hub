@@ -2,7 +2,7 @@
 
 ศูนย์รวม **privacy-first utility tools** แบบ Static PWA ที่ประมวลผลไฟล์และข้อมูลภายในเบราว์เซอร์เป็นหลัก โดยใช้ Modular Tool Registry, Lazy Loading, Dedicated Web Worker และ Offline/PWA support เมื่อความสามารถของเบราว์เซอร์รองรับ
 
-**สถานะปัจจุบัน:** `v0.9.0` — เพิ่มเครื่องมือจาก ITKB อีก 7 รายการ ได้แก่ PDF Page Organizer, CSV Thai Encoding Repair, JSON i18n Mapper, Batch Image Watermark, JSON-LD Generator, Flowchart Studio และ Circle/Rounded Crop; รวม 42 tools (41 public tools) มี bilingual tool-specific guides และทำงานแบบ client-side โดยไม่เพิ่ม backend, accounts หรือ cloud storage
+**สถานะปัจจุบัน:** `v0.10.0` — เพิ่มเครื่องมือ P0 จากแหล่งภายนอกอีก 4 รายการ ได้แก่ JWT Inspector, Hash & Checksum Verifier, Regex Playground และ Color Contrast Checker; รวม 46 tools (45 public tools) มี bilingual tool-specific guides และทำงานแบบ client-side โดยไม่เพิ่ม backend, accounts หรือ cloud storage
 
 ## เครื่องมือที่มีอยู่ใน main
 
@@ -39,9 +39,13 @@
 - PDF Split
 - PDF to Image
 - File Metadata Viewer
+- Hash & Checksum Verifier — คำนวณและเปรียบเทียบ SHA-256/SHA-384/SHA-512 ของข้อความหรือไฟล์
 
 ### Developer Tools
 
+- JWT Inspector — decode Header, Payload และ Claims ของ JWT แบบ local-only
+- Regex Playground — ทดลอง pattern, match, capture groups และ replace preview
+- Color Contrast Checker — ตรวจ contrast ratio ตาม WCAG พร้อม live preview
 - JSON i18n Mapper — ตรวจ key ของไฟล์แปลภาษา
 - JSON-LD Generator — สร้าง Schema.org structured data
 - Flowchart Studio — สร้างและ export แผนผัง workflow
@@ -111,9 +115,9 @@ IndexedDB ใช้เก็บเฉพาะสถานะว่า tool vers
 
 ## Version และ release contract
 
-Release baseline ปัจจุบันคือ `0.8.1` โดย identifiers ที่เกี่ยวกับ cache ใช้ `v0.8.1-image-blur` ใน Service Worker และ Offline Tool Manager การเปลี่ยน release version จะ invalidate shell/tool cache รุ่นเก่า แต่ไม่เปลี่ยน schema ข้อมูลผู้ใช้โดยอัตโนมัติ
+Release baseline ปัจจุบันคือ `0.10.0` โดย identifiers ที่เกี่ยวกับ cache ใช้ `v0.10.0-p0-tools` ใน Service Worker และ Offline Tool Manager การเปลี่ยน release version จะ invalidate shell/tool cache รุ่นเก่า แต่ไม่เปลี่ยน schema ข้อมูลผู้ใช้โดยอัตโนมัติ
 
-PWA manifest ไม่มี version field แยกต่างหาก จึงใช้ package version และ versioned cache identifiers เป็น release source ที่ตรวจสอบได้ ดูรายละเอียด milestone และข้อจำกัดได้ใน [`PROGRESS.md`](PROGRESS.md) และผล validation ใน [`TEST_REPORT.md`](TEST_REPORT.md)
+PWA manifest ไม่มี version field แยกต่างหาก จึงใช้ package version และ versioned cache identifiers เป็น release source ที่ตรวจสอบได้ สำหรับ Hash Verifier มี SHA-256/SHA-384/SHA-512 worker path และมี 40 MB file guard; JWT Inspector decode เท่านั้น ไม่ verify ลายเซ็น ดูรายละเอียด milestone และข้อจำกัดได้ใน [`PROGRESS.md`](PROGRESS.md) และผล validation ใน [`TEST_REPORT.md`](TEST_REPORT.md)
 
 ## เริ่มพัฒนา
 
@@ -159,6 +163,7 @@ Playwright ตั้งค่าไว้ 3 projects ได้แก่ Desktop 
 |---|---|
 | [`PROGRESS.md`](PROGRESS.md) | Milestones, release status และ known limitations |
 | [`TEST_REPORT.md`](TEST_REPORT.md) | Automated validation, browser matrix และ production evidence |
+| [`CODE_REVIEW_v0.10.0.md`](CODE_REVIEW_v0.10.0.md) | Code review, privacy/security findings และ P0 validation evidence |
 | [`docs/ADDING_A_TOOL.md`](docs/ADDING_A_TOOL.md) | Tool contract, registry, taxonomy และ processing-heavy guidance |
 | [`docs/PRIVACY_AND_DEPENDENCIES.md`](docs/PRIVACY_AND_DEPENDENCIES.md) | Privacy baseline และ dependency policy |
 | [`docs/VISUAL_SYSTEM.md`](docs/VISUAL_SYSTEM.md) | Asset และ UI visual system |

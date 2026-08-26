@@ -3,7 +3,7 @@
 > แหล่งข้อมูลกลางสำหรับสถานะการพัฒนา การทดสอบ การ release และข้อจำกัดของ Personal Utility Hub
 
 **อัปเดตล่าสุด:** 26 สิงหาคม 2026
-**สถานะโครงการ:** Local feature baseline `v0.9.0` — เพิ่มเครื่องมือใหม่จาก ITKB 7 รายการ พร้อม bilingual guides, unique visual assets, local-only processing และ mobile E2E; ยังไม่ได้ push หรือประกาศ deploy
+**สถานะโครงการ:** Local feature baseline `v0.10.0` — เพิ่มเครื่องมือ P0 จากแหล่งภายนอก 4 รายการ พร้อม bilingual guides, unique visual assets, local-only processing, Hash worker path และ mobile E2E; ยังไม่ได้ push หรือประกาศ deploy
 **เว็บไซต์:** https://aodxx.github.io/Personal-Utility-Hub/
 
 ## สรุป milestone
@@ -20,10 +20,11 @@
 | v0.8.0 — Audio Tool Suite Baseline | CI/Deploy ผ่าน; production smoke บางส่วนผ่าน | Versioned cache contract, source-aligned docs, CI run `31988106872`, Pages deploy run `31988106901` และ smoke notes |
 | v0.8.1 — Image Blur/Sensor | ผ่าน local quality gates | เลือกกรอบสี่เหลี่ยม, Blur/Pixelate, progress/cancel, Worker/fallback, local-only output และ unique SVG asset |
 | v0.9.0 — ITKB Utility Expansion | ผ่าน local quality gates | PDF Page Organizer, CSV Thai Encoding Repair, JSON i18n Mapper, Batch Image Watermark, JSON-LD Generator, Flowchart Studio และ Circle/Rounded Crop พร้อม 42 metadata modules |
+| v0.10.0 — External P0 Utility Expansion | กำลังตรวจสอบก่อน release | JWT Inspector, Hash & Checksum Verifier, Regex Playground และ Color Contrast Checker พร้อม worker protocol, bilingual guides, 46 metadata modules และ mobile E2E |
 
 ## ความสามารถปัจจุบัน
 
-Catalog ปัจจุบันมี **42 tools (41 public tools)** และ file-oriented tools 22 รายการ ทุก tool ใช้ client-side processing, lazy loading และ metadata contract ที่ประกาศ processing/privacy behavior อย่างชัดเจน
+Catalog ปัจจุบันมี **46 tools (45 public tools)** และ file-oriented tools 23 รายการ ทุก tool ใช้ client-side processing, lazy loading และ metadata contract ที่ประกาศ processing/privacy behavior อย่างชัดเจน
 
 ### Audio Tool Suite
 
@@ -41,6 +42,10 @@ Audio pipeline แชร์ `src/core/audio-processing.ts`, `src/tools/audio-wor
 
 ### New Utility Suite
 
+- JWT Inspector
+- Hash & Checksum Verifier
+- Regex Playground
+- Color Contrast Checker
 - Privacy Redactor Studio
 - File Diff & Change Map
 - Image Contact Sheet Studio
@@ -48,18 +53,18 @@ Audio pipeline แชร์ `src/core/audio-processing.ts`, `src/tools/audio-wor
 - CSV Data Cleaner & Profiler
 - Audio Chapter Marker & Cue Sheet
 
-## Release contract v0.8.1
+## Release contract v0.10.0
 
-- `package.json` ใช้ version `0.8.1`
-- Service Worker ใช้ shell cache `utility-hub-shell-v0.8.1-image-blur` และ tool cache `utility-hub-tools-v0.8.1-image-blur`
-- Offline Tool Manager ใช้ `OFFLINE_CACHE_VERSION = 0.8.1-image-blur`
+- `package.json` ใช้ version `0.10.0`
+- Service Worker ใช้ shell cache `utility-hub-shell-v0.10.0-p0-tools` และ tool cache `utility-hub-tools-v0.10.0-p0-tools`
+- Offline Tool Manager ใช้ `OFFLINE_CACHE_VERSION = 0.10.0-p0-tools`
 - PWA manifest ไม่มี version field แยกต่างหาก จึงไม่ถูกแก้ให้มีข้อมูลซ้ำ
 - Portable Settings และ IndexedDB store ยังคง schema version `1` เพื่อรักษา backward compatibility กับข้อมูลผู้ใช้เดิม
 - Cache รุ่นเก่าจะถูกล้างโดย Service Worker activation ตาม cache allow-list
 
 ## Validation status
 
-ผล local quality gate ล่าสุด: TypeScript, Vitest, production build, registry, SVG integrity, bundle budget, audit, Service Worker syntax และ diff checks ผ่าน; Playwright ครบ 204 cases ผ่าน 190 และ skip 14 แบบ intentional เมื่อรัน single-worker เพื่อหลีกเลี่ยง Chromium crash จาก memory pressure ใน sandbox
+ผล local quality gate ระหว่างพัฒนา v0.10.0: TypeScript, Vitest 128 tests, production build, registry 46 metadata modules, SVG integrity และ P0 Playwright 27 cases ผ่านแล้ว; full Playwright, bundle budget, audit, Service Worker syntax และ diff checks จะตรวจซ้ำใน release gate
 
 Production smoke รอบล่าสุดยืนยัน Hub, search/category, Settings, English localization, v0.8 Service Worker/cache และ Audio contract ครบ 7 tools: Audio Trimmer, Audio Compressor Pro, Audio Merger Studio, Silence Remover, Audio Finisher, Audio Speed & Pitch และ Audio Chapter Marker & Cue Sheet โดยรายละเอียดอยู่ใน `docs/v0.8-production-smoke-notes.md` การเพิ่ม one-retry recovery ใน AppShell ช่วยรับมือ transient lazy-module load state ก่อนแสดง error UI
 

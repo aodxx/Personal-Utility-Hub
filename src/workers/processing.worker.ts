@@ -1,5 +1,6 @@
 import { PDFDocument, type PDFImage } from 'pdf-lib';
 import { processAudio, trimPcm } from '../core/audio-processing';
+import { hashBytes, type HashAlgorithm } from '../core/hash';
 import { MAX_IMAGE_BYTES, MAX_IMAGE_DIMENSION, MAX_IMAGE_PIXELS, renderRedaction, SUPPORTED_IMAGE_TYPES } from '../core/image-processing';
 import { MAX_PDF_PAGES, parsePageSelection } from '../core/file-processing';
 import type {
@@ -124,9 +125,18 @@ async function trimAudio(pcm: ProcessingPayloadMap['audio-trim']['pcm'], options
 
 async function sha256(file: File, jobId: string): Promise<ProcessingResultMap['sha256']> {
   report(jobId, 20, 'กำลังอ่านข้อมูลสำหรับ SHA-256');
-  const hash = await crypto.subtle.digest('SHA-256', await file.arrayBuffer());
+  const value = await hashBytes(await file.arrayBuffer(), 'SHA-256');
   report(jobId, 100, 'คำนวณ SHA-256 เสร็จแล้ว');
-  return { value: Array.from(new Uint8Array(hash), (byte) => byte.toString(16).padStart(2, '0')).join('') };
+  return { value };
+}
+
+async function hash(file: File, algorithm: HashAlgorithm, jobId: string): Promise<ProcessingResultMap['hash']> {
+  report(jobId, 15, `กำลังอ่านข้อมูลสำหรับ ${algorithm}`);
+  const bytes = await file.arrayBuffer();
+  report(jobId, 45, `กำลังคำนวณ ${algorithm}`);
+  const value = await hashBytes(bytes, algorithm);
+  report(jobId, 100, `คำนวณ ${algorithm} เสร็จแล้ว`);
+  return { value, algorithm, byteLength: bytes.byteLength };
 }
 
 function imageDimensions(bitmap: ImageBitmap, options: ImageProcessOptions): { width: number; height: number } {
@@ -200,6 +210,10 @@ async function execute<K extends ProcessingJobKind>(request: ProcessingRequest<K
     return splitPdf(value.file, value.selection, jobId) as Promise<ProcessingResultMap[K]>;
   }
   if (kind === 'sha256') return sha256((payload as ProcessingPayloadMap['sha256']).file, jobId) as Promise<ProcessingResultMap[K]>;
+  if (kind === 'hash') {
+    const value = payload as ProcessingPayloadMap['hash'];
+    return hash(value.file, value.algorithm, jobId) as Promise<ProcessingResultMap[K]>;
+  }
   if (kind === 'audio-trim') {
     const value = payload as ProcessingPayloadMap['audio-trim'];
     return trimAudio(value.pcm, value.options, jobId) as Promise<ProcessingResultMap[K]>;

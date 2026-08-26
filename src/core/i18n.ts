@@ -90,6 +90,10 @@ const categoryEnglish: Record<string, string> = {
   'json-ld-generator': { title: 'JSON-LD Generator', description: 'Create Schema.org structured data for common website content types.' },
   'flowchart-studio': { title: 'Flowchart Studio', description: 'Render a local workflow diagram and export SVG, PNG or JSON.' },
   'image-crop': { title: 'Circle & Rounded Crop', description: 'Create transparent circle or rounded image crops locally.' },
+  'jwt-inspector': { title: 'JWT Inspector', description: 'Decode JWT headers, payloads and claims locally without verifying or uploading the token.' },
+  'hash-verifier': { title: 'Hash & Checksum Verifier', description: 'Calculate and compare SHA-256, SHA-384 or SHA-512 hashes for text and files locally.' },
+  'regex-playground': { title: 'Regex Playground', description: 'Test regular expressions with matches, capture groups and replacement preview in your browser.' },
+  'color-contrast': { title: 'Color Contrast Checker', description: 'Check WCAG contrast ratios for text and interface colors locally with a live preview.' },
 };
 
 export function localizeCategory(category: string, locale: AppLocale): string {

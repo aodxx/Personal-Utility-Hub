@@ -20,15 +20,15 @@ async function createPdf(name: string, pages: number): Promise<File> {
 }
 
 describe('Phase 3 File Tools', () => {
-  it('registers twenty-two active, offline, client-side tools', () => {
-    expect(fileTools).toHaveLength(22);
+  it('registers twenty-three active, offline, client-side tools', () => {
+    expect(fileTools).toHaveLength(23);
     expect(fileTools.every(({ status, processing, supportsOffline }) => status === 'active' && processing === 'client-side' && supportsOffline)).toBe(true);
   });
 
   it('lazy-loads every File Tool with matching Registry metadata', async () => {
     const fileIds = new Set<string>(fileTools.map(({ id }) => id));
     const entries = toolRegistry.filter(({ metadata }) => fileIds.has(metadata.id));
-    expect(entries).toHaveLength(22);
+    expect(entries).toHaveLength(23);
     for (const entry of entries) {
       const module = await entry.load();
       expect(() => assertToolModule(module, entry.metadata.id)).not.toThrow();

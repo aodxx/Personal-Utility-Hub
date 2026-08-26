@@ -21,6 +21,7 @@ import { metadata as imagesToPdf } from '../tools/images-to-pdf/metadata';
 import { metadata as pdfMerge } from '../tools/pdf-merge/metadata';
 import { metadata as pdfSplit } from '../tools/pdf-split/metadata';
 import { metadata as pdfToImage } from '../tools/pdf-to-image/metadata';
+import { metadata as hashVerifier } from '../tools/hash-verifier/metadata';
 
 export const fileTools = [
   audioTrimmer,
@@ -45,4 +46,5 @@ export const fileTools = [
   pdfSplit,
   pdfToImage,
   fileMetadata,
+  hashVerifier,
 ] as const satisfies readonly ToolMetadata[];

@@ -1,4 +1,5 @@
 import { trimPcm } from './audio-processing';
+import type { HashAlgorithm } from './hash';
 import type {
   ImageProcessOptions,
   ProcessingJobKind,
@@ -53,6 +54,11 @@ async function runFallback<K extends ProcessingJobKind>(
     const bytes = new Uint8Array(await file.arrayBuffer());
     const hash = await crypto.subtle.digest('SHA-256', bytes);
     result = { value: Array.from(new Uint8Array(hash), (byte) => byte.toString(16).padStart(2, '0')).join('') };
+  } else if (kind === 'hash') {
+    const hashPayload = payload as ProcessingPayloadMap['hash'];
+    const bytes = await hashPayload.file.arrayBuffer();
+    const { hashBytes } = await import('./hash');
+    result = { value: await hashBytes(bytes, hashPayload.algorithm), algorithm: hashPayload.algorithm, byteLength: bytes.byteLength };
   } else if (kind === 'audio-trim') {
     const audioPayload = payload as ProcessingPayloadMap['audio-trim'];
     result = await trimPcm(audioPayload.pcm, audioPayload.options, options.onProgress);
@@ -142,6 +148,7 @@ export const imagesToPdfAsync = (files: File[], options?: ProcessingJobOptions) 
 export const mergePdfsAsync = (files: File[], options?: ProcessingJobOptions) => runProcessingJob('pdf-merge', { files }, options);
 export const splitPdfAsync = (file: File, selection: string, options?: ProcessingJobOptions) => runProcessingJob('pdf-split', { file, selection }, options);
 export const sha256Async = async (file: File, options?: ProcessingJobOptions): Promise<string> => (await runProcessingJob('sha256', { file }, options)).value;
+export const hashAsync = async (file: File, algorithm: HashAlgorithm, options?: ProcessingJobOptions): Promise<ProcessingResultMap['hash']> => runProcessingJob('hash', { file, algorithm }, options);
 export const trimAudioAsync = (pcm: ProcessingPayloadMap['audio-trim']['pcm'], trimOptions: ProcessingPayloadMap['audio-trim']['options'], options?: ProcessingJobOptions) => runProcessingJob('audio-trim', { pcm, options: trimOptions }, options);
 export const processAudioAsync = (pcm: ProcessingPayloadMap['audio-process']['pcm'], operation: ProcessingPayloadMap['audio-process']['operation'], options?: ProcessingJobOptions) => runProcessingJob('audio-process', { pcm, operation }, options);
 export const processImageAsync = (file: File, imageOptions: ImageProcessOptions, options?: ProcessingJobOptions) => runProcessingJob('image-process', { file, options: imageOptions }, options);

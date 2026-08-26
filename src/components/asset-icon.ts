@@ -56,6 +56,10 @@ export const visualAssetIds = [
   'tool-json-ld-generator',
   'tool-flowchart-studio',
   'tool-image-crop',
+  'tool-jwt-inspector',
+  'tool-hash-verifier',
+  'tool-regex-playground',
+  'tool-color-contrast',
 ] as const;
 
 export type VisualAssetId = (typeof visualAssetIds)[number];
@@ -66,7 +70,7 @@ export function isVisualAssetId(value: string | undefined): value is VisualAsset
 
 export function assetIcon(id: VisualAssetId, className = ''): string {
   const classes = ['asset-icon', className].filter(Boolean).join(' ');
-  const spriteUrl = `${import.meta.env.BASE_URL}icons/utility-3d-icons.svg?v=0.9.0-all-tools#${id}`;
+  const spriteUrl = `${import.meta.env.BASE_URL}icons/utility-3d-icons.svg?v=0.10.0-p0-tools#${id}`;
 
   return `<svg class="${classes}" aria-hidden="true" focusable="false"><use href="${spriteUrl}"></use></svg>`;
 }
