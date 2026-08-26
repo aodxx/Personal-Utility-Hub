@@ -70,6 +70,7 @@ const categoryEnglish: Record<string, string> = {
   'audio-chapter-marker': { title: 'Audio Chapter Marker & Cue Sheet', description: 'Mark chapters on a local waveform and export cue sheets for podcasts and lectures.' },
   'foundation-demo': { title: 'Foundation Demo', description: 'Verify the registry, routing, lazy loading and module lifecycle.' },
   'json-formatter': { title: 'JSON Formatter / Validator', description: 'Format, minify and validate JSON directly in your browser.' },
+  'data-format-converter': { title: 'Data Format Converter', description: 'Convert JSON, YAML, TOML and XML locally with transparent validation notes.' },
   base64: { title: 'Base64 Encoder / Decoder', description: 'Encode and decode Unicode text or Base64 data in your browser.' },
   'text-formatter': { title: 'Text Formatter', description: 'Clean whitespace, blank lines and letter case without uploading text.' },
   'qr-generator': { title: 'QR Code Generator', description: 'Create downloadable QR Code images entirely on this device.' },

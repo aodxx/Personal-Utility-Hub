@@ -317,3 +317,23 @@ Static checks passed: TypeScript typecheck, Vitest unit suite, production build,
 | Integrity/security | Registry 46 modules ผ่าน, SVG 120 assets ผ่าน, npm audit 0 vulnerabilities, Service Worker syntax และ diff check ผ่าน |
 
 Release นี้ผ่าน local quality gates แล้ว แต่ยังไม่ถือว่าเป็น production deployment หรือ CI-verified จนกว่าจะ push commit และตรวจ remote/Pages evidence ใหม่ การ optimize โดยเฉพาะ Balanced/Aggressive อาจเปลี่ยน visual semantics จึงยังต้องตรวจ preview ก่อน export; gzip comparison อาจไม่พร้อมใน browser บางรุ่น
+
+
+## v0.12.0 — Data Format Converter P1 — 27 สิงหาคม 2026
+
+เพิ่ม `data-format-converter` เป็นเครื่องมือใหม่ในหมวดข้อความและข้อมูล โดยไม่ขยายภารกิจของ JSON Formatter เดิม รองรับ JSON, YAML, TOML และ XML ผ่าน normalized JSON model มี source/target selectors, sample, swap, copy, clear, parser diagnostics พร้อม line/column เมื่อมีข้อมูลจริง และ warnings สำหรับ conversion ที่อาจสูญเสีย semantics
+
+| งาน | ผลล่าสุด |
+|---|---|
+| Package/cache release | package `0.12.0`; shell/tool/offline cache `0.12.0-p1-data`; sprite query `v=0.12.0-p1-data` |
+| Parser dependencies | `yaml@2.9.0`, `smol-toml@1.8.0`, `fast-xml-parser@5.11.0`, `jsonc-parser@3.3.1` แบบ exact versions ใน lockfile |
+| Input/output boundary | input 500,000 chars/2 MB UTF-8; output 1,000,000 chars |
+| XML policy | attributes `@_`, text `#text`, repeated tags เป็น arrays, XML output ห่อด้วย `<root>`, entities disabled |
+| Regression tests | converter unit 9/9, module contract ผ่าน, full Vitest 164/164 จาก 34 files |
+| Browser regression | targeted converter 4 passed/2 intentional skips จาก 6; full Playwright 275 passed/16 intentional skips จาก 291 ด้วย single worker |
+| Bundle | Entry 59.2 KB gzip; largest lazy 366.1 KB; total JavaScript 1,305.7 KB จาก 63 chunks; converter lazy chunk 203.82 KB raw / 64.77 KB gzip |
+| Integrity/security | Registry 47 modules ผ่าน, SVG 120 assets ผ่าน, npm audit 0 vulnerabilities, Service Worker syntax และ diff check ผ่าน |
+
+Release นี้ผ่าน local quality gates และพร้อม commit/push โดยยังไม่ถือเป็น CI หรือ production deployment evidence ใหม่ ความเสี่ยงที่ประกาศไว้คือ YAML comments/anchors/tags, TOML date/time semantics และ XML comments/namespaces/mixed content อาจไม่ round-trip เหมือนต้นฉบับ หาก benchmark ภายหลังพบว่า parser ทำให้ UI ค้างใกล้ input limit จึงค่อยแยก Worker milestone พร้อม cancellation protocol
+
+References: [`P1_DATA_FORMAT_CONVERTER_FEASIBILITY.md`](../research/P1_DATA_FORMAT_CONVERTER_FEASIBILITY.md), [`CODE_REVIEW_v0.12.0.md`](../reviews/CODE_REVIEW_v0.12.0.md)

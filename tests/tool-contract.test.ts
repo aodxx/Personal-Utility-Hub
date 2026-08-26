@@ -17,6 +17,27 @@ describe('tool contract', () => {
     expect(validateToolMetadata({ ...metadata, id: 'Test Tool', route: '/wrong' })).toHaveLength(2);
   });
 
+  it('lazy-loads and cleans up the Data Format Converter module', async () => {
+    const entry = toolRegistry.find(({ metadata: entryMetadata }) => entryMetadata.id === 'data-format-converter');
+    expect(entry?.metadata).toMatchObject({ id: 'data-format-converter', route: '/tools/data-format-converter', supportsOffline: true });
+    if (!entry) throw new Error('missing data-format-converter registry entry');
+    const module = await entry.load();
+    const root = document.createElement('div');
+    module.mount(root);
+    expect(root.querySelector('#data-format-source')).not.toBeNull();
+    const source = root.querySelector<HTMLTextAreaElement>('#data-format-source');
+    const result = root.querySelector<HTMLTextAreaElement>('#data-format-result');
+    const convert = root.querySelector<HTMLButtonElement>('[data-data-format-action="convert"]');
+    expect(source).not.toBeNull();
+    expect(result).not.toBeNull();
+    expect(convert).not.toBeNull();
+    if (!source || !result || !convert) throw new Error('missing converter controls');
+    source.value = '{"name":"before-unmount"}';
+    module.unmount?.();
+    convert.click();
+    expect(result.value).toBe('');
+  });
+
   it('prepares all SVG library assets for offline caching', async () => {
     const entry = toolRegistry.find(({ metadata: entryMetadata }) => entryMetadata.id === 'svg-asset-studio');
     expect(entry?.metadata.supportsOffline).toBe(true);

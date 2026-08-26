@@ -417,3 +417,27 @@ Flowchart Studio ใช้ DSL แบบ `Step A -> Step B` และสร้�
 ข้อจำกัดที่ยังคงประกาศตาม implementation คือ gzip comparison อาจไม่พร้อมใน browser บางรุ่น และ raw/gzip savings ไม่ใช่การรับรองว่า visual semantics จะเหมือนเดิม โดยเฉพาะ Balanced/Aggressive preset ผู้ใช้ต้องตรวจ preview ก่อน export และสามารถกู้คืน SVG ก่อน optimize ได้จากปุ่ม Restore previous SVG
 
 การตรวจรอบนี้เป็น local validation ยังไม่ได้ใช้ GitHub Actions หรือ GitHub Pages deployment เป็นหลักฐานใหม่จนกว่าจะมีการ push commit นี้และตรวจผล remote จริง
+
+## 16. v0.12.0 — Data Format Converter P1 — 27 สิงหาคม 2026
+
+เพิ่ม `data-format-converter` เป็น beta tool ใหม่ในหมวดข้อความและข้อมูล รองรับ JSON, YAML, TOML และ XML แบบ JSON-centered conversion โดยใช้ parser dependencies แบบ exact version, strict input/output guards, normalized parser errors และ conversion-loss warnings เครื่องมือทำงานใน browser memory เท่านั้นและโหลด parser implementation เป็น lazy chunk
+
+| Gate | ผลลัพธ์ |
+|---|---|
+| TypeScript | ผ่าน `npm run typecheck` |
+| Full Vitest | ผ่าน 164/164 tests จาก 34 test files |
+| Converter unit suite | ผ่าน 9/9 tests ครอบคลุม conversion matrix, diagnostics, warnings และ size guards |
+| Module contract | ผ่าน lazy load, metadata, mount และ unmount event cleanup assertions |
+| Converter Playwright targeted | ผ่าน 4 tests, 2 intentional skips จาก 6 cases บน configured profiles |
+| Full Playwright | ผ่าน 275 tests, 16 intentional skips จาก 291 cases ด้วย `--workers=1` |
+| Production build | ผ่าน `npm run build` |
+| Bundle | Entry 59.2 KB gzip; largest lazy chunk 366.1 KB; JavaScript รวม 1,305.7 KB จาก 63 chunks; converter lazy chunk 203.82 KB raw / 64.77 KB gzip |
+| Registry | ผ่าน 47 metadata modules, unique routes และ lazy registrations |
+| SVG integrity | ผ่าน 120 assets, exact duplicates 0, geometry duplicates 0, near-duplicate warnings 0 |
+| Dependency audit | `npm audit --audit-level=high` พบ 0 vulnerabilities |
+| Service Worker | `node --check public/sw.js` ผ่าน; cache namespace ใหม่ `v0.12.0-p1-data` |
+| Diff quality | `git diff --check` ผ่าน |
+
+ข้อจำกัดของรุ่นนี้คือ conversion เป็น JSON-centered และไม่รับประกัน round-trip fidelity ของ YAML comments/anchors/tags, TOML date/time semantics หรือ XML comments, namespaces และ mixed content ordering XML output ใช้ generated `<root>` wrapper และ TOML output ต้องมี root table หาก parser ไม่ให้ตำแหน่ง error ระบบจะแสดงข้อความโดยไม่เดา line/column
+
+ผลทั้งหมดเป็น **local validation** ก่อน commit/push และยังไม่ใช่ GitHub Actions หรือ GitHub Pages deployment evidence ใหม่

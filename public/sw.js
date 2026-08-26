@@ -1,5 +1,5 @@
-const SHELL_CACHE = 'utility-hub-shell-v0.11.0-p1-svg';
-const TOOL_CACHE = 'utility-hub-tools-v0.11.0-p1-svg';
+const SHELL_CACHE = 'utility-hub-shell-v0.12.0-p1-data';
+const TOOL_CACHE = 'utility-hub-tools-v0.12.0-p1-data';
 const CACHE_NAMES = [SHELL_CACHE, TOOL_CACHE];
 const APP_SCOPE = self.registration.scope;
 const APP_SHELL_URL = new URL('index.html', APP_SCOPE).href;

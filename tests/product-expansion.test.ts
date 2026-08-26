@@ -14,7 +14,7 @@ describe('Phase 5 product expansion', () => {
   });
 
   it('orders most-used tools first and keeps registry order for ties', () => {
-    const tools = toolCatalog.slice(0, 4);
+    const tools = toolCatalog.filter(({ id }) => ['foundation-demo', 'json-formatter', 'base64', 'text-formatter'].includes(id));
     const ordered = orderTools(tools, 'frequent', { base64: 4, 'text-formatter': 4, 'json-formatter': 1 }, tools.map(({ id }) => id));
     expect(ordered.map(({ id }) => id)).toEqual(['base64', 'text-formatter', 'json-formatter', 'foundation-demo']);
     expect(orderTools(tools, 'catalog', { base64: 99 }, tools.map(({ id }) => id))).toEqual(tools);
