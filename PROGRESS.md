@@ -2,8 +2,8 @@
 
 > แหล่งข้อมูลกลางสำหรับสถานะการพัฒนา การทดสอบ การ release และข้อจำกัดของ Personal Utility Hub
 
-**อัปเดตล่าสุด:** 22 สิงหาคม 2026
-**สถานะโครงการ:** Production Baseline `v0.8.0` — Phase 5 merge เข้า `main` แล้ว; CI และ Pages deploy บน HEAD ผ่าน
+**อัปเดตล่าสุด:** 26 สิงหาคม 2026
+**สถานะโครงการ:** Local feature baseline `v0.9.0` — เพิ่มเครื่องมือใหม่จาก ITKB 7 รายการ พร้อม bilingual guides, unique visual assets, local-only processing และ mobile E2E; ยังไม่ได้ push หรือประกาศ deploy
 **เว็บไซต์:** https://aodxx.github.io/Personal-Utility-Hub/
 
 ## สรุป milestone
@@ -18,10 +18,12 @@
 | UX/UI Refinement | เสร็จสิ้นและเผยแพร่แล้ว | Full-card navigation, compact mobile cards, touch feedback และ accessibility assertions |
 | Phase 5 — Product Expansion | merge เข้า `main` แล้ว | TH/EN, Settings Center, portable settings, usage sorting, compatibility check, Audio Tool Suite และ new utility suite |
 | v0.8.0 — Audio Tool Suite Baseline | CI/Deploy ผ่าน; production smoke บางส่วนผ่าน | Versioned cache contract, source-aligned docs, CI run `31988106872`, Pages deploy run `31988106901` และ smoke notes |
+| v0.8.1 — Image Blur/Sensor | ผ่าน local quality gates | เลือกกรอบสี่เหลี่ยม, Blur/Pixelate, progress/cancel, Worker/fallback, local-only output และ unique SVG asset |
+| v0.9.0 — ITKB Utility Expansion | ผ่าน local quality gates | PDF Page Organizer, CSV Thai Encoding Repair, JSON i18n Mapper, Batch Image Watermark, JSON-LD Generator, Flowchart Studio และ Circle/Rounded Crop พร้อม 42 metadata modules |
 
 ## ความสามารถปัจจุบัน
 
-Catalog ปัจจุบันมี **33 tools (32 public tools)** และ file-oriented tools 17 รายการ ทุก tool ใช้ client-side processing, lazy loading และ metadata contract ที่ประกาศ processing/privacy behavior อย่างชัดเจน
+Catalog ปัจจุบันมี **42 tools (41 public tools)** และ file-oriented tools 22 รายการ ทุก tool ใช้ client-side processing, lazy loading และ metadata contract ที่ประกาศ processing/privacy behavior อย่างชัดเจน
 
 ### Audio Tool Suite
 
@@ -42,14 +44,15 @@ Audio pipeline แชร์ `src/core/audio-processing.ts`, `src/tools/audio-wor
 - Privacy Redactor Studio
 - File Diff & Change Map
 - Image Contact Sheet Studio
+- Image Blur & Sensor
 - CSV Data Cleaner & Profiler
 - Audio Chapter Marker & Cue Sheet
 
-## Release contract v0.8.0
+## Release contract v0.8.1
 
-- `package.json` ใช้ version `0.8.0`
-- Service Worker ใช้ shell cache `utility-hub-shell-v0.8.0-audio-suite` และ tool cache `utility-hub-tools-v0.8.0-audio-suite`
-- Offline Tool Manager ใช้ `OFFLINE_CACHE_VERSION = 0.8.0-audio-suite`
+- `package.json` ใช้ version `0.8.1`
+- Service Worker ใช้ shell cache `utility-hub-shell-v0.8.1-image-blur` และ tool cache `utility-hub-tools-v0.8.1-image-blur`
+- Offline Tool Manager ใช้ `OFFLINE_CACHE_VERSION = 0.8.1-image-blur`
 - PWA manifest ไม่มี version field แยกต่างหาก จึงไม่ถูกแก้ให้มีข้อมูลซ้ำ
 - Portable Settings และ IndexedDB store ยังคง schema version `1` เพื่อรักษา backward compatibility กับข้อมูลผู้ใช้เดิม
 - Cache รุ่นเก่าจะถูกล้างโดย Service Worker activation ตาม cache allow-list

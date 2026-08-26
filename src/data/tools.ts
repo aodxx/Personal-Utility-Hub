@@ -30,10 +30,18 @@ import { metadata as jsonSchemaGeneratorMetadata } from '../tools/json-schema-ge
 import { metadata as markdownTableBuilderMetadata } from '../tools/markdown-table-builder/metadata';
 import { metadata as fileMetadata } from '../tools/file-metadata/metadata';
 import { metadata as imageCompressorMetadata } from '../tools/image-compressor/metadata';
+import { metadata as imageBlurMetadata } from '../tools/image-blur/metadata';
 import { metadata as imagesToPdfMetadata } from '../tools/images-to-pdf/metadata';
 import { metadata as pdfMergeMetadata } from '../tools/pdf-merge/metadata';
 import { metadata as pdfSplitMetadata } from '../tools/pdf-split/metadata';
 import { metadata as pdfToImageMetadata } from '../tools/pdf-to-image/metadata';
+import { metadata as pdfOrganizerMetadata } from '../tools/pdf-organizer/metadata';
+import { metadata as csvEncodingRepairMetadata } from '../tools/csv-encoding-repair/metadata';
+import { metadata as jsonI18nMapperMetadata } from '../tools/json-i18n-mapper/metadata';
+import { metadata as imageWatermarkMetadata } from '../tools/image-watermark/metadata';
+import { metadata as jsonLdGeneratorMetadata } from '../tools/json-ld-generator/metadata';
+import { metadata as flowchartStudioMetadata } from '../tools/flowchart-studio/metadata';
+import { metadata as imageCropMetadata } from '../tools/image-crop/metadata';
 
 const svgLibraryAssets = async (): Promise<readonly string[]> => svgAssetManifest.map(({ assetUrl }) => assetUrl);
 
@@ -95,6 +103,11 @@ export const toolRegistry = [
     prepareOffline: processingWorkerAssets,
   },
   {
+    metadata: imageBlurMetadata,
+    load: () => import('../tools/image-blur'),
+    prepareOffline: processingWorkerAssets,
+  },
+  {
     metadata: imagesToPdfMetadata,
     load: () => import('../tools/images-to-pdf'),
     prepareOffline: processingWorkerAssets,
@@ -117,11 +130,9 @@ export const toolRegistry = [
       return [PDF_RENDERING_WORKER_URL];
     },
   },
-  {
-    metadata: fileMetadata,
-    load: () => import('../tools/file-metadata'),
-    prepareOffline: processingWorkerAssets,
-  },
+  { metadata: pdfOrganizerMetadata, load: () => import('../tools/pdf-organizer') },
+  { metadata: fileMetadata, load: () => import('../tools/file-metadata'), prepareOffline: processingWorkerAssets },
+  { metadata: csvEncodingRepairMetadata, load: () => import('../tools/csv-encoding-repair') },
   {
     metadata: audioTrimmerMetadata,
     load: () => import('../tools/audio-trimmer'),
@@ -156,6 +167,11 @@ export const toolRegistry = [
   { metadata: fileDiffMetadata, load: () => import('../tools/file-diff') },
   { metadata: imageContactSheetMetadata, load: () => import('../tools/image-contact-sheet') },
   { metadata: csvProfilerMetadata, load: () => import('../tools/csv-profiler') },
+  { metadata: imageWatermarkMetadata, load: () => import('../tools/image-watermark') },
+  { metadata: imageCropMetadata, load: () => import('../tools/image-crop') },
+  { metadata: jsonI18nMapperMetadata, load: () => import('../tools/json-i18n-mapper') },
+  { metadata: jsonLdGeneratorMetadata, load: () => import('../tools/json-ld-generator') },
+  { metadata: flowchartStudioMetadata, load: () => import('../tools/flowchart-studio') },
   {
     metadata: lineStickerStudioMetadata,
     load: () => import('../tools/line-sticker-studio'),

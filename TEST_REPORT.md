@@ -1,13 +1,13 @@
-# Test and Release Validation Report — v0.8.0
+# Test and Release Validation Report — v0.9.0
 
-**อัปเดต:** 17 สิงหาคม 2026
+**อัปเดต:** 26 สิงหาคม 2026
 **Repository:** `aodxx/Personal-Utility-Hub`
-**Release baseline:** `0.8.0`
-**Release scope:** Phase 5 Product Expansion และ Audio Tool Suite บน `main`
+**Release baseline:** `0.9.0` (local feature baseline)
+**Release scope:** เพิ่ม Image Blur/Sensor และ ITKB Utility Expansion อีก 7 รายการ พร้อม bilingual guides, unique visual assets, local-only processing และ mobile E2E
 
 ## 1. ขอบเขตของ baseline
 
-v0.8.0 ไม่ใช่การเพิ่ม tool ใหม่ในรอบ validation นี้ แต่เป็น release baseline สำหรับ source code ที่มีอยู่จริง ได้แก่ 25 active tools, Audio processing pipeline, Worker/fallback architecture, bilingual App Shell, Settings Center, Portable Settings, Offline Tool Preparation และ mobile-first UI
+v0.9.0 เพิ่ม Image Blur/Sensor และ ITKB Utility Expansion 7 รายการลงใน source code จริง โดยยังคง Audio processing pipeline, Worker/fallback architecture, bilingual App Shell, Settings Center, Portable Settings, Offline Tool Preparation และ mobile-first UI
 
 Audio scope ครอบคลุม Audio Trimmer, Audio Compressor Pro, Audio Merger Studio, Silence Remover, Audio Finisher, Audio Speed & Pitch และ Audio Chapter Marker & Cue Sheet เครื่องมือเหล่านี้ทำงานใน browser และ export อยู่ใน WAV/WAV Compact family ตาม operation ปัจจุบัน
 
@@ -309,3 +309,61 @@ JSON Schema Generator และ Markdown Table Builder ยังอยู่ส�
 | Production build | Passed |
 | Bundle | Entry 46.8 KB gzip; all JavaScript 1,071.0 KB |
 | `git diff --check` | Passed |
+
+## v0.8.1 — Image Blur/Sensor local validation — 26 สิงหาคม 2026
+
+Image Blur/Sensor เพิ่มจากแนวคิดเครื่องมือบน ITKB โดยเลือกกรอบสี่เหลี่ยมด้วยการลาก, Blur หรือ Pixelate, ปรับความแรง, preview และ download ทั้งหมดทำงานใน browser และใช้ Worker เมื่อรองรับ พร้อม main-thread fallback เมื่อจำเป็น ไม่มีการเพิ่ม dependency ใหม่หรือ backend
+
+| Check | Result |
+|---|---:|
+| TypeScript | ผ่าน |
+| Vitest | 119/119 ผ่าน จาก 26 test files |
+| Registry | 35 metadata modules ผ่าน; unique IDs/routes และ lazy registrations ผ่าน |
+| SVG library | 120 assets; exact duplicates 0; geometry duplicates 0; near-duplicate warnings 0 |
+| Production build | ผ่าน |
+| Bundle | Entry 50.5 KB gzip ภายใต้งบใหม่ 51 KB; largest lazy 366.1 KB; JavaScript รวม 1,200.2 KB |
+| Image Blur/Sensor E2E | 3/3 ผ่าน บน Desktop Chromium, Android entry 360 × 740 และ Android current |
+| Full Playwright E2E | 202 ผ่าน, 14 intentional skips จาก 216 cases |
+| npm audit | 0 vulnerabilities |
+| Service Worker syntax | ผ่านด้วย `node --check public/sw.js` |
+| `git diff --check` | ผ่าน |
+
+Entry budget ถูกขยับจาก 50 KB เป็น 51 KB และบันทึกเหตุผลไว้ใน `scripts/check-bundle.mjs` เนื่องจาก static catalog มี metadata และ bilingual guide เพิ่มขึ้นหนึ่งเครื่องมือ ขณะที่ largest lazy chunk และ total JavaScript ยังคงอยู่ต่ำกว่างบเดิม
+
+
+## v0.9.0 — ITKB Utility Expansion validation — 26 สิงหาคม 2026
+
+Release `v0.9.0` เพิ่มเครื่องมือใหม่ 7 รายการ ได้แก่ PDF Page Organizer, CSV Thai Encoding Repair, JSON i18n Mapper, Batch Image Watermark, JSON-LD Generator, Flowchart Studio และ Circle/Rounded Crop โดยทุกโมดูลลงทะเบียนแบบ lazy, มี metadata และ bilingual guide, ใช้ client-side processing และไม่เพิ่ม backend หรือ external upload path
+
+| Gate | ผลลัพธ์ |
+|---|---|
+| TypeScript | ผ่าน `npm run typecheck` |
+| Unit/integration | ผ่าน 27 test files, 124 tests |
+| Registry | ผ่าน: 42 metadata modules, unique routes และ lazy registrations |
+| SVG library | ผ่าน: 120 assets, exact duplicates 0, geometry duplicates 0, near-duplicate warnings 0 |
+| Production build | ผ่าน `npm run build` |
+| Service Worker syntax | ผ่าน `node --check public/sw.js` |
+| Diff whitespace | ผ่าน `git diff --check` |
+| Expansion E2E desktop | ผ่าน 7/7 routes บน Desktop Chromium |
+| Expansion E2E mobile | ผ่าน 14/14 tests บน Android entry 360 × 740 และ Android current |
+
+### Implementation notes
+
+PDF Page Organizer ใช้ `pdf-lib` ที่มีอยู่แล้วเพื่อจัดลำดับ ลบ หมุน ใส่เลขหน้า และใส่ลายน้ำ โดยไม่แก้ไฟล์ต้นฉบับ ส่วน CSV Thai Encoding Repair ตรวจ UTF-8 แบบ fatal ก่อนใช้ heuristic ของ Windows-874/Windows-1252 และ export UTF-8 BOM เพื่อช่วย workflow ของ Excel
+
+JSON i18n Mapper และ JSON-LD Generator เป็น pure text/data tools ที่ทำงานใน browser ส่วน Batch Image Watermark และ Circle/Rounded Crop ใช้ Canvas/ImageBitmap และ cleanup object URLs ตาม image processing contract รุ่นนี้รองรับ text watermark และ center crop; ยังไม่อ้างว่าเป็น logo watermark หรือ draggable crop editor
+
+Flowchart Studio ใช้ DSL แบบ `Step A -> Step B` และสร้าง SVG ที่ escape label ก่อน render พร้อม export SVG, PNG และ JSON เครื่องมือนี้เป็น editor แบบพื้นฐาน ไม่ได้อ้างว่าเป็น auto-layout หรือ collaborative diagram system
+
+### Release boundary
+
+ผลการตรวจสอบทั้งหมดเป็น local validation ใน working copy และยังไม่ใช่หลักฐาน production GitHub Pages smoke หรือ GitHub Actions run บน commit ใหม่ การเปลี่ยนแปลงยังไม่ได้ commit หรือ push ขึ้น GitHub ตามขอบเขตความปลอดภัยของงานนี้
+
+
+## Final pre-push review — 26 สิงหาคม 2026
+
+รอบ code review ล่าสุดแก้ไขและยืนยันแล้ว 4 ประเด็น ได้แก่ Flowchart slug collision และ stable label mapping, total-byte guard 40 MB สำหรับ Batch Image Watermark, fallback path เมื่อ Canvas ไม่มี `roundRect` สำหรับ Circle/Rounded Crop และการนำ `prepareOffline` ที่ไม่จำเป็นออกจากเครื่องมือที่ทำงานบน main thread
+
+หลังการแก้ไข ผลตรวจล่าสุดคือ `npm test` ผ่าน 124/124 tests, full Playwright E2E ผ่าน 244 cases และ skip 14 cases ตามเงื่อนไขเดิมของโครงการ โดย functional workflows ของเครื่องมือใหม่ทั้ง 7 รายการผ่านบน Desktop Chromium, Android entry 360 × 740 และ Android current รวม 21 workflows ทุกข้อ ผล production build, bundle, registry, SVG integrity, npm audit, Service Worker syntax และ `git diff --check` ผ่านเช่นกัน
+
+ยังไม่มีการ commit หรือ push จากการตรวจรอบนี้

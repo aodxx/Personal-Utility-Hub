@@ -12,6 +12,11 @@ import { metadata as csvProfiler } from '../tools/csv-profiler/metadata';
 import { metadata as audioChapterMarker } from '../tools/audio-chapter-marker/metadata';
 import { metadata as fileMetadata } from '../tools/file-metadata/metadata';
 import { metadata as imageCompressor } from '../tools/image-compressor/metadata';
+import { metadata as imageBlur } from '../tools/image-blur/metadata';
+import { metadata as pdfOrganizer } from '../tools/pdf-organizer/metadata';
+import { metadata as csvEncodingRepair } from '../tools/csv-encoding-repair/metadata';
+import { metadata as imageWatermark } from '../tools/image-watermark/metadata';
+import { metadata as imageCrop } from '../tools/image-crop/metadata';
 import { metadata as imagesToPdf } from '../tools/images-to-pdf/metadata';
 import { metadata as pdfMerge } from '../tools/pdf-merge/metadata';
 import { metadata as pdfSplit } from '../tools/pdf-split/metadata';
@@ -30,6 +35,11 @@ export const fileTools = [
   csvProfiler,
   audioChapterMarker,
   imageCompressor,
+  imageBlur,
+  pdfOrganizer,
+  csvEncodingRepair,
+  imageWatermark,
+  imageCrop,
   imagesToPdf,
   pdfMerge,
   pdfSplit,

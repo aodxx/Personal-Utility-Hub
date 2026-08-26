@@ -1,5 +1,6 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { AppShell } from '../src/app/app-shell';
+import { publicToolCatalog } from '../src/data/tools';
 
 describe('AppShell integration', () => {
   let app: AppShell | undefined;
@@ -27,9 +28,9 @@ describe('AppShell integration', () => {
   it('renders the Hub and filters tools by Thai search and category', async () => {
     const root = startApp();
     await vi.waitFor(() => expect(root.textContent).toContain('เครื่องมือที่ต้องใช้'));
-    expect(root.querySelectorAll('#tool-grid .tool-card')).toHaveLength(33);
+    expect(root.querySelectorAll('#tool-grid .tool-card')).toHaveLength(publicToolCatalog.length);
     expect(root.querySelectorAll('.category-tab .asset-icon')).toHaveLength(13);
-    expect(root.querySelectorAll('#tool-grid .tool-card .asset-icon')).toHaveLength(33);
+    expect(root.querySelectorAll('#tool-grid .tool-card .asset-icon')).toHaveLength(publicToolCatalog.length);
     expect(root.querySelector('#tool-grid [data-tool-id="foundation-demo"]')).toBeNull();
     expect(root.querySelector('.developer-credit')?.textContent).toContain('Developed by aod');
     const facebook = root.querySelector<HTMLAnchorElement>('.developer-credit__social');
@@ -41,17 +42,17 @@ describe('AppShell integration', () => {
     if (!search) throw new Error('missing search input');
     search.value = 'รูปภาพ';
     search.dispatchEvent(new InputEvent('input', { bubbles: true }));
-    expect(root.querySelectorAll('#tool-grid .tool-card')).toHaveLength(9);
+    expect(root.querySelectorAll('#tool-grid .tool-card')).toHaveLength(12);
 
     search.value = '';
     search.dispatchEvent(new InputEvent('input', { bubbles: true }));
     root.querySelector<HTMLButtonElement>('[data-category="ข้อความและข้อมูล"]')?.click();
-    expect(root.querySelectorAll('#tool-grid .tool-card')).toHaveLength(8);
+    expect(root.querySelectorAll('#tool-grid .tool-card')).toHaveLength(9);
   });
 
   it('persists favorites, records recent tools and clears history', async () => {
     const root = startApp();
-    await vi.waitFor(() => expect(root.querySelectorAll('#tool-grid .tool-card')).toHaveLength(33));
+    await vi.waitFor(() => expect(root.querySelectorAll('#tool-grid .tool-card')).toHaveLength(publicToolCatalog.length));
     const jsonCard = root.querySelector<HTMLElement>('#tool-grid [data-tool-id="json-formatter"]');
     expect(jsonCard?.querySelector('.tool-card__tap-target')?.getAttribute('href')).toBe('#/tools/json-formatter');
     expect(jsonCard?.querySelector('.tool-card__link')).toBeNull();
@@ -114,7 +115,7 @@ describe('AppShell integration', () => {
     window.localStorage.setItem('utility-hub:tool-order', 'frequent');
     window.localStorage.setItem('utility-hub:usage', JSON.stringify({ 'pdf-merge': 8, base64: 2 }));
     const root = startApp();
-    await vi.waitFor(() => expect(root.querySelectorAll('#tool-grid .tool-card')).toHaveLength(33));
+    await vi.waitFor(() => expect(root.querySelectorAll('#tool-grid .tool-card')).toHaveLength(publicToolCatalog.length));
     expect(root.querySelector<HTMLElement>('#tool-grid .tool-card')?.dataset.toolId).toBe('pdf-merge');
   });
 });

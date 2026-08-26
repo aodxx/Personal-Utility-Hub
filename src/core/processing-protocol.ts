@@ -1,7 +1,7 @@
 import type { AudioOperation, AudioPcmData, AudioProcessResult, AudioTrimOptions, AudioTrimResult } from './audio-processing';
-import type { SupportedImageType } from './image-processing';
+import type { ImageRedactionOptions, SupportedImageType } from './image-processing';
 
-export type ProcessingJobKind = 'images-to-pdf' | 'pdf-inspect' | 'pdf-merge' | 'pdf-split' | 'sha256' | 'image-process' | 'audio-trim' | 'audio-process';
+export type ProcessingJobKind = 'images-to-pdf' | 'pdf-inspect' | 'pdf-merge' | 'pdf-split' | 'sha256' | 'image-process' | 'image-redact' | 'audio-trim' | 'audio-process';
 
 export interface ImageProcessOptions {
   width?: number;
@@ -10,6 +10,11 @@ export interface ImageProcessOptions {
   quality: number;
   type: SupportedImageType;
   background?: string;
+}
+
+export interface ImageRedactOptions extends ImageRedactionOptions {
+  quality: number;
+  type: SupportedImageType;
 }
 
 export interface PdfInfo {
@@ -28,6 +33,7 @@ export interface ProcessingPayloadMap {
   'pdf-split': { file: File; selection: string };
   sha256: { file: File };
   'image-process': { file: File; options: ImageProcessOptions };
+  'image-redact': { file: File; options: ImageRedactOptions };
   'audio-trim': { pcm: AudioPcmData; options: AudioTrimOptions };
   'audio-process': { pcm: AudioPcmData; operation: AudioOperation };
 }
@@ -39,6 +45,7 @@ export interface ProcessingResultMap {
   'pdf-split': { bytes: Uint8Array; selectedPages: number[]; totalPages: number };
   sha256: { value: string };
   'image-process': { blob: Blob; width: number; height: number };
+  'image-redact': { blob: Blob; width: number; height: number };
   'audio-trim': AudioTrimResult;
   'audio-process': AudioProcessResult;
 }

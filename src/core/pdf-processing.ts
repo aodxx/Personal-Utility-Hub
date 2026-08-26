@@ -1,4 +1,4 @@
-import { PDFDocument, type PDFImage } from 'pdf-lib';
+import { PDFDocument, StandardFonts, degrees, rgb, type PDFImage } from 'pdf-lib';
 import { canvasToBlob, loadImageBitmap, renderBitmap, type SupportedImageType } from './image-processing';
 import { MAX_PDF_PAGES, parsePageSelection, validatePdfFile } from './file-processing';
 export { bytesToPdfBlob } from './file-processing';
@@ -90,6 +90,65 @@ export async function splitPdf(file: File, selection: string): Promise<{ bytes: 
   const copied = await output.copyPages(source, selectedPages);
   copied.forEach((page) => output.addPage(page));
   return { bytes: await output.save(), selectedPages, totalPages };
+}
+
+export function parsePageOrder(value: string, pageCount: number): number[] {
+  if (!Number.isInteger(pageCount) || pageCount < 1) throw new Error('จำนวนหน้า PDF ไม่ถูกต้อง');
+  if (!value.trim()) return Array.from({ length: pageCount }, (_, index) => index);
+  const result = value.split(',').map((part) => Number(part.trim()));
+  if (result.some((page) => !Number.isInteger(page) || page < 1 || page > pageCount)) {
+    throw new Error(`ลำดับหน้าต้องอยู่ระหว่าง 1 ถึง ${pageCount}`);
+  }
+  if (new Set(result).size !== result.length) throw new Error('ลำดับหน้าห้ามซ้ำกัน');
+  if (!result.length) throw new Error('กรุณาระบุลำดับหน้า PDF');
+  return result.map((page) => page - 1);
+}
+
+export interface PdfOrganizerOptions {
+  order: number[];
+  rotations?: Record<number, number>;
+  addPageNumbers?: boolean;
+  watermark?: string;
+}
+
+export async function organizePdf(file: File, options: PdfOrganizerOptions): Promise<{ bytes: Uint8Array; pageCount: number }> {
+  validatePdfFile(file);
+  const source = await PDFDocument.load(await file.arrayBuffer());
+  const totalPages = source.getPageCount();
+  if (totalPages > MAX_PDF_PAGES) throw new Error(`รองรับ PDF ไม่เกิน ${MAX_PDF_PAGES} หน้า`);
+  if (!options.order.length || options.order.some((index) => index < 0 || index >= totalPages) || new Set(options.order).size !== options.order.length) {
+    throw new Error('ลำดับหน้า PDF ไม่ถูกต้อง');
+  }
+  const output = await PDFDocument.create();
+  output.setCreator('Personal Utility Hub');
+  output.setProducer('pdf-lib');
+  const copied = await output.copyPages(source, options.order);
+  copied.forEach((page) => output.addPage(page));
+  const font = await output.embedFont(StandardFonts.Helvetica);
+  const pageCount = copied.length;
+  copied.forEach((page, index) => {
+    const originalIndex = options.order[index] ?? index;
+    const rotation = options.rotations?.[originalIndex];
+    if (rotation !== undefined) page.setRotation(degrees(((rotation % 360) + 360) % 360));
+    if (options.addPageNumbers) {
+      page.drawText(`${index + 1} / ${pageCount}`, { x: 24, y: 18, size: 9, font, color: rgb(0.25, 0.25, 0.25) });
+    }
+    const watermark = options.watermark?.trim();
+    if (watermark) {
+      const size = Math.min(32, Math.max(16, page.getWidth() / Math.max(12, watermark.length)));
+      const textWidth = font.widthOfTextAtSize(watermark, size);
+      page.drawText(watermark, {
+        x: (page.getWidth() - textWidth) / 2,
+        y: page.getHeight() / 2,
+        size,
+        font,
+        rotate: degrees(35),
+        color: rgb(0.45, 0.45, 0.45),
+        opacity: 0.18,
+      });
+    }
+  });
+  return { bytes: await output.save(), pageCount };
 }
 
 export async function compressImage(

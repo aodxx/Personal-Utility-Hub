@@ -2,7 +2,7 @@
 
 ศูนย์รวม **privacy-first utility tools** แบบ Static PWA ที่ประมวลผลไฟล์และข้อมูลภายในเบราว์เซอร์เป็นหลัก โดยใช้ Modular Tool Registry, Lazy Loading, Dedicated Web Worker และ Offline/PWA support เมื่อความสามารถของเบราว์เซอร์รองรับ
 
-**สถานะปัจจุบัน:** `v0.8.0` — Phase 5 Product Expansion และ Phase 6 Trust & Usability ถูก merge เข้า `main` แล้ว; 33 tools (32 public tools) มี bilingual tool-specific guides และ Production smoke บน GitHub Pages ผ่าน โดยไม่เพิ่ม backend, accounts หรือ cloud storage
+**สถานะปัจจุบัน:** `v0.9.0` — เพิ่มเครื่องมือจาก ITKB อีก 7 รายการ ได้แก่ PDF Page Organizer, CSV Thai Encoding Repair, JSON i18n Mapper, Batch Image Watermark, JSON-LD Generator, Flowchart Studio และ Circle/Rounded Crop; รวม 42 tools (41 public tools) มี bilingual tool-specific guides และทำงานแบบ client-side โดยไม่เพิ่ม backend, accounts หรือ cloud storage
 
 ## เครื่องมือที่มีอยู่ใน main
 
@@ -14,6 +14,7 @@
 - Privacy Redactor Studio
 - File Diff & Change Map
 - CSV Data Cleaner & Profiler
+- CSV Thai Encoding Repair — ตรวจและซ่อม encoding ภาษาไทย พร้อม export UTF-8 BOM
 
 ### QR
 
@@ -25,15 +26,25 @@
 - Image Resizer
 - Image Converter
 - Image Compressor
+- Image Blur & Sensor — ลากเลือกพื้นที่เพื่อเบลอหรือทำพิกเซลก่อนแชร์
 - Image Contact Sheet Studio
+- Batch Image Watermark — ใส่ข้อความลายน้ำบนหลายไฟล์ในเครื่อง
+- Circle & Rounded Crop — ครอบรูปเป็นวงกลมหรือขอบมน
 - Images to PDF
 
 ### PDF / File
 
+- PDF Page Organizer — ลบ จัดเรียง หมุน ใส่เลขหน้า และลายน้ำ
 - PDF Merge
 - PDF Split
 - PDF to Image
 - File Metadata Viewer
+
+### Developer Tools
+
+- JSON i18n Mapper — ตรวจ key ของไฟล์แปลภาษา
+- JSON-LD Generator — สร้าง Schema.org structured data
+- Flowchart Studio — สร้างและ export แผนผัง workflow
 
 ### Maps / Location
 
@@ -100,7 +111,7 @@ IndexedDB ใช้เก็บเฉพาะสถานะว่า tool vers
 
 ## Version และ release contract
 
-Release baseline ปัจจุบันคือ `0.8.0` โดย identifiers ที่เกี่ยวกับ cache ใช้ `v0.8.0-audio-suite` ใน Service Worker และ Offline Tool Manager การเปลี่ยน release version จะ invalidate shell/tool cache รุ่นเก่า แต่ไม่เปลี่ยน schema ข้อมูลผู้ใช้โดยอัตโนมัติ
+Release baseline ปัจจุบันคือ `0.8.1` โดย identifiers ที่เกี่ยวกับ cache ใช้ `v0.8.1-image-blur` ใน Service Worker และ Offline Tool Manager การเปลี่ยน release version จะ invalidate shell/tool cache รุ่นเก่า แต่ไม่เปลี่ยน schema ข้อมูลผู้ใช้โดยอัตโนมัติ
 
 PWA manifest ไม่มี version field แยกต่างหาก จึงใช้ package version และ versioned cache identifiers เป็น release source ที่ตรวจสอบได้ ดูรายละเอียด milestone และข้อจำกัดได้ใน [`PROGRESS.md`](PROGRESS.md) และผล validation ใน [`TEST_REPORT.md`](TEST_REPORT.md)
 

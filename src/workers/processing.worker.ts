@@ -1,9 +1,10 @@
 import { PDFDocument, type PDFImage } from 'pdf-lib';
 import { processAudio, trimPcm } from '../core/audio-processing';
-import { MAX_IMAGE_BYTES, MAX_IMAGE_DIMENSION, MAX_IMAGE_PIXELS, SUPPORTED_IMAGE_TYPES } from '../core/image-processing';
+import { MAX_IMAGE_BYTES, MAX_IMAGE_DIMENSION, MAX_IMAGE_PIXELS, renderRedaction, SUPPORTED_IMAGE_TYPES } from '../core/image-processing';
 import { MAX_PDF_PAGES, parsePageSelection } from '../core/file-processing';
 import type {
   ImageProcessOptions,
+  ImageRedactOptions,
   ProcessingJobKind,
   ProcessingPayloadMap,
   ProcessingRequest,
@@ -165,6 +166,30 @@ async function processImage(file: File, options: ImageProcessOptions, jobId: str
   }
 }
 
+async function processImageRedact(file: File, options: ImageRedactOptions, jobId: string): Promise<ProcessingResultMap['image-redact']> {
+  if (!SUPPORTED_IMAGE_TYPES.includes(file.type as (typeof SUPPORTED_IMAGE_TYPES)[number])) throw new Error('รองรับเฉพาะไฟล์ PNG, JPEG และ WebP');
+  if (file.size <= 0 || file.size > MAX_IMAGE_BYTES) throw new Error('ไฟล์รูปภาพต้องมีขนาดไม่เกิน 15 MB');
+  report(jobId, 15, 'กำลังถอดรหัสรูปภาพใน Worker');
+  const bitmap = await createImageBitmap(file);
+  try {
+    const dimensions = { width: bitmap.width, height: bitmap.height };
+    if (dimensions.width > MAX_IMAGE_DIMENSION || dimensions.height > MAX_IMAGE_DIMENSION || dimensions.width * dimensions.height > MAX_IMAGE_PIXELS) {
+      throw new Error('ขนาดรูปภาพเกินขีดจำกัดบนอุปกรณ์');
+    }
+    report(jobId, 45, `กำลังเซนเซอร์ ${options.region.width.toLocaleString()} × ${options.region.height.toLocaleString()} px`);
+    const canvas = new OffscreenCanvas(dimensions.width, dimensions.height);
+    const context = canvas.getContext('2d', { alpha: true });
+    if (!context) throw new Error('ไม่สามารถเปิด OffscreenCanvas ได้');
+    renderRedaction(context, bitmap, dimensions, options);
+    report(jobId, 80, 'กำลังเข้ารหัสไฟล์ผลลัพธ์');
+    const blob = await canvas.convertToBlob({ type: options.type, quality: options.quality });
+    report(jobId, 100, 'เซนเซอร์รูปภาพเสร็จแล้ว');
+    return { blob, ...dimensions };
+  } finally {
+    bitmap.close();
+  }
+}
+
 async function execute<K extends ProcessingJobKind>(request: ProcessingRequest<K>): Promise<ProcessingResultMap[K]> {
   const { kind, payload, jobId } = request;
   if (kind === 'images-to-pdf') return imagesToPdf((payload as ProcessingPayloadMap['images-to-pdf']).files, jobId) as Promise<ProcessingResultMap[K]>;
@@ -182,6 +207,10 @@ async function execute<K extends ProcessingJobKind>(request: ProcessingRequest<K
   if (kind === 'audio-process') {
     const value = payload as ProcessingPayloadMap['audio-process'];
     return Promise.resolve(processAudio(value.pcm, value.operation, (progress, message) => report(jobId, progress, message))) as Promise<ProcessingResultMap[K]>;
+  }
+  if (kind === 'image-redact') {
+    const value = payload as ProcessingPayloadMap['image-redact'];
+    return processImageRedact(value.file, value.options, jobId) as Promise<ProcessingResultMap[K]>;
   }
   const value = payload as ProcessingPayloadMap['image-process'];
   return processImage(value.file, value.options, jobId) as Promise<ProcessingResultMap[K]>;

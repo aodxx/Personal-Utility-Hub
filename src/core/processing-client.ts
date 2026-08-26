@@ -20,7 +20,7 @@ function assertNotAborted(signal?: AbortSignal): void {
 
 function canUseWorker(kind: ProcessingJobKind): boolean {
   if (typeof Worker !== 'function') return false;
-  return !['image-process', 'images-to-pdf'].includes(kind) || typeof OffscreenCanvas === 'function';
+  return !['image-process', 'image-redact', 'images-to-pdf'].includes(kind) || typeof OffscreenCanvas === 'function';
 }
 
 export const PROCESSING_WORKER_URL = processingWorkerUrl;
@@ -61,9 +61,14 @@ async function runFallback<K extends ProcessingJobKind>(
     const { processAudio } = await import('./audio-processing');
     result = processAudio(audioPayload.pcm, audioPayload.operation, options.onProgress);
   } else {
-    const { processImageOnMainThread } = await import('./image-processing');
-    const imagePayload = payload as ProcessingPayloadMap['image-process'];
-    result = await processImageOnMainThread(imagePayload.file, imagePayload.options);
+    const { processImageOnMainThread, processImageRedactionOnMainThread } = await import('./image-processing');
+    if (kind === 'image-redact') {
+      const imagePayload = payload as ProcessingPayloadMap['image-redact'];
+      result = await processImageRedactionOnMainThread(imagePayload.file, imagePayload.options);
+    } else {
+      const imagePayload = payload as ProcessingPayloadMap['image-process'];
+      result = await processImageOnMainThread(imagePayload.file, imagePayload.options);
+    }
   }
 
   assertNotAborted(options.signal);
@@ -140,3 +145,4 @@ export const sha256Async = async (file: File, options?: ProcessingJobOptions): P
 export const trimAudioAsync = (pcm: ProcessingPayloadMap['audio-trim']['pcm'], trimOptions: ProcessingPayloadMap['audio-trim']['options'], options?: ProcessingJobOptions) => runProcessingJob('audio-trim', { pcm, options: trimOptions }, options);
 export const processAudioAsync = (pcm: ProcessingPayloadMap['audio-process']['pcm'], operation: ProcessingPayloadMap['audio-process']['operation'], options?: ProcessingJobOptions) => runProcessingJob('audio-process', { pcm, operation }, options);
 export const processImageAsync = (file: File, imageOptions: ImageProcessOptions, options?: ProcessingJobOptions) => runProcessingJob('image-process', { file, options: imageOptions }, options);
+export const redactImageAsync = (file: File, imageOptions: ProcessingPayloadMap['image-redact']['options'], options?: ProcessingJobOptions) => runProcessingJob('image-redact', { file, options: imageOptions }, options);

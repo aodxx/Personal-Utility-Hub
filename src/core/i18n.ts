@@ -77,11 +77,19 @@ const categoryEnglish: Record<string, string> = {
   'image-converter': { title: 'Image Converter', description: 'Convert images between PNG, JPEG and WebP locally.' },
   'qr-reader': { title: 'QR Code Reader', description: 'Read QR Codes from an image or camera without uploading media.' },
   'image-compressor': { title: 'Image Compressor', description: 'Reduce JPEG or WebP file size with local quality controls.' },
+  'image-blur': { title: 'Image Blur & Sensor', description: 'Blur or pixelate a selected image area locally before sharing.' },
   'images-to-pdf': { title: 'Images to PDF', description: 'Turn up to 20 images into a private A4 PDF.' },
   'pdf-merge': { title: 'PDF Merge', description: 'Combine up to 10 PDF files in the selected order.' },
   'pdf-split': { title: 'PDF Split', description: 'Extract pages or page ranges into a new PDF.' },
   'pdf-to-image': { title: 'PDF to Image', description: 'Render a selected PDF page as PNG or JPEG.' },
   'file-metadata': { title: 'File Metadata Viewer', description: 'Inspect file details and SHA-256 without uploading the file.' },
+  'pdf-organizer': { title: 'PDF Page Organizer', description: 'Delete, rotate, reorder, number and watermark PDF pages locally.' },
+  'csv-encoding-repair': { title: 'CSV Thai Encoding Repair', description: 'Detect and repair Thai CSV encoding with a UTF-8 BOM export.' },
+  'json-i18n-mapper': { title: 'JSON i18n Mapper', description: 'Compare localization JSON keys and create a translation skeleton.' },
+  'image-watermark': { title: 'Batch Image Watermark', description: 'Apply a text watermark to multiple images locally.' },
+  'json-ld-generator': { title: 'JSON-LD Generator', description: 'Create Schema.org structured data for common website content types.' },
+  'flowchart-studio': { title: 'Flowchart Studio', description: 'Render a local workflow diagram and export SVG, PNG or JSON.' },
+  'image-crop': { title: 'Circle & Rounded Crop', description: 'Create transparent circle or rounded image crops locally.' },
 };
 
 export function localizeCategory(category: string, locale: AppLocale): string {
