@@ -34,7 +34,7 @@ git diff --check
 | Check | Result |
 |---|---:|
 | TypeScript strict typecheck | ผ่าน |
-| Vitest unit/integration | 132/132 tests ผ่าน จาก 29 test files |
+| Vitest unit/integration | 152/152 tests ผ่าน จาก 33 test files |
 | Production build | ผ่าน |
 | Bundle budget | ผ่าน; entry 57.9 KB gzip, largest lazy 366.1 KB, total 1,240.8 KB จาก 62 chunks และ gate 60 KB gzip |
 | Playwright P0 | 27 passed จาก 27 cases บน 3 profiles |
@@ -374,3 +374,22 @@ Flowchart Studio ใช้ DSL แบบ `Step A -> Step B` และสร้�
 หลังการแก้ไข ผลตรวจล่าสุดคือ `npm test` ผ่าน 124/124 tests, full Playwright E2E ผ่าน 244 cases และ skip 14 cases ตามเงื่อนไขเดิมของโครงการ โดย functional workflows ของเครื่องมือใหม่ทั้ง 7 รายการผ่านบน Desktop Chromium, Android entry 360 × 740 และ Android current รวม 21 workflows ทุกข้อ ผล production build, bundle, registry, SVG integrity, npm audit, Service Worker syntax และ `git diff --check` ผ่านเช่นกัน
 
 ยังไม่มีการ commit หรือ push จากการตรวจรอบนี้
+
+
+## 14. P0 baseline test suite — 27 สิงหาคม 2026
+
+เพิ่มชุดทดสอบแบบแยกไฟล์สำหรับ P0 utilities เพื่อให้แต่ละเครื่องมือมีขอบเขตที่อ่านง่ายและแก้ไขต่อได้โดยไม่ต้องพึ่งบริบทจากการสนทนาภายนอก ชุดนี้ทดสอบ pure core logic ของ JWT Inspector, Hash & Checksum Verifier, Regex Playground และ Color Contrast Checker พร้อม registry integration ที่ตรวจ lazy-loaded module และ metadata contract ของทั้ง 4 รายการ
+
+| Test file | ขอบเขตหลัก |
+|---|---|
+| `tests/p0-jwt.test.ts` | JWT decode, expiry/nbf semantics, `alg=none` warning, malformed JSON/UTF-8, input limit และ claim formatting |
+| `tests/p0-hash.test.ts` | SHA-256/SHA-512 known vectors, binary/file hashing, digest normalization/verdicts และ file/text size guards |
+| `tests/p0-regex.test.ts` | global/non-global matches, named groups, zero-length safety, match truncation, replacement และ input/output limits |
+| `tests/p0-color-contrast.test.ts` | HEX/RGB/RGBA parsing, invalid ranges, luminance, WCAG decisions, ratio formatting และ opaque-color boundary |
+| `tests/p0-registry.test.ts` | active local metadata, route contract และ lazy module loading ของ P0 ทั้ง 4 ตัว |
+
+ผล validation หลังเพิ่ม suite คือ targeted P0 tests ผ่าน **24/24 tests จาก 5 files** และ full Vitest ผ่าน **152/152 tests จาก 33 test files** โดย typecheck, production build, bundle, registry, SVG integrity, high-severity audit, Service Worker syntax และ `git diff --check` ผ่านเช่นกัน
+
+ผล bundle ล่าสุดยังอยู่ใน budget เดิม: entry gzip **57.9 KB**, largest lazy chunk **366.1 KB** และ JavaScript รวม **1,240.8 KB จาก 62 chunks**; registry ตรวจพบ **46 metadata modules**, SVG library มี **120 assets** และ `npm audit --audit-level=high` รายงาน **0 vulnerabilities**
+
+ชุดทดสอบนี้เป็น unit/integration baseline; browser workflows ของ P0 ทั้ง 4 ตัวยังคงอยู่ใน `tests/e2e/p0-tools.spec.ts` สำหรับการตรวจ route, local-only notice, primary action, result rendering และ mobile no-overflow
